@@ -2,7 +2,8 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import type { MarkdownInstance } from "astro";
 
-type FM = { title: string; date?: string | Date; images?: any[] };
+type ImageItem = string | { image: string };
+type FM = { title: string; date?: string | Date; images?: ImageItem[] };
 
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
 const posts = await Promise.all(Object.values(modules).map((fn) => fn()));
@@ -12,23 +13,40 @@ posts.sort(
 );
 
 const slugOf = (p: MarkdownInstance<FM>) => p.file.split("/").pop()!.replace(/\.md$/, "");
+
+const firstImage = (images?: ImageItem[]) => {
+  const v = images?.[0];
+  if (!v) return "";
+  return typeof v === "string" ? v : v.image;
+};
 ---
 
 <BaseLayout title="Gallery">
   <h1>Gallery</h1>
 
-  <div class="grid">
-    {posts.map((p) => (
-      <div class="card">
-        <div>
-          <strong>
-            <a href={`/board/gallery/${slugOf(p)}`}>{p.frontmatter.title}</a>
-          </strong>
-        </div>
-        {p.frontmatter.date && (
-          <div class="muted">{new Date(p.frontmatter.date).toLocaleDateString()}</div>
-        )}
-      </div>
-    ))}
+  <div class="gallery-grid">
+    {posts.map((p) => {
+      const slug = slugOf(p);
+      const thumb = firstImage(p.frontmatter.images);
+
+      return (
+        <a class="gallery-card" href={`/board/gallery/${slug}`}>
+          <div class="thumb">
+            {thumb ? (
+              <img src={thumb} alt={p.frontmatter.title} loading="lazy" />
+            ) : (
+              <div class="thumb-empty">No Image</div>
+            )}
+          </div>
+
+          <div class="g-info">
+            <div class="g-title">{p.frontmatter.title}</div>
+            {p.frontmatter.date && (
+              <div class="muted">{new Date(p.frontmatter.date).toLocaleDateString()}</div>
+            )}
+          </div>
+        </a>
+      );
+    })}
   </div>
 </BaseLayout>

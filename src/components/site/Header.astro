@@ -1,0 +1,89 @@
+---
+const nav = [
+  {
+    label: "RESEARCH",
+    items: [
+      { label: "Introduction", href: "/research/research-area" },
+      // LETS의 Highlights 느낌을 일단 Facilities에 매핑(원하면 나중에 /research/highlights 따로 만들자)
+      { label: "Highlights", href: "/research/facilities" },
+    ],
+  },
+  {
+    label: "PEOPLE",
+    items: [
+      { label: "Professor", href: "/people/professor" },
+      { label: "Students", href: "/people/students" },
+      { label: "Alumni", href: "/people/alumni" },
+    ],
+  },
+  {
+    label: "PUBLICATION",
+    items: [
+      { label: "Journal", href: "/publication/journal" },
+      { label: "Conference", href: "/publication/conference" },
+    ],
+  },
+  {
+    label: "BOARD",
+    items: [
+      { label: "Gallery", href: "/board/gallery" },
+      { label: "News", href: "/board/news" }
+    ],
+  },
+];
+---
+
+<header class="site-header">
+  <!-- top utility bar (LETS 느낌) -->
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="topbar-left">
+        <a href="https://www.pusan.ac.kr/" target="_blank" rel="noreferrer">부산대학교</a>
+        <a href="https://onestop.pusan.ac.kr/" target="_blank" rel="noreferrer">학생지원시스템</a>
+        <a href="https://plato.pusan.ac.kr/" target="_blank" rel="noreferrer">PLATO</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- logo + main nav -->
+  <div class="header-main">
+    <div class="container header-main-inner">
+      <a class="brand" href="/">
+        <div class="brand-title">고체전자물성실험실</div>
+        <div class="brand-sub">Solid-State Electronic Properties Lab</div>
+      </a>
+
+      <button class="nav-toggle" aria-label="toggle navigation" data-nav-toggle>
+        ☰
+      </button>
+
+      <nav class="gnb" data-gnb>
+        <ul class="gnb-list">
+          {nav.map((group) => (
+            <li class="gnb-item">
+              <a class="gnb-link" href={group.items[0]?.href ?? "#"}>{group.label}</a>
+
+              {group.items?.length ? (
+                <ul class="dropdown">
+                  {group.items.map((it) => (
+                    <li class="dropdown-item">
+                      <a href={it.href}>{it.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <script is:inline>
+    const btn = document.querySelector("[data-nav-toggle]");
+    const gnb = document.querySelector("[data-gnb]");
+    btn?.addEventListener("click", () => {
+      gnb?.classList.toggle("is-open");
+    });
+  </script>
+</header>

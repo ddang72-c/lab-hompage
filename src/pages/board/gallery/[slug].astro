@@ -1,56 +1,50 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import type { MarkdownInstance } from "astro";
 
-// ✅ 갤러리 글(md) 전부 불러오기 (빌드 시점에 안전)
+type ImageItem = string | { image: string };
+type FM = { title: string; date?: string | Date; images?: ImageItem[] };
+
+const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
 
 export async function getStaticPaths() {
-  const modules = import.meta.glob("../../../content/board/gallery/*.md");
-  const entries = await Promise.all(
-    Object.entries(modules).map(async ([path, loader]) => {
-      const mod: any = await (loader as any)();
-      const slug = path.split("/").pop()!.replace(/\.md$/, "");
-      return { slug, mod };
-    })
-  );
-
-  return entries.map(({ slug, mod }) => ({
-    params: { slug },
-    props: { post: mod },
+  const entries = await Promise.all(Object.values(modules).map((fn) => fn()));
+  return entries.map((p) => ({
+    params: { slug: p.file.split("/").pop()!.replace(/\.md$/, "") },
   }));
 }
 
-const { post } = Astro.props;
-const { Content, frontmatter } = post as any;
+const { slug } = Astro.params;
 
-// images: ["/..."] 또는 [{image:"/..."}] 둘 다 처리
-const rawImages = frontmatter?.images ?? [];
-const images = Array.isArray(rawImages) ? rawImages : [];
+const entry = await (modules[`/src/content/board/gallery/${slug}.md`] as any)();
+const { Content, frontmatter } = entry;
+
+const imageUrls =
+  (frontmatter.images ?? [])
+    .map((v) => (typeof v === "string" ? v : v.image))
+    .filter(Boolean);
 ---
 
-<BaseLayout title={frontmatter?.title ?? "Gallery"}>
-  <h1>{frontmatter?.title}</h1>
+<BaseLayout title={frontmatter.title ?? "Gallery"}>
+  <h1>{frontmatter.title ?? "Gallery"}</h1>
 
-  {frontmatter?.date && (
-    <p class="muted">{new Date(frontmatter.date).toLocaleDateString()}</p>
+  {frontmatter.date && (
+    <p class="muted" style="margin-top:-6px;">
+      {new Date(frontmatter.date).toLocaleDateString()}
+    </p>
   )}
 
-  {images.length > 0 && (
-    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
-      {images.map((img) => {
-        const src = typeof img === "string" ? img : img.image;
-        return (
-          <div class="card">
-            <img
-              src={src}
-              alt=""
-              style="width:100%; height:auto; border-radius:12px;"
-              loading="lazy"
-            />
-          </div>
-        );
-      })}
+  {imageUrls.length > 0 && (
+    <div class="gallery-detail-grid">
+      {imageUrls.map((src) => (
+        <a class="photo" href={src} target="_blank" rel="noreferrer">
+          <img src={src} alt={frontmatter.title ?? "photo"} loading="lazy" />
+        </a>
+      ))}
     </div>
   )}
 
-  <Content />
+  <div class="gallery-body">
+    <Content />
+  </div>
 </BaseLayout>
