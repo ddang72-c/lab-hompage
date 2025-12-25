@@ -1,19 +1,76 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import type { MarkdownInstance } from "astro";
 
-const alumni = await Astro.glob("/src/content/people/alumni/*.md");
-alumni.sort((a, b) => (b.frontmatter.year ?? 0) - (a.frontmatter.year ?? 0));
+type FM = Record<string, any>;
+
+const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/people/alumni/*.md");
+
+const entries = await Promise.all(
+  Object.entries(modules).map(async ([path, loader]) => {
+    const entry = await loader();
+    return { path, entry };
+  })
+);
+
+entries.sort((a, b) => {
+  const ao = a.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
+  const bo = b.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
+  if (ao !== bo) return ao - bo;
+
+  const an = (a.entry.frontmatter?.name ?? "").toString();
+  const bn = (b.entry.frontmatter?.name ?? "").toString();
+  return an.localeCompare(bn);
+});
 ---
 
 <BaseLayout title="Alumni">
-  <h1>Alumni</h1>
-  <div class="grid">
-    {alumni.map((p) => (
-      <div class="card">
-        <div><strong>{p.frontmatter.name}</strong></div>
-        {p.frontmatter.year && <div class="muted">Year: {p.frontmatter.year}</div>}
-        {p.frontmatter.current && <div class="muted">{p.frontmatter.current}</div>}
-      </div>
-    ))}
-  </div>
+  <main style="max-width: 1000px; margin: 0 auto; padding: 48px 16px;">
+    <h1>Alumni</h1>
+
+    <div style="display:grid; gap:24px; margin-top:24px;">
+      {entries.map(({ entry }) => {
+        const { Content, frontmatter } = entry;
+
+        const name = frontmatter.name ?? "";
+        const role = frontmatter.role ?? frontmatter.position ?? "";
+        const email = frontmatter.email ?? "";
+        const photo = frontmatter.photo ?? "";
+        const gradYear = frontmatter.grad_year ?? "";
+        const current = frontmatter.current ?? "";
+
+        return (
+          <article style="display:flex; gap:20px; padding:16px; border:1px solid #eee; border-radius:14px;">
+            {photo && (
+              <img
+                src={photo}
+                alt={name}
+                style="width:140px; height:140px; object-fit:cover; border-radius:12px;"
+                loading="lazy"
+              />
+            )}
+
+            <div style="flex:1;">
+              <h2 style="margin:0 0 6px 0;">{name}</h2>
+              {(role || gradYear || current) && (
+                <div style="opacity:.85; margin-bottom:10px;">
+                  {[role, gradYear && `(${gradYear})`, current].filter(Boolean).join(" · ")}
+                </div>
+              )}
+
+              {email && (
+                <div style="margin-bottom:10px;">
+                  <b>Email:</b> {email}
+                </div>
+              )}
+
+              <div style="margin-top:10px; line-height:1.7;">
+                <Content />
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </main>
 </BaseLayout>

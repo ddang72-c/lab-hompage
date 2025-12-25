@@ -9,9 +9,6 @@ media_folder: "public/uploads"
 public_folder: "/uploads"
 
 collections:
-  # -------------------------
-  # Board > News (기존)
-  # -------------------------
   - name: "news"
     label: "News"
     folder: "src/content/board/news"
@@ -22,9 +19,6 @@ collections:
       - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Body", name: "body", widget: "markdown" }
 
-  # -------------------------
-  # Board > Gallery (기존)
-  # -------------------------
   - name: "gallery"
     label: "Gallery"
     folder: "src/content/board/gallery"
@@ -40,8 +34,7 @@ collections:
       - { label: "Body", name: "body", widget: "markdown", required: false }
 
   # =========================
-  # People > Professor (1) 단일 문서
-  # 파일은 src/content/people/professor.md 로 고정
+  # People > Professor (단일 문서)
   # =========================
   - name: "professor"
     label: "Professor"
@@ -50,21 +43,16 @@ collections:
         name: "profile"
         file: "src/content/people/professor.md"
         fields:
-          - {
-              label: "Title",
-              name: "title",
-              widget: "string",
-              default: "Professor",
-            }
           - { label: "Name", name: "name", widget: "string" }
-          - { label: "Photo", name: "photo", widget: "image", required: false }
           - {
-              label: "Position",
-              name: "position",
+              label: "Role/Position",
+              name: "role",
               widget: "string",
               required: false,
+              hint: "예: 정교수, 부교수",
             }
           - { label: "Email", name: "email", widget: "string", required: false }
+          - { label: "Photo", name: "photo", widget: "image", required: false }
           - {
               label: "Office",
               name: "office",
@@ -74,8 +62,7 @@ collections:
           - { label: "Body", name: "body", widget: "markdown", required: false }
 
   # =========================
-  # People > Students (2) 여러 문서
-  # 폴더: src/content/people/students/*.md
+  # People > Students (여러 문서)
   # =========================
   - name: "students"
     label: "Students"
@@ -83,15 +70,15 @@ collections:
     folder: "src/content/people/students"
     create: true
     slug: "{{slug}}"
-    summary: "{{name}} — {{position}}"
+    summary: "{{name}} — {{role}}"
     fields:
       - { label: "Name", name: "name", widget: "string" }
       - {
-          label: "Position/Role",
-          name: "position",
+          label: "Role",
+          name: "role",
           widget: "string",
           required: false,
-          hint: "예: Ph.D, M.S, Undergraduate",
+          hint: "예: Ph.D, M.S, Undergraduate, Lab Leader",
         }
       - { label: "Email", name: "email", widget: "string", required: false }
       - { label: "Photo", name: "photo", widget: "image", required: false }
@@ -100,18 +87,24 @@ collections:
           name: "order",
           widget: "number",
           required: false,
-          hint: "정렬용 숫자(작을수록 위). 비우면 파일/기본 정렬",
+          hint: "정렬용 숫자(작을수록 위). 비우면 이름순",
         }
       - label: "Research Interests"
         name: "interests"
         widget: "list"
         required: false
         field: { label: "Interest", name: "interest", widget: "string" }
+      - {
+          label: "Page",
+          name: "page",
+          widget: "string",
+          required: false,
+          hint: "개인 홈페이지/구글스칼라 등 URL",
+        }
       - { label: "Body", name: "body", widget: "markdown", required: false }
 
   # =========================
-  # People > Alumni (2) 여러 문서
-  # 폴더: src/content/people/alumni/*.md
+  # People > Alumni (여러 문서)
   # =========================
   - name: "alumni"
     label: "Alumni"
@@ -123,20 +116,25 @@ collections:
     fields:
       - { label: "Name", name: "name", widget: "string" }
       - {
+          label: "Role",
+          name: "role",
+          widget: "string",
+          required: false,
+          hint: "예: Ph.D, M.S, Undergraduate",
+        }
+      - { label: "Email", name: "email", widget: "string", required: false }
+      - { label: "Photo", name: "photo", widget: "image", required: false }
+      - {
           label: "Graduation Year",
           name: "grad_year",
           widget: "string",
           required: false,
-          hint: "예: 2024",
         }
       - {
           label: "Current Affiliation",
           name: "current",
           widget: "string",
           required: false,
-          hint: "예: 삼성전자, POSTECH, etc.",
         }
-      - { label: "Email", name: "email", widget: "string", required: false }
-      - { label: "Photo", name: "photo", widget: "image", required: false }
       - { label: "Order", name: "order", widget: "number", required: false }
       - { label: "Body", name: "body", widget: "markdown", required: false }
