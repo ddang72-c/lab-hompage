@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const alumni = await Astro.glob("/src/content/people/alumni/*.md");
+alumni.sort((a, b) => (b.frontmatter.year ?? 0) - (a.frontmatter.year ?? 0));
+---
+
+<BaseLayout title="Alumni">
+  <h1>Alumni</h1>
+  <div class="grid">
+    {alumni.map((p) => (
+      <div class="card">
+        <div><strong>{p.frontmatter.name}</strong></div>
+        {p.frontmatter.year && <div class="muted">Year: {p.frontmatter.year}</div>}
+        {p.frontmatter.current && <div class="muted">{p.frontmatter.current}</div>}
+      </div>
+    ))}
+  </div>
+</BaseLayout>

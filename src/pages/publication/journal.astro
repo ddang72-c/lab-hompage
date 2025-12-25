@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const items = await Astro.glob("/src/content/publication/journal/*.md");
+items.sort((a, b) => (b.frontmatter.year ?? 0) - (a.frontmatter.year ?? 0));
+---
+
+<BaseLayout title="Journal">
+  <h1>Journal</h1>
+  <div class="grid">
+    {items.map((it) => (
+      <div class="card">
+        <div><strong>
+          <a href={it.frontmatter.link_url} target="_blank" rel="noreferrer">
+            {it.frontmatter.title}
+          </a>
+        </strong></div>
+        <div class="muted">
+          {it.frontmatter.year} · {it.frontmatter.venue}{it.frontmatter.authors ? ` · ${it.frontmatter.authors}` : ""}
+        </div>
+      </div>
+    ))}
+  </div>
+</BaseLayout>

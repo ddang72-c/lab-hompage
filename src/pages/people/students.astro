@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const people = await Astro.glob("/src/content/people/students/*.md");
+people.sort((a, b) => (a.frontmatter.name ?? "").localeCompare(b.frontmatter.name ?? ""));
+---
+
+<BaseLayout title="Students">
+  <h1>Students</h1>
+  <div class="grid">
+    {people.map((p) => (
+      <div class="card">
+        <div><strong>{p.frontmatter.name}</strong></div>
+        {p.frontmatter.role && <div class="muted">{p.frontmatter.role}</div>}
+        {p.frontmatter.email && <div class="muted">{p.frontmatter.email}</div>}
+      </div>
+    ))}
+  </div>
+</BaseLayout>

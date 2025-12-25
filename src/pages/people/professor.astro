@@ -1,0 +1,12 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const pages = await Astro.glob("/src/content/people/professor.md");
+const page = pages[0];
+const { Content, frontmatter } = page;
+---
+
+<BaseLayout title={frontmatter.title}>
+  <h1>{frontmatter.title}</h1>
+  <Content />
+</BaseLayout>
