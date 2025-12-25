@@ -5,10 +5,22 @@ import type { MarkdownInstance } from "astro";
 type ImageItem = string | { image: string };
 type FM = { title: string; date?: string | Date; images?: ImageItem[] };
 
-const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
+const first = (imgs?: ImageItem[]) => {
+  const v = imgs?.[0];
+  if (!v) return "";
+  return typeof v === "string" ? v : v.image;
+};
+
+const toUrls = (imgs?: ImageItem[]) =>
+  (imgs ?? [])
+    .map((v) => (typeof v === "string" ? v : v.image))
+    .filter(Boolean);
 
 export async function getStaticPaths() {
+  // ✅ getStaticPaths 내부에서 다시 선언 (Cloudflare 빌드 스코프 문제 방지)
+  const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
   const entries = await Promise.all(Object.values(modules).map((fn) => fn()));
+
   return entries.map((p) => ({
     params: { slug: p.file.split("/").pop()!.replace(/\.md$/, "") },
   }));
@@ -16,13 +28,17 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 
-const entry = await (modules[`/src/content/board/gallery/${slug}.md`] as any)();
+// ✅ 페이지 렌더링에서도 다시 선언해서 안전하게 로드
+const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
+const loader = modules[`/src/content/board/gallery/${slug}.md`];
+
+if (!loader) throw new Error(`Gallery not found: ${slug}`);
+
+const entry = await loader();
 const { Content, frontmatter } = entry;
 
-const imageUrls =
-  (frontmatter.images ?? [])
-    .map((v) => (typeof v === "string" ? v : v.image))
-    .filter(Boolean);
+const imageUrls = toUrls(frontmatter.images);
+const thumb = first(frontmatter.images);
 ---
 
 <BaseLayout title={frontmatter.title ?? "Gallery"}>
