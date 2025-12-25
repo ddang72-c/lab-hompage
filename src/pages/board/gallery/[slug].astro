@@ -1,0 +1,56 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+// ✅ 갤러리 글(md) 전부 불러오기 (빌드 시점에 안전)
+
+export async function getStaticPaths() {
+  const modules = import.meta.glob("../../../content/board/gallery/*.md");
+  const entries = await Promise.all(
+    Object.entries(modules).map(async ([path, loader]) => {
+      const mod: any = await (loader as any)();
+      const slug = path.split("/").pop()!.replace(/\.md$/, "");
+      return { slug, mod };
+    })
+  );
+
+  return entries.map(({ slug, mod }) => ({
+    params: { slug },
+    props: { post: mod },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, frontmatter } = post as any;
+
+// images: ["/..."] 또는 [{image:"/..."}] 둘 다 처리
+const rawImages = frontmatter?.images ?? [];
+const images = Array.isArray(rawImages) ? rawImages : [];
+---
+
+<BaseLayout title={frontmatter?.title ?? "Gallery"}>
+  <h1>{frontmatter?.title}</h1>
+
+  {frontmatter?.date && (
+    <p class="muted">{new Date(frontmatter.date).toLocaleDateString()}</p>
+  )}
+
+  {images.length > 0 && (
+    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
+      {images.map((img) => {
+        const src = typeof img === "string" ? img : img.image;
+        return (
+          <div class="card">
+            <img
+              src={src}
+              alt=""
+              style="width:100%; height:auto; border-radius:12px;"
+              loading="lazy"
+            />
+          </div>
+        );
+      })}
+    </div>
+  )}
+
+  <Content />
+</BaseLayout>
