@@ -6,4 +6,13 @@ email: pusan.ac.kr
 office: "010"
 interests: []
 ---
-d
+
+**Title:** 교수소개
+
+**Name:** 강해용
+
+**Position:** 정교수
+
+**Email:** pusan.ac.kr
+
+**Office:** 010
