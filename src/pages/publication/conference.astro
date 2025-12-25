@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const modules = import.meta.glob("/src/content/publication/conference/*.md");
+const items = await Promise.all(Object.values(modules).map(async (fn: any) => fn()));
+items.sort((a: any, b: any) => (b.frontmatter.year ?? 0) - (a.frontmatter.year ?? 0));
+---
+
+<BaseLayout title="Conference">
+  <h1>Conference</h1>
+  <div class="grid">
+    {items.map((it: any) => (
+      <div class="card">
+        <div><strong>
+          <a href={it.frontmatter.link_url} target="_blank" rel="noreferrer">
+            {it.frontmatter.title}
+          </a>
+        </strong></div>
+        <div class="muted">
+          {it.frontmatter.year} · {it.frontmatter.venue}{it.frontmatter.authors ? ` · ${it.frontmatter.authors}` : ""}
+        </div>
+      </div>
+    ))}
+  </div>
+</BaseLayout>

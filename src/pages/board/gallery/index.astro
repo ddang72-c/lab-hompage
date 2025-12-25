@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import type { MarkdownInstance } from "astro";
+
+type FM = { title: string; date?: string | Date; images?: any[] };
+
+const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
+const posts = await Promise.all(Object.values(modules).map((fn) => fn()));
+
+posts.sort(
+  (a, b) => new Date(b.frontmatter.date ?? 0).getTime() - new Date(a.frontmatter.date ?? 0).getTime()
+);
+
+const slugOf = (p: MarkdownInstance<FM>) => p.file.split("/").pop()!.replace(/\.md$/, "");
+---
+
+<BaseLayout title="Gallery">
+  <h1>Gallery</h1>
+
+  <div class="grid">
+    {posts.map((p) => (
+      <div class="card">
+        <div>
+          <strong>
+            <a href={`/board/gallery/${slugOf(p)}`}>{p.frontmatter.title}</a>
+          </strong>
+        </div>
+        {p.frontmatter.date && (
+          <div class="muted">{new Date(p.frontmatter.date).toLocaleDateString()}</div>
+        )}
+      </div>
+    ))}
+  </div>
+</BaseLayout>

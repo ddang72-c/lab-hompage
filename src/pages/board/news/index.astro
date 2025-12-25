@@ -1,15 +1,22 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import type { MarkdownInstance } from "astro";
 
-const posts = await Astro.glob("/src/content/board/news/*.md");
-posts.sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+type FM = { title: string; date: string | Date };
+
+const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/news/*.md");
+const posts = await Promise.all(Object.values(modules).map((fn) => fn()));
+
+posts.sort(
+  (a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime()
+);
 ---
 
 <BaseLayout title="News">
   <h1>News</h1>
   <div class="grid">
     {posts.map((p) => {
-      const slug = p.file.split("/").pop().replace(/\.md$/, "");
+      const slug = p.file.split("/").pop()?.replace(/\.md$/, "") ?? "";
       return (
         <div class="card">
           <div><strong><a href={`/board/news/${slug}`}>{p.frontmatter.title}</a></strong></div>

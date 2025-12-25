@@ -1,0 +1,16 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import type { MarkdownInstance } from "astro";
+
+const modules = import.meta.glob<MarkdownInstance<any>>("/src/content/research/research-area.md");
+const page = (await Promise.all(Object.values(modules).map((fn) => fn())))[0];
+
+if (!page) throw new Error("Missing: /src/content/research/research-area.md");
+
+const { Content, frontmatter } = page;
+---
+
+<BaseLayout title={frontmatter.title ?? "Research area"}>
+  <h1>{frontmatter.title ?? "Research area"}</h1>
+  <Content />
+</BaseLayout>
