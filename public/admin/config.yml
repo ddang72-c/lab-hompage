@@ -1,0 +1,52 @@
+backend:
+  name: github
+  repo: ddang72-c/lab-hompage
+  branch: main
+  base_url: https://decap-cms-oauth-lac.vercel.app
+  auth_endpoint: auth
+
+# 이미지 업로드 위치 (레포에 파일로 저장됨)
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "news"
+    label: "News"
+    folder: "src/content/board/news"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  - name: "gallery"
+    label: "Gallery"
+    folder: "src/content/board/gallery"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - label: "Images"
+        name: "images"
+        widget: "list"
+        field: { label: "Image", name: "image", widget: "image" }
+      - { label: "Body", name: "body", widget: "markdown", required: false }
+
+  - name: "professor"
+    label: "Professor"
+    files:
+      - label: "Professor Profile"
+        name: "professor"
+        file: "src/content/people/professor.md"
+        fields:
+          - { label: "Name", name: "name", widget: "string" }
+          - {
+              label: "Position",
+              name: "position",
+              widget: "string",
+              required: false,
+            }
+          - { label: "Email", name: "email", widget: "string", required: false }
+          - { label: "Body", name: "body", widget: "markdown", required: false }
