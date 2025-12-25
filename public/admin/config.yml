@@ -5,11 +5,13 @@ backend:
   base_url: https://decap-cms-oauth-lac.vercel.app
   auth_endpoint: auth
 
-# 이미지 업로드 위치 (레포에 파일로 저장됨)
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
 collections:
+  # --------------------
+  # Board
+  # --------------------
   - name: "news"
     label: "News"
     folder: "src/content/board/news"
@@ -34,14 +36,24 @@ collections:
         field: { label: "Image", name: "image", widget: "image" }
       - { label: "Body", name: "body", widget: "markdown", required: false }
 
+  # --------------------
+  # People
+  # --------------------
   - name: "professor"
     label: "Professor"
     files:
-      - label: "Professor Profile"
-        name: "professor"
+      - name: "profile"
+        label: "Professor Profile"
         file: "src/content/people/professor.md"
         fields:
+          - {
+              label: "Title",
+              name: "title",
+              widget: "string",
+              default: "Professor",
+            }
           - { label: "Name", name: "name", widget: "string" }
+          - { label: "Photo", name: "photo", widget: "image", required: false }
           - {
               label: "Position",
               name: "position",
@@ -49,4 +61,61 @@ collections:
               required: false,
             }
           - { label: "Email", name: "email", widget: "string", required: false }
+          - {
+              label: "Office",
+              name: "office",
+              widget: "string",
+              required: false,
+            }
+          - label: "Education"
+            name: "education"
+            widget: "list"
+            required: false
+            field: { label: "Item", name: "item", widget: "string" }
+          - label: "Research Interests"
+            name: "interests"
+            widget: "list"
+            required: false
+            field: { label: "Item", name: "item", widget: "string" }
           - { label: "Body", name: "body", widget: "markdown", required: false }
+
+  - name: "students"
+    label: "Students"
+    folder: "src/content/people/students"
+    create: true
+    slug: "{{name}}"
+    identifier_field: "name"
+    summary: "{{name}} — {{role}}"
+    fields:
+      - { label: "Name", name: "name", widget: "string" }
+      - {
+          label: "Role",
+          name: "role",
+          widget: "string",
+          required: false,
+          hint: "PhD / MS / Intern 등",
+        }
+      - { label: "Photo", name: "photo", widget: "image", required: false }
+      - { label: "Email", name: "email", widget: "string", required: false }
+      - { label: "Website", name: "website", widget: "string", required: false }
+      - { label: "Body", name: "body", widget: "markdown", required: false }
+
+  - name: "alumni"
+    label: "Alumni"
+    folder: "src/content/people/alumni"
+    create: true
+    slug: "{{name}}"
+    identifier_field: "name"
+    summary: "{{name}} — {{year}}"
+    fields:
+      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Year", name: "year", widget: "number", required: false }
+      - {
+          label: "Current",
+          name: "current",
+          widget: "string",
+          required: false,
+          hint: "현재 소속/직장/진학 등",
+        }
+      - { label: "Photo", name: "photo", widget: "image", required: false }
+      - { label: "Body", name: "body", widget: "markdown", required: false }
