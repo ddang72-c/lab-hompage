@@ -37,7 +37,7 @@ for (const y of years) {
 ---
 
 <BaseLayout title="Journal">
-  <h1>Publication</h1>
+  <h1>Journal</h1>
 
   {years.map((y) => {
     const g = byYear.get(y)!;
@@ -48,7 +48,7 @@ for (const y of years) {
         <div class="pub-year-right">
           {g.International.length > 0 && (
             <>
-              <h2 class="pub-section">International (Journal)</h2>
+              <h2 class="pub-section">International </h2>
               <div class="pub-items">
                 {g.International.map((it) => (
                   <article class="pub-item">
@@ -73,7 +73,7 @@ for (const y of years) {
 
           {g.Domestic.length > 0 && (
             <>
-              <h2 class="pub-section">Domestic (Journal)</h2>
+              <h2 class="pub-section">Domestic </h2>
               <div class="pub-items">
                 {g.Domestic.map((it) => (
                   <article class="pub-item">

@@ -1,19 +1,18 @@
 ---
 const nav = [
   {
-    label: "RESEARCH",
-    items: [
-      { label: "Introduction", href: "/research/research-area" },
-      // LETS의 Highlights 느낌을 일단 Facilities에 매핑(원하면 나중에 /research/highlights 따로 만들자)
-      { label: "Highlights", href: "/research/facilities" },
-    ],
-  },
-  {
     label: "PEOPLE",
     items: [
       { label: "Professor", href: "/people/professor" },
       { label: "Students", href: "/people/students" },
       { label: "Alumni", href: "/people/alumni" },
+    ],
+  },
+  {
+    label: "RESEARCH",
+    items: [
+      { label: "research-area", href: "/research/research-area" },
+      { label: "facilities", href: "/research/facilities" },
     ],
   },
   {
@@ -38,7 +37,7 @@ const nav = [
   <div class="topbar">
     <div class="container topbar-inner">
       <div class="topbar-left">
-        <a href="https://www.pusan.ac.kr/" target="_blank" rel="noreferrer">부산대학교</a>
+        <a class="topbar-pnu" href="https://www.pusan.ac.kr/" target="_blank" rel="noreferrer">부산대학교</a>
         <a href="https://onestop.pusan.ac.kr/" target="_blank" rel="noreferrer">학생지원시스템</a>
         <a href="https://plato.pusan.ac.kr/" target="_blank" rel="noreferrer">PLATO</a>
       </div>
@@ -49,10 +48,12 @@ const nav = [
   <div class="header-main">
     <div class="container header-main-inner">
       <a class="brand" href="/">
-        <div class="brand-title">고체전자물성실험실</div>
-        <div class="brand-sub">Solid-State Electronic Properties Lab</div>
+        <img class="brand-logo" src="/images/pnu-logo.png" alt="Pusan National University logo" />
+        <div class="brand-text">
+          <div class="brand-title">고체전자물성실험실</div>
+          <div class="brand-sub">Solid-State Electronic Properties Lab</div>
+        </div>
       </a>
-
       <button class="nav-toggle" aria-label="toggle navigation" data-nav-toggle>
         ☰
       </button>

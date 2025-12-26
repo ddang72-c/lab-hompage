@@ -6,6 +6,11 @@
   --bg: #fff;
   --bg-soft: #f6f6f6;
   --brand: #0b3b7a;
+
+  /* LETS 상단바 느낌 */
+  --topbar-bg: #50565f; /* 진한 회색 */
+  --topbar-border: #3f454d;
+  --topbar-text: #e9ecef;
 }
 
 * {
@@ -44,24 +49,56 @@ a:hover {
   width: 100%;
 }
 
-/* top bar */
+/* top bar (LETS-like) */
 .topbar {
-  background: var(--bg-soft);
-  border-bottom: 1px solid var(--line);
+  background: var(--topbar-bg);
+  border-bottom: 1px solid var(--topbar-border);
   font-size: 13px;
+  color: var(--topbar-text);
 }
+
+/* ✅ 톱바 높이/여백 제거 */
 .topbar-inner {
   display: flex;
-  align-items: center;
-  justify-content: flex-start; /* 우측 버튼 삭제 기준 */
-  gap: 12px;
-  padding: 8px 0;
+  align-items: stretch; /* 자식이 높이 꽉 */
+  justify-content: flex-start;
+  gap: 0; /* 탭처럼 붙게 */
+  padding: 0; /* 위아래 여백 제거 */
+  height: 30px; /* 필요하면 36~40 */
+  font-size: 11px;
 }
+
 .topbar-left {
   display: flex;
-  gap: 12px;
+  align-items: stretch;
+  gap: 0;
+  flex-wrap: nowrap;
+}
+
+/* ✅ 모든 톱바 링크를 높이 꽉 채우는 탭 형태로 */
+.topbar-left a {
+  color: var(--topbar-text);
+  text-decoration: none;
+  padding: 0 11px;
+  height: 100%;
+  display: inline-flex;
   align-items: center;
-  flex-wrap: wrap;
+}
+
+.topbar-left a:hover {
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ✅ 부산대학교만 파란 탭 */
+.topbar-left a.topbar-pnu {
+  background: #163d7a; /* 더 찐한 파랑 (원하면 #1f4f9b로) */
+  color: #fff;
+  font-weight: 700;
+}
+
+.topbar-left a.topbar-pnu:hover {
+  background: #123261;
 }
 
 /* header main row */
@@ -77,18 +114,33 @@ a:hover {
   padding: 18px 0;
 }
 
+/* ✅ brand 로고 + 텍스트 가로 정렬 */
 .brand {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
 }
+.brand-logo {
+  width: 43px;
+  height: 43px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
 .brand-title {
   font-weight: 800;
   letter-spacing: -0.02em;
-  font-size: 22px;
+  font-size: 18px;
   color: var(--brand);
 }
 .brand-sub {
   margin-top: 2px;
-  font-size: 12px;
+  font-size: 10px;
   color: var(--muted);
 }
 
@@ -179,7 +231,7 @@ h2 {
   background: #fff;
 }
 
-/* Publication list (journal/conference) */
+/* Publication list (old style, 남겨둠) */
 .pub-list {
   display: flex;
   flex-direction: column;
@@ -310,47 +362,7 @@ h2 {
   margin-top: 6px;
 }
 
-/* Mobile */
-@media (max-width: 900px) {
-  .nav-toggle {
-    display: inline-block;
-  }
-  .gnb {
-    display: none;
-  }
-  .gnb.is-open {
-    display: block;
-  }
-
-  .gnb .gnb-list {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 12px 0 0;
-  }
-
-  /* 모바일에서는 dropdown을 아래로 펼쳐 보여주기 */
-  .dropdown {
-    position: static;
-    display: block;
-    border: none;
-    box-shadow: none;
-    padding: 4px 0 10px 10px;
-    margin-top: 6px;
-  }
-
-  .gallery-grid,
-  .gallery-detail-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 520px) {
-  .gallery-grid,
-  .gallery-detail-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* Publication (year-grouped style) */
 .pub-year {
   display: grid;
   grid-template-columns: 140px 1fr;
@@ -404,11 +416,57 @@ h2 {
   color: var(--brand);
 }
 
+/* Mobile */
 @media (max-width: 900px) {
+  .nav-toggle {
+    display: inline-block;
+  }
+  .gnb {
+    display: none;
+  }
+  .gnb.is-open {
+    display: block;
+  }
+
+  .gnb .gnb-list {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 0 0;
+  }
+
+  /* 모바일에서는 dropdown을 아래로 펼쳐 보여주기 */
+  .dropdown {
+    position: static;
+    display: block;
+    border: none;
+    box-shadow: none;
+    padding: 4px 0 10px 10px;
+    margin-top: 6px;
+  }
+
+  .gallery-grid,
+  .gallery-detail-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .pub-year {
     grid-template-columns: 1fr;
   }
   .pub-year-left {
     font-size: 20px;
+  }
+
+  /* 모바일에서 로고 살짝 줄이기 */
+  .brand-logo {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 520px) {
+  .gallery-grid,
+  .gallery-detail-grid {
+    grid-template-columns: 1fr;
   }
 }
