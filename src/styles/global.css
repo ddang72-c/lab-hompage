@@ -351,3 +351,64 @@ h2 {
     grid-template-columns: 1fr;
   }
 }
+.pub-year {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 20px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+
+.pub-year-left {
+  font-size: 22px;
+  font-weight: 800;
+  color: #222;
+  padding-top: 6px;
+}
+
+.pub-section {
+  margin: 4px 0 12px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.pub-items {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.pub-item .pub-title {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.pub-item .pub-meta {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.pub-actions {
+  margin-top: 6px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pub-btn {
+  font-size: 13px;
+  text-decoration: underline;
+  color: var(--brand);
+}
+
+@media (max-width: 900px) {
+  .pub-year {
+    grid-template-columns: 1fr;
+  }
+  .pub-year-left {
+    font-size: 20px;
+  }
+}

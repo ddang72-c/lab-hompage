@@ -84,6 +84,19 @@ collections:
         name: link_url
         widget: string
         required: false
+      - label: Scope
+        name: scope
+        widget: select
+        options: ["International", "Domestic"]
+        default: "International"
+      - label: Preprint link
+        name: preprint_url
+        widget: string
+        required: false
+      - label: GitHub link
+        name: github_url
+        widget: string
+        required: false
       - label: Body
         name: body
         widget: markdown
@@ -116,6 +129,19 @@ collections:
         required: false
       - label: External link
         name: link_url
+        widget: string
+        required: false
+      - label: Scope
+        name: scope
+        widget: select
+        options: ["International", "Domestic"]
+        default: "International"
+      - label: Preprint link
+        name: preprint_url
+        widget: string
+        required: false
+      - label: GitHub link
+        name: github_url
         widget: string
         required: false
       - label: Body
