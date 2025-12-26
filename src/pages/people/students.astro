@@ -26,7 +26,7 @@ entries.sort((a, b) => {
 ---
 
 <BaseLayout title="Students">
-  <div style="max-width: 1000px; margin: 0 auto; padding: 48px 16px;">
+  <main style="max-width: 1000px; margin: 0 auto; padding: 48px 16px;">
     <h1>Students</h1>
 
     <div style="display:grid; gap:24px; margin-top:24px;">
@@ -34,7 +34,7 @@ entries.sort((a, b) => {
         const { Content, frontmatter } = entry;
 
         const name = frontmatter.name ?? "";
-        const role = frontmatter.role ?? frontmatter.position ?? "";
+        const program = frontmatter.program ?? "";
         const email = frontmatter.email ?? "";
         const photo = frontmatter.photo ?? "";
         const interests = frontmatter.interests ?? [];
@@ -53,7 +53,7 @@ entries.sort((a, b) => {
 
             <div style="flex:1;">
               <h2 style="margin:0 0 6px 0;">{name}</h2>
-              {role && <div style="opacity:.8; margin-bottom:10px;">{role}</div>}
+              {program && <div style="opacity:.8; margin-bottom:10px;">{program}</div>}
 
               <div style="display:grid; gap:6px; margin-bottom:10px;">
                 {email && (
@@ -90,5 +90,5 @@ entries.sort((a, b) => {
         );
       })}
     </div>
-  </div>
+  </main>
 </BaseLayout>
