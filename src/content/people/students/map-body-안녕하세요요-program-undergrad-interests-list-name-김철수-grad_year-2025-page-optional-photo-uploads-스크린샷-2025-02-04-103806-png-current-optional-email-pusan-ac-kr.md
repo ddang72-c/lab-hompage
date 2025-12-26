@@ -8,4 +8,4 @@ current: optional
 page: optional
 interests: []
 ---
-안녕하세요요
+안녕하세요
