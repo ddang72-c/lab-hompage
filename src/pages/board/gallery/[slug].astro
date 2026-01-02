@@ -1,24 +1,16 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
+import SectionLayout from "../../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
 type ImageItem = string | { image: string };
-type FM = { title: string; date?: string | Date; images?: ImageItem[] };
-
-const first = (imgs?: ImageItem[]) => {
-  const v = imgs?.[0];
-  if (!v) return "";
-  return typeof v === "string" ? v : v.image;
-};
+type FM = { title?: string; date?: string; images?: ImageItem[]; summary?: string };
 
 const toUrls = (imgs?: ImageItem[]) =>
   (imgs ?? []).map((v) => (typeof v === "string" ? v : v.image)).filter(Boolean);
 
-// ✅ 1) 여기서 1번만 선언 (modules → galleryModules로 이름도 바꿔서 충돌 방지)
-const galleryModules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
-
 export async function getStaticPaths() {
-  // ✅ 2) slug는 path에서 만든다 (entry.file 의존 X)
+  const galleryModules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
+
   return Object.keys(galleryModules).map((path) => ({
     params: { slug: path.split("/").pop()!.replace(/\.md$/, "") },
   }));
@@ -26,13 +18,43 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 
-// ✅ 3) 렌더링에서도 같은 객체 재사용
+// ⚠️ 여기서도 다시 선언(안전)
+const galleryModules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
 const loader = galleryModules[`/src/content/board/gallery/${slug}.md`];
+
 if (!loader) throw new Error(`Gallery not found: ${slug}`);
 
 const entry = await loader();
 const { Content, frontmatter } = entry;
 
-const imageUrls = toUrls(frontmatter.images);
-const thumb = first(frontmatter.images);
+const nav = [
+  { label: "News", href: "/board/news/" },
+  { label: "Gallery", href: "/board/gallery/" },
+];
+
+const imgs = toUrls(frontmatter.images);
 ---
+
+<SectionLayout
+  title={frontmatter.title ?? "Gallery"}
+  sectionLabel="BOARD"
+  navItems={nav}
+  currentLabel="Gallery"
+  heroImage="/images/sub-hero.jpg"
+>
+  <h1>{frontmatter.title ?? "Gallery"}</h1>
+
+  {imgs.length > 0 && (
+    <div class="gallery-detail-grid">
+      {imgs.map((src) => (
+        <a class="photo" href={src} target="_blank" rel="noreferrer">
+          <img src={src} alt="" loading="lazy" />
+        </a>
+      ))}
+    </div>
+  )}
+
+  <div class="gallery-body">
+    <Content />
+  </div>
+</SectionLayout>
