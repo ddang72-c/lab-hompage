@@ -2,39 +2,55 @@
 import SectionLayout from "../../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
+type FM = {
+  title?: string;
+  date?: string;
+  summary?: string;
+};
+
+export async function getStaticPaths() {
+  const newsModules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/news/*.md");
+
+  return Object.keys(newsModules).map((path) => ({
+    params: { slug: path.split("/").pop()!.replace(/\.md$/, "") },
+  }));
+}
+
+const { slug } = Astro.params;
+
+// ⚠️ 여기서도 다시 선언(안전)
+const newsModules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/news/*.md");
+const loader = newsModules[`/src/content/board/news/${slug}.md`];
+
+if (!loader) throw new Error(`News not found: ${slug}`);
+
+const entry = await loader();
+const { Content, frontmatter } = entry;
+
 const nav = [
   { label: "News", href: "/board/news/" },
   { label: "Gallery", href: "/board/gallery/" },
 ];
-
-type FM = Record<string, any>;
-const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/news/*.md");
-
-export async function getStaticPaths() {
-  return Object.keys(modules).map((path) => {
-    const slug = path.split("/").pop()?.replace(/\.md$/, "") ?? path;
-    return { params: { slug }, props: { path } };
-  });
-}
-
-const { path } = Astro.props as { path: string };
-const entry = await modules[path]();
-const { Content, frontmatter } = entry;
-
-const title = frontmatter?.title ?? "News";
-const dateStr = (frontmatter?.date ?? frontmatter?.published ?? "").toString();
-const when = dateStr ? dateStr.slice(0, 10) : "";
 ---
 
-<SectionLayout title={title} sectionLabel="BOARD" navItems={nav} heroSrc="/images/sub-hero.jpg">
-  <h1>{title}</h1>
-  {when && <div class="muted" style="margin-top:6px;">{when}</div>}
+<SectionLayout
+  title={frontmatter.title ?? "News"}
+  sectionLabel="BOARD"
+  navItems={nav}
+  currentLabel="News"
+  heroImage="/images/sub-hero.jpg"
+>
+  <h1>{frontmatter.title ?? "News"}</h1>
 
-  <div style="margin-top:18px; line-height:1.8;">
+  {(frontmatter.date || frontmatter.summary) && (
+    <div style="margin: 8px 0 18px; color:#6b7280; font-size:14px;">
+      {frontmatter.date && <span>{frontmatter.date}</span>}
+      {frontmatter.date && frontmatter.summary && <span> · </span>}
+      {frontmatter.summary && <span>{frontmatter.summary}</span>}
+    </div>
+  )}
+
+  <div style="line-height:1.75;">
     <Content />
-  </div>
-
-  <div style="margin-top:22px;">
-    <a class="btn" href="/board/news/">Back to list</a>
   </div>
 </SectionLayout>
