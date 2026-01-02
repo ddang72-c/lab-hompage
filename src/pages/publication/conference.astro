@@ -1,129 +1,102 @@
 ---
-import SectionLayout from "../../layouts/SectionLayout.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 import type { MarkdownInstance } from "astro";
 
-const nav = [
-  { label: "Journal", href: "/publication/journal/" },
-  { label: "Conference", href: "/publication/conference/" },
-];
+type FM = {
+  title: string;
+  authors?: string;
+  venue?: string;
+  year: number;
+  scope?: "International" | "Domestic";
+  pdf?: string;
+  link_url?: string;
+  preprint_url?: string;
+  github_url?: string;
+};
 
-type FM = Record<string, any>;
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/publication/conference/*.md");
+const items = await Promise.all(Object.values(modules).map((fn) => fn()));
 
-const items = await Promise.all(
-  Object.entries(modules).map(async ([path, loader]) => {
-    const entry = await loader();
-    const slug = path.split("/").pop()?.replace(/\.md$/, "") ?? path;
-    const fm = entry.frontmatter ?? {};
-    const year =
-      fm.year ??
-      (typeof fm.date === "string" ? Number(String(fm.date).slice(0, 4)) : undefined) ??
-      (typeof fm.published === "string" ? Number(String(fm.published).slice(0, 4)) : undefined);
+const normScope = (s?: FM["scope"]) => (s === "Domestic" ? "Domestic" : "International");
 
-    const scopeRaw = (fm.scope ?? fm.type ?? fm.category ?? fm.region ?? "").toString().toLowerCase();
-    const scope = scopeRaw.includes("domestic") || scopeRaw.includes("국내") ? "Domestic" : "International";
+const byYear = new Map<number, { International: MarkdownInstance<FM>[]; Domestic: MarkdownInstance<FM>[] }>();
 
-    return { slug, entry, fm, year: year ?? 0, scope };
-  })
-);
-
-items.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
-
-const byYear = new Map<number, { International: typeof items; Domestic: typeof items }>();
 for (const it of items) {
-  const y = it.year ?? 0;
+  const y = it.frontmatter.year ?? 0;
   if (!byYear.has(y)) byYear.set(y, { International: [], Domestic: [] });
-  byYear.get(y)![it.scope].push(it);
+  byYear.get(y)![normScope(it.frontmatter.scope)].push(it);
 }
 
 const years = Array.from(byYear.keys()).sort((a, b) => b - a);
+
+for (const y of years) {
+  for (const k of ["International", "Domestic"] as const) {
+    byYear.get(y)![k].sort((a, b) => (a.frontmatter.title ?? "").localeCompare(b.frontmatter.title ?? ""));
+  }
+}
 ---
 
-<SectionLayout title="Conference" sectionLabel="PUBLICATION" navItems={nav} heroSrc="/images/sub-hero.jpg">
-  <h1>Conference</h1>
+<BaseLayout title="Conference">
+  <h1>Publication</h1>
 
-  <div style="margin-top:18px;">
-    {years.map((y) => {
-      const grp = byYear.get(y)!;
-      return (
-        <section class="pub-year">
-          <div class="pub-year-left">{y || "—"}</div>
+  {years.map((y) => {
+    const g = byYear.get(y)!;
+    return (
+      <section class="pub-year">
+        <div class="pub-year-left">{y}</div>
 
-          <div>
-            {grp.International.length > 0 && (
-              <div class="pub-block">
-                <div class="pub-section">International</div>
-                <div class="pub-items">
-                  {grp.International.map(({ entry }) => {
-                    const fm = entry.frontmatter ?? {};
-                    const title = fm.title ?? fm.paperTitle ?? fm.name ?? "Untitled";
-                    const meta =
-                      fm.meta ??
-                      fm.authors ??
-                      fm.conference ??
-                      fm.venue ??
-                      fm.citation ??
-                      fm.description ??
-                      "";
-                    const link = fm.link ?? fm.url ?? fm.doi ?? "";
+        <div class="pub-year-right">
+          {g.International.length > 0 && (
+            <>
+              <h2 class="pub-section">International (Conference)</h2>
+              <div class="pub-items">
+                {g.International.map((it) => (
+                  <article class="pub-item">
+                    <div class="pub-title">{it.frontmatter.title}</div>
+                    <div class="pub-meta">
+                      {it.frontmatter.authors && <span>{it.frontmatter.authors}</span>}
+                      {it.frontmatter.venue && <span> · <em>{it.frontmatter.venue}</em></span>}
+                      <span> · {it.frontmatter.year}</span>
+                    </div>
 
-                    return (
-                      <div class="pub-item">
-                        <div class="pub-title">{title}</div>
-                        {meta && <div class="pub-meta">{meta}</div>}
-                        {link && (
-                          <div style="margin-top:6px;">
-                            <a class="pub-btn" href={link} target="_blank" rel="noreferrer">
-                              Link
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                    <div class="pub-actions">
+                      {it.frontmatter.preprint_url && <a class="pub-btn" href={it.frontmatter.preprint_url} target="_blank" rel="noreferrer">preprint</a>}
+                      {it.frontmatter.link_url && <a class="pub-btn" href={it.frontmatter.link_url} target="_blank" rel="noreferrer">link</a>}
+                      {it.frontmatter.github_url && <a class="pub-btn" href={it.frontmatter.github_url} target="_blank" rel="noreferrer">GitHub</a>}
+                      {it.frontmatter.pdf && <a class="pub-btn" href={it.frontmatter.pdf} download>PDF</a>}
+                    </div>
+                  </article>
+                ))}
               </div>
-            )}
+            </>
+          )}
 
-            {grp.Domestic.length > 0 && (
-              <div class="pub-block">
-                <div class="pub-section">Domestic</div>
-                <div class="pub-items">
-                  {grp.Domestic.map(({ entry }) => {
-                    const fm = entry.frontmatter ?? {};
-                    const title = fm.title ?? fm.paperTitle ?? fm.name ?? "Untitled";
-                    const meta =
-                      fm.meta ??
-                      fm.authors ??
-                      fm.conference ??
-                      fm.venue ??
-                      fm.citation ??
-                      fm.description ??
-                      "";
-                    const link = fm.link ?? fm.url ?? fm.doi ?? "";
+          {g.Domestic.length > 0 && (
+            <>
+              <h2 class="pub-section">Domestic (Conference)</h2>
+              <div class="pub-items">
+                {g.Domestic.map((it) => (
+                  <article class="pub-item">
+                    <div class="pub-title">{it.frontmatter.title}</div>
+                    <div class="pub-meta">
+                      {it.frontmatter.authors && <span>{it.frontmatter.authors}</span>}
+                      {it.frontmatter.venue && <span> · <em>{it.frontmatter.venue}</em></span>}
+                      <span> · {it.frontmatter.year}</span>
+                    </div>
 
-                    return (
-                      <div class="pub-item">
-                        <div class="pub-title">{title}</div>
-                        {meta && <div class="pub-meta">{meta}</div>}
-                        {link && (
-                          <div style="margin-top:6px;">
-                            <a class="pub-btn" href={link} target="_blank" rel="noreferrer">
-                              Link
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                    <div class="pub-actions">
+                      {it.frontmatter.preprint_url && <a class="pub-btn" href={it.frontmatter.preprint_url} target="_blank" rel="noreferrer">preprint</a>}
+                      {it.frontmatter.link_url && <a class="pub-btn" href={it.frontmatter.link_url} target="_blank" rel="noreferrer">link</a>}
+                      {it.frontmatter.github_url && <a class="pub-btn" href={it.frontmatter.github_url} target="_blank" rel="noreferrer">GitHub</a>}
+                      {it.frontmatter.pdf && <a class="pub-btn" href={it.frontmatter.pdf} download>PDF</a>}
+                    </div>
+                  </article>
+                ))}
               </div>
-            )}
-          </div>
-        </section>
-      );
-    })}
-
-    {items.length === 0 && <p class="muted">No conference publications yet.</p>}
-  </div>
-</SectionLayout>
+            </>
+          )}
+        </div>
+      </section>
+    );
+  })}
+</BaseLayout>
