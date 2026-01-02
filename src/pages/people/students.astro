@@ -1,9 +1,14 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionLayout from "../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
-type FM = Record<string, any>;
+const nav = [
+  { label: "Professor", href: "/people/professor/" },
+  { label: "Students", href: "/people/students/" },
+  { label: "Alumni", href: "/people/alumni/" },
+];
 
+type FM = Record<string, any>;
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/people/students/*.md");
 
 const entries = await Promise.all(
@@ -13,82 +18,78 @@ const entries = await Promise.all(
   })
 );
 
-// 정렬: order 오름차순(있으면), 없으면 name 오름차순
 entries.sort((a, b) => {
   const ao = a.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
   const bo = b.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
   if (ao !== bo) return ao - bo;
-
   const an = (a.entry.frontmatter?.name ?? "").toString();
   const bn = (b.entry.frontmatter?.name ?? "").toString();
   return an.localeCompare(bn);
 });
 ---
 
-<BaseLayout title="Students">
-  <main style="max-width: 1000px; margin: 0 auto; padding: 48px 16px;">
-    <h1>Students</h1>
+<SectionLayout title="Students" sectionLabel="PEOPLE" navItems={nav} heroSrc="/images/sub-hero.jpg">
+  <h1>Students</h1>
 
-    <div style="display:grid; gap:24px; margin-top:24px;">
-      {entries.map(({ entry }) => {
-        const { Content, frontmatter } = entry;
+  <div style="display:grid; gap:24px; margin-top:24px;">
+    {entries.map(({ entry }) => {
+      const { Content, frontmatter } = entry;
 
-        const name = frontmatter.name ?? "";
-        const program = frontmatter.program ?? "";
-        const email = frontmatter.email ?? "";
-        const photo = frontmatter.photo ?? "";
-        const interests = frontmatter.interests ?? [];
-        const page = frontmatter.page ?? "";
+      const name = frontmatter.name ?? "";
+      const role = frontmatter.role ?? frontmatter.position ?? "";
+      const email = frontmatter.email ?? "";
+      const photo = frontmatter.photo ?? "";
+      const interests = frontmatter.interests ?? [];
+      const page = frontmatter.page ?? "";
 
-        return (
-          <article style="display:flex; gap:20px; padding:16px; border:1px solid #eee; border-radius:14px;">
-            {photo && (
-              <img
-                src={photo}
-                alt={name}
-                style="width:160px; height:160px; object-fit:cover; border-radius:12px;"
-                loading="lazy"
-              />
-            )}
+      return (
+        <article style="display:flex; gap:20px; padding:16px; border:1px solid #eee; border-radius:14px;">
+          {photo && (
+            <img
+              src={photo}
+              alt={name}
+              style="width:160px; height:160px; object-fit:cover; border-radius:12px;"
+              loading="lazy"
+            />
+          )}
 
-            <div style="flex:1;">
-              <h2 style="margin:0 0 6px 0;">{name}</h2>
-              {program && <div style="opacity:.8; margin-bottom:10px;">{program}</div>}
+          <div style="flex:1;">
+            <h2 style="margin:0 0 6px 0;">{name}</h2>
+            {role && <div style="opacity:.8; margin-bottom:10px;">{role}</div>}
 
-              <div style="display:grid; gap:6px; margin-bottom:10px;">
-                {email && (
-                  <div>
-                    <b>Email:</b> {email}
-                  </div>
-                )}
-                {page && (
-                  <div>
-                    <b>Page:</b>{" "}
-                    <a href={page} target="_blank" rel="noreferrer">
-                      {page}
-                    </a>
-                  </div>
-                )}
-              </div>
-
-              {Array.isArray(interests) && interests.length > 0 && (
-                <div style="margin:10px 0;">
-                  <b>Research Interests:</b>
-                  <ul style="margin:6px 0 0 18px;">
-                    {interests.map((it) => (
-                      <li>{it}</li>
-                    ))}
-                  </ul>
+            <div style="display:grid; gap:6px; margin-bottom:10px;">
+              {email && (
+                <div>
+                  <b>Email:</b> {email}
                 </div>
               )}
-
-              <div style="margin-top:12px; line-height:1.7;">
-                <Content />
-              </div>
+              {page && (
+                <div>
+                  <b>Page:</b>{" "}
+                  <a href={page} target="_blank" rel="noreferrer">
+                    {page}
+                  </a>
+                </div>
+              )}
             </div>
-          </article>
-        );
-      })}
-    </div>
-  </main>
-</BaseLayout>
+
+            {Array.isArray(interests) && interests.length > 0 && (
+              <div style="margin:10px 0;">
+                <b>Research Interests:</b>
+                <ul style="margin:6px 0 0 18px;">
+                  {interests.map((it) => (
+                    <li>{it}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div style="margin-top:12px; line-height:1.7;">
+              <Content />
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</SectionLayout>

@@ -1,28 +1,63 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
+import SectionLayout from "../../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
-type FM = { title: string; date: string | Date };
+const nav = [
+  { label: "News", href: "/board/news/" },
+  { label: "Gallery", href: "/board/gallery/" },
+];
 
+type FM = Record<string, any>;
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/news/*.md");
-const posts = await Promise.all(Object.values(modules).map((fn) => fn()));
 
-posts.sort(
-  (a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime()
+const items = await Promise.all(
+  Object.entries(modules).map(async ([path, loader]) => {
+    const entry = await loader();
+    const slug = path.split("/").pop()?.replace(/\.md$/, "") ?? path;
+    const fm = entry.frontmatter ?? {};
+    const dateStr = (fm.date ?? fm.published ?? fm.created ?? "").toString();
+    const date = dateStr ? new Date(dateStr) : null;
+    return { slug, entry, fm, date };
+  })
 );
+
+items.sort((a, b) => {
+  const ad = a.date ? a.date.getTime() : 0;
+  const bd = b.date ? b.date.getTime() : 0;
+  if (ad !== bd) return bd - ad;
+  const at = (a.fm.title ?? "").toString();
+  const bt = (b.fm.title ?? "").toString();
+  return at.localeCompare(bt);
+});
 ---
 
-<BaseLayout title="News">
+<SectionLayout title="News" sectionLabel="BOARD" navItems={nav} heroSrc="/images/sub-hero.jpg">
   <h1>News</h1>
-  <div class="grid">
-    {posts.map((p) => {
-      const slug = p.file.split("/").pop()?.replace(/\.md$/, "") ?? "";
+
+  <div class="pub-list" style="margin-top:18px;">
+    {items.map(({ slug, fm, date, entry }) => {
+      const title = fm.title ?? "Untitled";
+      const summary = fm.summary ?? fm.description ?? "";
+      const when = date ? date.toISOString().slice(0, 10) : "";
+
       return (
-        <div class="card">
-          <div><strong><a href={`/board/news/${slug}`}>{p.frontmatter.title}</a></strong></div>
-          <div class="muted">{new Date(p.frontmatter.date).toLocaleDateString()}</div>
+        <div class="pub-row">
+          <div>
+            <div class="pub-title">
+              <a href={`/board/news/${slug}/`}>{title}</a>
+            </div>
+            <div class="pub-meta">
+              {when && <span>{when}</span>}
+              {summary && <span>{when ? " · " : ""}{summary}</span>}
+            </div>
+          </div>
+          <div class="pub-actions">
+            <a class="btn" href={`/board/news/${slug}/`}>Read</a>
+          </div>
         </div>
       );
     })}
+
+    {items.length === 0 && <p class="muted">No news posts yet.</p>}
   </div>
-</BaseLayout>
+</SectionLayout>

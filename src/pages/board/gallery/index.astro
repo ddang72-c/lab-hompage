@@ -1,52 +1,55 @@
 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro";
+import SectionLayout from "../../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
-type ImageItem = string | { image: string };
-type FM = { title: string; date?: string | Date; images?: ImageItem[] };
+const nav = [
+  { label: "News", href: "/board/news/" },
+  { label: "Gallery", href: "/board/gallery/" },
+];
 
+type FM = Record<string, any>;
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
-const posts = await Promise.all(Object.values(modules).map((fn) => fn()));
 
-posts.sort(
-  (a, b) => new Date(b.frontmatter.date ?? 0).getTime() - new Date(a.frontmatter.date ?? 0).getTime()
+const items = await Promise.all(
+  Object.entries(modules).map(async ([path, loader]) => {
+    const entry = await loader();
+    const slug = path.split("/").pop()?.replace(/\.md$/, "") ?? path;
+    const fm = entry.frontmatter ?? {};
+    const title = fm.title ?? "Untitled";
+    const cover = fm.cover ?? fm.thumbnail ?? fm.thumb ?? "";
+    const dateStr = (fm.date ?? fm.published ?? fm.created ?? "").toString();
+    const date = dateStr ? new Date(dateStr) : null;
+    return { slug, entry, fm, title, cover, date };
+  })
 );
 
-const slugOf = (p: MarkdownInstance<FM>) => p.file.split("/").pop()!.replace(/\.md$/, "");
-
-const firstImage = (images?: ImageItem[]) => {
-  const v = images?.[0];
-  if (!v) return "";
-  return typeof v === "string" ? v : v.image;
-};
+items.sort((a, b) => {
+  const ad = a.date ? a.date.getTime() : 0;
+  const bd = b.date ? b.date.getTime() : 0;
+  if (ad !== bd) return bd - ad;
+  return a.title.localeCompare(b.title);
+});
 ---
 
-<BaseLayout title="Gallery">
+<SectionLayout title="Gallery" sectionLabel="BOARD" navItems={nav} heroSrc="/images/sub-hero.jpg">
   <h1>Gallery</h1>
 
-  <div class="gallery-grid">
-    {posts.map((p) => {
-      const slug = slugOf(p);
-      const thumb = firstImage(p.frontmatter.images);
-
-      return (
-        <a class="gallery-card" href={`/board/gallery/${slug}`}>
-          <div class="thumb">
-            {thumb ? (
-              <img src={thumb} alt={p.frontmatter.title} loading="lazy" />
-            ) : (
-              <div class="thumb-empty">No Image</div>
-            )}
-          </div>
-
-          <div class="g-info">
-            <div class="g-title">{p.frontmatter.title}</div>
-            {p.frontmatter.date && (
-              <div class="muted">{new Date(p.frontmatter.date).toLocaleDateString()}</div>
-            )}
-          </div>
-        </a>
-      );
-    })}
+  <div class="gallery-grid" style="margin-top:18px;">
+    {items.map(({ slug, title, cover }) => (
+      <a class="gallery-card" href={`/board/gallery/${slug}/`}>
+        <div class="thumb">
+          {cover ? (
+            <img src={cover} alt={title} loading="lazy" />
+          ) : (
+            <div class="thumb-empty">No image</div>
+          )}
+        </div>
+        <div class="g-info">
+          <div class="g-title">{title}</div>
+        </div>
+      </a>
+    ))}
   </div>
-</BaseLayout>
+
+  {items.length === 0 && <p class="muted" style="margin-top:18px;">No gallery posts yet.</p>}
+</SectionLayout>

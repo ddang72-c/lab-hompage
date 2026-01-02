@@ -1,0 +1,70 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+type NavItem = { label: string; href: string };
+
+const {
+  title,
+  sectionLabel,
+  navItems = [] as NavItem[],
+  currentLabel,
+  heroSrc = "/images/sub-hero.jpg",
+} = Astro.props;
+
+const pathname = Astro.url.pathname;
+
+// trailing slash 통일
+const norm = (p: string) => (p.endsWith("/") ? p : p + "/");
+
+const isActive = (item: NavItem) => {
+  if (currentLabel) return item.label === currentLabel;
+  return norm(pathname) === norm(item.href);
+};
+
+// ✅ breadcrumb의 섹션 링크는 /research/ 같은 루트가 아니라, navItems 첫 링크로 이동
+const sectionHref = navItems?.[0]?.href ?? `/${String(sectionLabel || "").toLowerCase()}/`;
+---
+
+<BaseLayout title={title}>
+  <div class="section-layout">
+    <!-- HERO (풀폭 + 바깥은 blur로 자연스럽게) -->
+    <section class="sub-hero" style={`--hero-url: url('${heroSrc}')`}>
+      <div class="container">
+        <img src={heroSrc} alt="" />
+      </div>
+    </section>
+
+    <!-- Breadcrumb (풀폭 배경 + 안쪽은 container 정렬) -->
+    <nav class="sub-breadcrumb" aria-label="Breadcrumb">
+      <div class="container">
+        <a href="/">HOME</a>
+        <span class="sep">/</span>
+        <a href={sectionHref}>{sectionLabel}</a>
+        <span class="sep">/</span>
+        <span class="current">{title}</span>
+      </div>
+    </nav>
+
+    <!-- 2-column layout -->
+    <div class="container">
+      <div class="sub-grid">
+        <aside class="sidenav" aria-label={`${sectionLabel} navigation`}>
+          <div class="sidenav-title">{sectionLabel}</div>
+          <ul class="sidenav-list">
+            {navItems.map((it) => (
+              <li>
+                <a class={`sidenav-link ${isActive(it) ? "is-active" : ""}`} href={it.href}>
+                  {it.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+
+        <section class="sub-content">
+          <slot />
+        </section>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

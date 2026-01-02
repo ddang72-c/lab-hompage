@@ -1,9 +1,14 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionLayout from "../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
-type FM = Record<string, any>;
+const nav = [
+  { label: "Professor", href: "/people/professor/" },
+  { label: "Students", href: "/people/students/" },
+  { label: "Alumni", href: "/people/alumni/" },
+];
 
+type FM = Record<string, any>;
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/people/alumni/*.md");
 
 const entries = await Promise.all(
@@ -14,78 +19,72 @@ const entries = await Promise.all(
 );
 
 entries.sort((a, b) => {
-  const ay = a.entry.frontmatter?.grad_year ?? "";
-  const by = b.entry.frontmatter?.grad_year ?? "";
-  if (ay !== by) return String(by).localeCompare(String(ay)); // 최신 졸업년도 먼저
-
-  const ao = a.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
-  const bo = b.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
-  if (ao !== bo) return ao - bo;
-
+  const ay = a.entry.frontmatter?.year ?? a.entry.frontmatter?.endYear ?? 0;
+  const by = b.entry.frontmatter?.year ?? b.entry.frontmatter?.endYear ?? 0;
+  if (ay !== by) return Number(by) - Number(ay);
   const an = (a.entry.frontmatter?.name ?? "").toString();
   const bn = (b.entry.frontmatter?.name ?? "").toString();
   return an.localeCompare(bn);
 });
 ---
 
-<BaseLayout title="Alumni">
-  <main style="max-width: 1000px; margin: 0 auto; padding: 48px 16px;">
-    <h1>Alumni</h1>
+<SectionLayout title="Alumni" sectionLabel="PEOPLE" navItems={nav} heroSrc="/images/sub-hero.jpg">
+  <h1>Alumni</h1>
 
-    <div style="display:grid; gap:24px; margin-top:24px;">
-      {entries.map(({ entry }) => {
-        const { Content, frontmatter } = entry;
+  <div style="display:grid; gap:16px; margin-top:24px;">
+    {entries.map(({ entry }) => {
+      const { Content, frontmatter } = entry;
 
-        const name = frontmatter.name ?? "";
-        const program = frontmatter.program ?? "";
-        const email = frontmatter.email ?? "";
-        const photo = frontmatter.photo ?? "";
-        const gradYear = frontmatter.grad_year ?? "";
-        const current = frontmatter.current ?? "";
-        const page = frontmatter.page ?? "";
+      const name = frontmatter.name ?? "";
+      const role = frontmatter.role ?? frontmatter.position ?? "";
+      const email = frontmatter.email ?? "";
+      const photo = frontmatter.photo ?? "";
+      const page = frontmatter.page ?? "";
+      const year = frontmatter.year ?? frontmatter.endYear ?? "";
 
-        return (
-          <article style="display:flex; gap:20px; padding:16px; border:1px solid #eee; border-radius:14px;">
-            {photo && (
-              <img
-                src={photo}
-                alt={name}
-                style="width:140px; height:140px; object-fit:cover; border-radius:12px;"
-                loading="lazy"
-              />
-            )}
+      return (
+        <article style="display:flex; gap:20px; padding:16px; border:1px solid #eee; border-radius:14px;">
+          {photo && (
+            <img
+              src={photo}
+              alt={name}
+              style="width:140px; height:140px; object-fit:cover; border-radius:12px;"
+              loading="lazy"
+            />
+          )}
 
-            <div style="flex:1;">
-              <h2 style="margin:0 0 6px 0;">{name}</h2>
-              {(program || gradYear || current) && (
-                <div style="opacity:.85; margin-bottom:10px;">
-                  {[program, gradYear && `(${gradYear})`, current].filter(Boolean).join(" · ")}
+          <div style="flex:1;">
+            <div style="display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;">
+              <h2 style="margin:0;">{name}</h2>
+              {year && <span style="opacity:.75;">({year})</span>}
+            </div>
+
+            {role && <div style="opacity:.8; margin:6px 0 10px 0;">{role}</div>}
+
+            <div style="display:grid; gap:6px; margin-bottom:10px;">
+              {email && (
+                <div>
+                  <b>Email:</b> {email}
                 </div>
               )}
-
-              <div style="display:grid; gap:6px; margin-bottom:10px;">
-                {email && (
-                  <div>
-                    <b>Email:</b> {email}
-                  </div>
-                )}
-                {page && (
-                  <div>
-                    <b>Page:</b>{" "}
-                    <a href={page} target="_blank" rel="noreferrer">
-                      {page}
-                    </a>
-                  </div>
-                )}
-              </div>
-
-              <div style="margin-top:10px; line-height:1.7;">
-                <Content />
-              </div>
+              {page && (
+                <div>
+                  <b>Page:</b>{" "}
+                  <a href={page} target="_blank" rel="noreferrer">
+                    {page}
+                  </a>
+                </div>
+              )}
             </div>
-          </article>
-        );
-      })}
-    </div>
-  </main>
-</BaseLayout>
+
+            <div style="margin-top:10px; line-height:1.7;">
+              <Content />
+            </div>
+          </div>
+        </article>
+      );
+    })}
+
+    {entries.length === 0 && <p class="muted">No alumni entries yet.</p>}
+  </div>
+</SectionLayout>

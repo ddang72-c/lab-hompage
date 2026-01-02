@@ -1,66 +1,90 @@
 ---
-const nav = [
+const desktopNav = [
   {
     label: "PEOPLE",
     items: [
-      { label: "Professor", href: "/people/professor" },
-      { label: "Students", href: "/people/students" },
-      { label: "Alumni", href: "/people/alumni" },
+      { label: "Professor", href: "/people/professor/" },
+      { label: "Students", href: "/people/students/" },
+      { label: "Alumni", href: "/people/alumni/" },
     ],
   },
   {
     label: "RESEARCH",
     items: [
-      { label: "research-area", href: "/research/research-area" },
-      { label: "facilities", href: "/research/facilities" },
+      { label: "Research area", href: "/research/research-area/" },
+      { label: "Facilities", href: "/research/facilities/" },
     ],
   },
   {
     label: "PUBLICATION",
     items: [
-      { label: "Journal", href: "/publication/journal" },
-      { label: "Conference", href: "/publication/conference" },
+      { label: "Journal", href: "/publication/journal/" },
+      { label: "Conference", href: "/publication/conference/" },
     ],
   },
   {
     label: "BOARD",
     items: [
-      { label: "Gallery", href: "/board/gallery" },
-      { label: "News", href: "/board/news" }
+      { label: "News", href: "/board/news/" },
+      { label: "Gallery", href: "/board/gallery/" },
+    ],
+  },
+];
+
+// 모바일 목차(PEOPLE/RESEARCH/PUBLICATION/BOARD 4개 아코디언)
+const mobileMenu = [
+  {
+    label: "PEOPLE",
+    items: [
+      { label: "Professor", href: "/people/professor/" },
+      { label: "Students", href: "/people/students/" },
+      { label: "Alumni", href: "/people/alumni/" },
+    ],
+  },
+  {
+    label: "RESEARCH",
+    items: [
+      { label: "Research area", href: "/research/research-area/" },
+      { label: "Facilities", href: "/research/facilities/" },
+    ],
+  },
+  {
+    label: "PUBLICATION",
+    items: [
+      { label: "Journal", href: "/publication/journal/" },
+      { label: "Conference", href: "/publication/conference/" },
+    ],
+  },
+  {
+    label: "BOARD",
+    items: [
+      { label: "News", href: "/board/news/" },
+      { label: "Gallery", href: "/board/gallery/" },
     ],
   },
 ];
 ---
 
 <header class="site-header">
-  <!-- top utility bar (LETS 느낌) -->
-  <div class="topbar">
-    <div class="container topbar-inner">
-      <div class="topbar-left">
-        <a class="topbar-pnu" href="https://www.pusan.ac.kr/" target="_blank" rel="noreferrer">부산대학교</a>
-        <a href="https://onestop.pusan.ac.kr/" target="_blank" rel="noreferrer">학생지원시스템</a>
-        <a href="https://plato.pusan.ac.kr/" target="_blank" rel="noreferrer">PLATO</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- logo + main nav -->
   <div class="header-main">
     <div class="container header-main-inner">
       <a class="brand" href="/">
-        <img class="brand-logo" src="/images/pnu-logo.png" alt="Pusan National University logo" />
-        <div class="brand-text">
-          <div class="brand-title">고체전자물성실험실</div>
-          <div class="brand-sub">Solid-State Electronic Properties Lab</div>
-        </div>
+        <img class="brand-logo" src="/images/pnu-logo.png" alt="PNU logo" />
+        <span class="brand-text">
+          <span class="brand-title">고체전자물성실험실</span>
+          <span class="brand-sub">Laboratory of Electronic Transport in Solids</span>
+        </span>
       </a>
-      <button class="nav-toggle" aria-label="toggle navigation" data-nav-toggle>
+
+      <!-- 모바일 햄버거 -->
+      <button class="nav-toggle" aria-label="open menu" aria-expanded="false" data-menu-open>
         ☰
       </button>
 
-      <nav class="gnb" data-gnb>
+      <!-- 데스크탑 GNB -->
+      <nav class="gnb" aria-label="Main navigation">
         <ul class="gnb-list">
-          {nav.map((group) => (
+          {desktopNav.map((group) => (
             <li class="gnb-item">
               <a class="gnb-link" href={group.items[0]?.href ?? "#"}>{group.label}</a>
 
@@ -80,11 +104,111 @@ const nav = [
     </div>
   </div>
 
+  <!-- 모바일 오버레이 메뉴 -->
+  <div class="mobile-overlay" data-mobile-overlay aria-hidden="true">
+    <div class="mobile-overlay-inner">
+      <!-- 상단 X만 -->
+      <div class="mobile-topbar">
+        <button class="mobile-close" aria-label="close menu" data-menu-close>✕</button>
+      </div>
+
+      <div class="mobile-card" role="dialog" aria-label="Mobile menu">
+        {mobileMenu.map((g) => (
+          <details class="mobile-group">
+            <summary class="mobile-summary">
+              <span class="mobile-summary-label">{g.label}</span>
+              <span class="mobile-summary-caret">▾</span>
+            </summary>
+
+            <ul class="mobile-sub">
+              {g.items.map((it) => (
+                <li>
+                  <a href={it.href}>{it.label}</a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+
   <script is:inline>
-    const btn = document.querySelector("[data-nav-toggle]");
-    const gnb = document.querySelector("[data-gnb]");
-    btn?.addEventListener("click", () => {
-      gnb?.classList.toggle("is-open");
+    const openBtn = document.querySelector("[data-menu-open]");
+    const closeBtn = document.querySelector("[data-menu-close]");
+    const overlay = document.querySelector("[data-mobile-overlay]");
+    const card = overlay?.querySelector(".mobile-card");
+
+    const BASE_VH = 60; // global.css 기본값(예: 72vh)
+
+    function updateOverlayHeight() {
+      if (!overlay || !card) return;
+
+      const basePx = (window.innerHeight * BASE_VH) / 100;
+      const rect = card.getBoundingClientRect();
+
+      // 카드 아래쪽 + 약간 여유
+      const desired = rect.bottom + 24;
+
+      // 기본 높이보다 작으면 기본 유지, 크면 필요한 만큼만 증가
+      const h = Math.max(basePx, desired);
+
+      // 화면 높이를 넘지 않게 제한
+      const clamped = Math.min(h, window.innerHeight);
+
+      overlay.style.setProperty("--overlay-h", `${clamped}px`);
+    }
+
+    const openMenu = () => {
+      overlay?.classList.add("is-open");
+      overlay?.setAttribute("aria-hidden", "false");
+      openBtn?.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+
+      requestAnimationFrame(updateOverlayHeight);
+    };
+
+    const closeMenu = () => {
+      overlay?.classList.remove("is-open");
+      overlay?.setAttribute("aria-hidden", "true");
+      openBtn?.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+
+      // 닫으면 기본값으로 복귀
+      overlay?.style.removeProperty("--overlay-h");
+    };
+
+    openBtn?.addEventListener("click", openMenu);
+    closeBtn?.addEventListener("click", closeMenu);
+
+    // ✅ 아코디언: 한 번에 하나만 열리게
+    const groups = overlay?.querySelectorAll("details.mobile-group");
+
+    groups?.forEach((d) => {
+      d.addEventListener("toggle", () => {
+        // 지금 열린 것만 남기고 나머지는 닫기
+        if (d.open) {
+          groups.forEach((other) => {
+            if (other !== d) other.open = false;
+          });
+        }
+        requestAnimationFrame(updateOverlayHeight);
+      });
+    });
+
+    // 리사이즈/회전 대응
+    window.addEventListener("resize", () => {
+      if (overlay?.classList.contains("is-open")) updateOverlayHeight();
+    });
+
+    // 배경 클릭 시 닫기
+    overlay?.addEventListener("click", (e) => {
+      if (e.target === overlay) closeMenu();
+    });
+
+    // ESC 닫기
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeMenu();
     });
   </script>
 </header>

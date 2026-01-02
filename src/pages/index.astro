@@ -1,8 +1,67 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const quick = [
+  { key: "people", label: "PEOPLE", href: "/people/professor/" },
+  { key: "research", label: "RESEARCH", href: "/research/research-area/" },
+  { key: "publication", label: "PUBLICATION", href: "/publication/journal/" },
+  { key: "board", label: "BOARD", href: "/board/news/" },
+];
+
+const heroImg = "/images/main-hero.jpg";
 ---
 
-<BaseLayout title="Lab Home">
-  <h1>Lab Homepage</h1>
-  <p class="muted">People / Research / Publication / Board</p>
+<BaseLayout title="LETS">
+  <section class="home-hero" style={`--home-hero-url: url('${heroImg}')`}>
+    <div class="home-hero-bg" aria-hidden="true"></div>
+
+    <div class="container home-hero-inner">
+      <div class="home-hero-copy">
+        <div class="home-hero-line"></div>
+        <h1 class="home-hero-title">
+          Laboratory of Electronic<br />Transport in Solids
+        </h1>
+        <div class="home-hero-sub">고체전자물성실험실</div>
+      </div>
+
+      <div class="home-quick">
+        {quick.map((q) => (
+          <a class="home-quick-btn" href={q.href}>
+            <div class="home-quick-icon" aria-hidden="true">
+              {q.key === "people" && (
+                <svg viewBox="0 0 24 24" class="qi">
+                  <path d="M20 21a8 8 0 0 0-16 0" />
+                  <path d="M12 13a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" />
+                </svg>
+              )}
+              {q.key === "research" && (
+                <svg viewBox="0 0 24 24" class="qi">
+                  <path d="M10 2v6l-5 9a4 4 0 0 0 3.5 6h7A4 4 0 0 0 19 17l-5-9V2" />
+                  <path d="M8 12h8" />
+                </svg>
+              )}
+              {q.key === "publication" && (
+                <svg viewBox="0 0 24 24" class="qi">
+                  <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z" />
+                  <path d="M14 2v5h5" />
+                  <path d="M8 12h8" />
+                  <path d="M8 16h8" />
+                </svg>
+              )}
+              {q.key === "board" && (
+                <svg viewBox="0 0 24 24" class="qi">
+                  <path d="M4 5h16v14H4z" />
+                  <path d="M7 8h10" />
+                  <path d="M7 12h10" />
+                  <path d="M7 16h7" />
+                </svg>
+              )}
+            </div>
+
+            <div class="home-quick-label">{q.label}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
 </BaseLayout>
