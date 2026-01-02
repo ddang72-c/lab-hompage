@@ -1,96 +1,124 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionLayout from "../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
 type FM = {
-  title: string;
+  title?: string;
+  year?: number;
+  type?: "International" | "Domestic";
   authors?: string;
-  venue?: string;
-  year: number;
-  scope?: "International" | "Domestic";
-  pdf?: string;
-  link_url?: string;
-  preprint_url?: string;
-  github_url?: string;
+  journal?: string;
+  date?: string;
+  link?: string;
 };
 
+const nav = [
+  { label: "Journal", href: "/publication/journal/" },
+  { label: "Conference", href: "/publication/conference/" },
+];
+
+// ✅ 정렬/그룹: year 내림차순 → type(International 먼저) → title
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/publication/journal/*.md");
-const items = await Promise.all(Object.values(modules).map((fn) => fn()));
+const items = await Promise.all(
+  Object.entries(modules).map(async ([path, loader]) => {
+    const entry = await loader();
+    const fm = entry.frontmatter ?? {};
+    return { path, entry, fm };
+  })
+);
 
-const normScope = (s?: FM["scope"]) => (s === "Domestic" ? "Domestic" : "International");
+const typeRank = (t?: string) => (t === "International" ? 0 : 1);
 
-const byYear = new Map<number, { International: MarkdownInstance<FM>[]; Domestic: MarkdownInstance<FM>[] }>();
+items.sort((a, b) => {
+  const ay = Number(a.fm.year ?? -1);
+  const by = Number(b.fm.year ?? -1);
+  if (ay !== by) return by - ay;
 
+  const at = typeRank(a.fm.type);
+  const bt = typeRank(b.fm.type);
+  if (at !== bt) return at - bt;
+
+  const an = (a.fm.title ?? "").toString();
+  const bn = (b.fm.title ?? "").toString();
+  return an.localeCompare(bn);
+});
+
+// group by year
+const byYear = new Map<number, typeof items>();
 for (const it of items) {
-  const y = it.frontmatter.year ?? 0;
-  if (!byYear.has(y)) byYear.set(y, { International: [], Domestic: [] });
-  byYear.get(y)![normScope(it.frontmatter.scope)].push(it);
+  const y = Number(it.fm.year ?? 0);
+  if (!byYear.has(y)) byYear.set(y, []);
+  byYear.get(y)!.push(it);
 }
-
 const years = Array.from(byYear.keys()).sort((a, b) => b - a);
 
-for (const y of years) {
-  for (const k of ["International", "Domestic"] as const) {
-    byYear.get(y)![k].sort((a, b) => (a.frontmatter.title ?? "").localeCompare(b.frontmatter.title ?? ""));
-  }
-}
+const splitByType = (arr: typeof items) => {
+  const intl = arr.filter((x) => x.fm.type === "International");
+  const dom = arr.filter((x) => x.fm.type !== "International");
+  return { intl, dom };
+};
+
+const metaLine = (fm: FM) => {
+  const parts = [
+    fm.journal,
+    fm.authors,
+    fm.date,
+  ].filter(Boolean);
+  return parts.join(" · ");
+};
 ---
 
-<BaseLayout title="Journal">
-  <h1>Publication</h1>
+<SectionLayout
+  title="Journal"
+  sectionLabel="PUBLICATION"
+  navItems={nav}
+  currentLabel="Journal"
+  heroImage="/images/sub-hero.jpg"
+>
+  <h1>Journal</h1>
 
   {years.map((y) => {
-    const g = byYear.get(y)!;
+    const list = byYear.get(y)!;
+    const { intl, dom } = splitByType(list);
+
     return (
       <section class="pub-year">
         <div class="pub-year-left">{y}</div>
 
-        <div class="pub-year-right">
-          {g.International.length > 0 && (
+        <div>
+          {intl.length > 0 && (
             <>
-              <h2 class="pub-section">International (Journal)</h2>
+              <div class="pub-section">International</div>
               <div class="pub-items">
-                {g.International.map((it) => (
-                  <article class="pub-item">
-                    <div class="pub-title">{it.frontmatter.title}</div>
-                    <div class="pub-meta">
-                      {it.frontmatter.authors && <span>{it.frontmatter.authors}</span>}
-                      {it.frontmatter.venue && <span> · <em>{it.frontmatter.venue}</em></span>}
-                      <span> · {it.frontmatter.year}</span>
-                    </div>
-
-                    <div class="pub-actions">
-                      {it.frontmatter.preprint_url && <a class="pub-btn" href={it.frontmatter.preprint_url} target="_blank" rel="noreferrer">preprint</a>}
-                      {it.frontmatter.link_url && <a class="pub-btn" href={it.frontmatter.link_url} target="_blank" rel="noreferrer">link</a>}
-                      {it.frontmatter.github_url && <a class="pub-btn" href={it.frontmatter.github_url} target="_blank" rel="noreferrer">GitHub</a>}
-                      {it.frontmatter.pdf && <a class="pub-btn" href={it.frontmatter.pdf} download>PDF</a>}
-                    </div>
-                  </article>
+                {intl.map(({ fm }) => (
+                  <div class="pub-item">
+                    <div class="pub-title">{fm.title}</div>
+                    <div class="pub-meta">{metaLine(fm)}</div>
+                    {fm.link && (
+                      <a class="pub-btn" href={fm.link} target="_blank" rel="noreferrer">
+                        link
+                      </a>
+                    )}
+                  </div>
                 ))}
               </div>
             </>
           )}
 
-          {g.Domestic.length > 0 && (
+          {dom.length > 0 && (
             <>
-              <h2 class="pub-section">Domestic (Journal)</h2>
+              <div class="pub-section">Domestic</div>
               <div class="pub-items">
-                {g.Domestic.map((it) => (
-                  <article class="pub-item">
-                    <div class="pub-title">{it.frontmatter.title}</div>
-                    <div class="pub-meta">
-                      {it.frontmatter.authors && <span>{it.frontmatter.authors}</span>}
-                      {it.frontmatter.venue && <span> · <em>{it.frontmatter.venue}</em></span>}
-                      <span> · {it.frontmatter.year}</span>
-                    </div>
-
-                    <div class="pub-actions">
-                      {it.frontmatter.preprint_url && <a class="pub-btn" href={it.frontmatter.preprint_url} target="_blank" rel="noreferrer">preprint</a>}
-                      {it.frontmatter.link_url && <a class="pub-btn" href={it.frontmatter.link_url} target="_blank" rel="noreferrer">link</a>}
-                      {it.frontmatter.github_url && <a class="pub-btn" href={it.frontmatter.github_url} target="_blank" rel="noreferrer">GitHub</a>}
-                      {it.frontmatter.pdf && <a class="pub-btn" href={it.frontmatter.pdf} download>PDF</a>}
-                    </div>
-                  </article>
+                {dom.map(({ fm }) => (
+                  <div class="pub-item">
+                    <div class="pub-title">{fm.title}</div>
+                    <div class="pub-meta">{metaLine(fm)}</div>
+                    {fm.link && (
+                      <a class="pub-btn" href={fm.link} target="_blank" rel="noreferrer">
+                        link
+                      </a>
+                    )}
+                  </div>
                 ))}
               </div>
             </>
@@ -99,4 +127,4 @@ for (const y of years) {
       </section>
     );
   })}
-</BaseLayout>
+</SectionLayout>
