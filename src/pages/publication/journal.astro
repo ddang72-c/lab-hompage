@@ -6,9 +6,9 @@ type FM = {
   title?: string;
   year?: number;
   authors?: string;
-  journal?: string;
-  date?: string;
   link?: string;
+  logoImage?: string;
+  logoUrl?: string;
 };
 
 const nav = [
@@ -46,9 +46,11 @@ for (const it of items) {
 const years = Array.from(byYear.keys()).sort((a, b) => b - a);
 
 const metaLine = (fm: FM) => {
-  const parts = [fm.journal, fm.authors, fm.date].filter(Boolean);
-  return parts.join(" · ");
+  // 너가 제거한 컬럼(journal/date 등)은 더 이상 쓰지 않음
+  return (fm.authors ?? "").toString();
 };
+
+const logoSrc = (fm: FM) => fm.logoImage || fm.logoUrl || "";
 ---
 
 <SectionLayout
@@ -68,17 +70,34 @@ const metaLine = (fm: FM) => {
         <div class="pub-year-left">{y}</div>
 
         <div class="pub-items">
-          {list.map(({ fm }) => (
-            <div class="pub-item">
-              <div class="pub-title">{fm.title}</div>
-              <div class="pub-meta">{metaLine(fm)}</div>
-              {fm.link && (
-                <a class="pub-btn" href={fm.link} target="_blank" rel="noreferrer">
-                  link
-                </a>
-              )}
-            </div>
-          ))}
+          {list.map(({ fm }) => {
+            const ls = logoSrc(fm);
+
+            return (
+              <div class="pub-item">
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                  {ls && (
+                    <img
+                      src={ls}
+                      alt=""
+                      style="width:70px; height:auto; object-fit:contain;"
+                      loading="lazy"
+                    />
+                  )}
+
+                  <div style="flex:1;">
+                    <div class="pub-title">{fm.title}</div>
+                    {metaLine(fm) && <div class="pub-meta">{metaLine(fm)}</div>}
+                    {fm.link && (
+                      <a class="pub-btn" href={fm.link} target="_blank" rel="noreferrer">
+                        link
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
     );

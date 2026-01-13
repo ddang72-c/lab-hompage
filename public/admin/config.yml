@@ -134,9 +134,11 @@ collections:
     fields:
       - { label: Title, name: title, widget: string }
       - { label: Year, name: year, widget: number, value_type: int }
+
+      - { label: Logo Image (optional), name: logoImage, widget: image, required: false }
+      - { label: Logo URL (optional), name: logoUrl, widget: string, required: false, hint: "업로드 대신 로고 이미지 URL을 넣을 수 있음" }
+
       - { label: Authors, name: authors, widget: string, required: false }
-      - { label: Journal, name: journal, widget: string, required: false }
-      - { label: Date, name: date, widget: datetime, required: false }
       - { label: Link, name: link, widget: string, required: false }
       - { label: Body, name: body, widget: markdown, required: false }
 
@@ -148,8 +150,10 @@ collections:
     fields:
       - { label: Title, name: title, widget: string }
       - { label: Year, name: year, widget: number, value_type: int }
+
+      - { label: Logo Image (optional), name: logoImage, widget: image, required: false }
+      - { label: Logo URL (optional), name: logoUrl, widget: string, required: false, hint: "업로드 대신 로고 이미지 URL을 넣을 수 있음" }
+
       - { label: Authors, name: authors, widget: string, required: false }
-      - { label: Conference, name: conference, widget: string, required: false }
-      - { label: Date, name: date, widget: datetime, required: false }
       - { label: Link, name: link, widget: string, required: false }
       - { label: Body, name: body, widget: markdown, required: false }
