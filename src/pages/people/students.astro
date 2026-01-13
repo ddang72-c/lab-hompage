@@ -18,10 +18,12 @@ const entries = await Promise.all(
   })
 );
 
+// order(숫자) 오름차순 → name 오름차순
 entries.sort((a, b) => {
   const ao = a.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
   const bo = b.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
   if (ao !== bo) return ao - bo;
+
   const an = (a.entry.frontmatter?.name ?? "").toString();
   const bn = (b.entry.frontmatter?.name ?? "").toString();
   return an.localeCompare(bn);
@@ -36,11 +38,10 @@ entries.sort((a, b) => {
       const { Content, frontmatter } = entry;
 
       const name = frontmatter.name ?? "";
-      const role = frontmatter.role ?? frontmatter.position ?? "";
+      const role = frontmatter.role ?? "";
       const email = frontmatter.email ?? "";
       const photo = frontmatter.photo ?? "";
-      const interests = frontmatter.interests ?? [];
-      const page = frontmatter.page ?? "";
+      const period = frontmatter.period ?? "";
 
       return (
         <article style="display:flex; gap:20px; padding:16px; border:1px solid #eee; border-radius:14px;">
@@ -55,32 +56,18 @@ entries.sort((a, b) => {
 
           <div style="flex:1;">
             <h2 style="margin:0 0 6px 0;">{name}</h2>
-            {role && <div style="opacity:.8; margin-bottom:10px;">{role}</div>}
 
-            <div style="display:grid; gap:6px; margin-bottom:10px;">
-              {email && (
-                <div>
-                  <b>Email:</b> {email}
-                </div>
-              )}
-              {page && (
-                <div>
-                  <b>Page:</b>{" "}
-                  <a href={page} target="_blank" rel="noreferrer">
-                    {page}
-                  </a>
-                </div>
-              )}
-            </div>
+            {(role || period) && (
+              <div style="opacity:.8; margin-bottom:10px;">
+                {role}
+                {role && period ? " · " : ""}
+                {period}
+              </div>
+            )}
 
-            {Array.isArray(interests) && interests.length > 0 && (
-              <div style="margin:10px 0;">
-                <b>Research Interests:</b>
-                <ul style="margin:6px 0 0 18px;">
-                  {interests.map((it) => (
-                    <li>{it}</li>
-                  ))}
-                </ul>
+            {email && (
+              <div style="margin-bottom:10px;">
+                <b>Email:</b> {email}
               </div>
             )}
 
@@ -91,5 +78,7 @@ entries.sort((a, b) => {
         </article>
       );
     })}
+
+    {entries.length === 0 && <p class="muted">No student entries yet.</p>}
   </div>
 </SectionLayout>

@@ -5,205 +5,151 @@ backend:
   base_url: https://decap-cms-oauth-lac.vercel.app
   auth_endpoint: auth
 
-media_folder: "public/uploads"
-public_folder: "/uploads"
+media_folder: public/uploads
+public_folder: /uploads
 
 collections:
-  - name: "news"
-    label: "News"
-    folder: "src/content/board/news"
+  - name: news
+    label: News
+    folder: src/content/board/news
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime" }
-      - { label: "Body", name: "body", widget: "markdown" }
+      - { label: Title, name: title, widget: string }
+      - { label: Date, name: date, widget: datetime }
+      - { label: Body, name: body, widget: markdown }
 
-  - name: "gallery"
-    label: "Gallery"
-    folder: "src/content/board/gallery"
+  - name: gallery
+    label: Gallery
+    folder: src/content/board/gallery
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime" }
-      - label: "Photos"
-        name: "photos"
-        widget: "list"
+      - { label: Title, name: title, widget: string }
+      - { label: Date, name: date, widget: datetime }
+      - label: Photos
+        name: photos
+        widget: list
         required: false
-        field: { label: "Photo", name: "photo", widget: "image" }
-      - { label: "Body", name: "body", widget: "markdown", required: false }
+        field: { label: Photo, name: photo, widget: image }
+      - { label: Body, name: body, widget: markdown, required: false }
 
-  # =========================
-  # People > Professor (단일 문서)
-  # =========================
-  - name: "professor"
-    label: "Professor"
+  - name: professor
+    label: Professor
     files:
-      - label: "Professor Profile"
-        name: "professor"
-        file: "src/content/people/professor.md"
+      - label: Professor Profile
+        name: professor
+        file: src/content/people/professor.md
         fields:
-          - { label: "Name", name: "name", widget: "string" }
-          - {
-              label: "Role/Position",
-              name: "role",
-              widget: "string",
-              required: false,
-              hint: "예: 정교수, 부교수",
-            }
-          - { label: "Email", name: "email", widget: "string", required: false }
-          - { label: "Photo", name: "photo", widget: "image", required: false }
-          - {
-              label: "Office",
-              name: "office",
-              widget: "string",
-              required: false,
-            }
-          - { label: "Body", name: "body", widget: "markdown", required: false }
+          - { label: Name, name: name, widget: string }
+          - { label: Role/Position, name: role, widget: string }
+          - { label: Office, name: office, widget: string, required: false }
+          - { label: Email, name: email, widget: string, required: false }
+          - { label: Phone, name: phone, widget: string, required: false }
+          - { label: Photo, name: photo, widget: image, required: false }
+          - label: Links
+            name: links
+            widget: list
+            required: false
+            fields:
+              - { label: Label, name: label, widget: string }
+              - { label: URL, name: url, widget: string }
+          - { label: Body, name: body, widget: markdown, required: false }
 
-  # =========================
-  # People > Students (여러 문서)
-  # =========================
-  - name: "students"
-    label: "Students"
-    label_singular: "Student"
-    folder: "src/content/people/students"
+  - name: students
+    label: Students
+    label_singular: Student
+    folder: src/content/people/students
     create: true
     slug: "{{slug}}"
-    summary: "{{name}} — {{program}}"
+    summary: "{{order}} - {{name}}"
     fields:
-      - { label: "Name", name: "name", widget: "string" }
+      - { label: Name, name: name, widget: string }
       - {
-          label: "Program",
-          name: "program",
-          widget: "string",
+          label: Role/Status,
+          name: role,
+          widget: string,
           required: false,
-          hint: "예: Ph.D / M.S / Undergrad",
+          hint: "예: Ph.D / M.S / Undergrad 등",
         }
-      - { label: "Email", name: "email", widget: "string", required: false }
-      - { label: "Photo", name: "photo", widget: "image", required: false }
+      - { label: Email, name: email, widget: string, required: false }
+      - { label: Photo, name: photo, widget: image, required: false }
       - {
-          label: "Graduation Year",
-          name: "grad_year",
-          widget: "string",
+          label: Period,
+          name: period,
+          widget: string,
           required: false,
+          hint: "예: 2023–present, 2019–2023",
         }
+      - { label: Note, name: body, widget: markdown, required: false }
       - {
-          label: "Current Affiliation",
-          name: "current",
-          widget: "string",
-          required: false,
-        }
-      - {
-          label: "Page",
-          name: "page",
-          widget: "string",
-          required: false,
-          hint: "개인 홈페이지/구글스칼라 등 URL",
-        }
-      - label: "Research Interests"
-        name: "interests"
-        widget: "list"
-        required: false
-        field: { label: "Interest", name: "interest", widget: "string" }
-      - {
-          label: "Order",
-          name: "order",
-          widget: "number",
+          label: Order,
+          name: order,
+          widget: number,
+          value_type: int,
           required: false,
           hint: "정렬용 숫자(작을수록 위). 비우면 이름순",
         }
-      - { label: "Body", name: "body", widget: "markdown", required: false }
 
-  # =========================
-  # People > Alumni (여러 문서)
-  # =========================
-  - name: "alumni"
-    label: "Alumni"
-    label_singular: "Alumnus"
-    folder: "src/content/people/alumni"
+  - name: alumni
+    label: Alumni
+    label_singular: Alumni
+    folder: src/content/people/alumni
     create: true
     slug: "{{slug}}"
-    summary: "{{name}} — {{program}}"
+    summary: "{{order}} - {{name}}"
     fields:
-      - { label: "Name", name: "name", widget: "string" }
+      - { label: Name, name: name, widget: string }
       - {
-          label: "Program",
-          name: "program",
-          widget: "string",
+          label: Role/Status,
+          name: role,
+          widget: string,
           required: false,
-          hint: "예: Ph.D / M.S / Undergrad",
+          hint: "예: Ph.D / M.S / Undergrad / Alumni 등",
         }
-      - { label: "Email", name: "email", widget: "string", required: false }
-      - { label: "Photo", name: "photo", widget: "image", required: false }
+      - { label: Email, name: email, widget: string, required: false }
+      - { label: Photo, name: photo, widget: image, required: false }
       - {
-          label: "Graduation Year",
-          name: "grad_year",
-          widget: "string",
+          label: Period,
+          name: period,
+          widget: string,
           required: false,
+          hint: "예: 2019–2023",
         }
+      - { label: Note, name: body, widget: markdown, required: false }
       - {
-          label: "Current Affiliation",
-          name: "current",
-          widget: "string",
+          label: Order,
+          name: order,
+          widget: number,
+          value_type: int,
           required: false,
+          hint: "정렬용 숫자(작을수록 위). 비우면 이름순",
         }
-      - {
-          label: "Page",
-          name: "page",
-          widget: "string",
-          required: false,
-          hint: "개인 홈페이지/구글스칼라 등 URL",
-        }
-      - label: "Research Interests"
-        name: "interests"
-        widget: "list"
-        required: false
-        field: { label: "Interest", name: "interest", widget: "string" }
-      - { label: "Order", name: "order", widget: "number", required: false }
-      - { label: "Body", name: "body", widget: "markdown", required: false }
-  - name: "journal"
-    label: "Journal"
-    folder: "src/content/publication/journal"
-    create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-    fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Year", name: "year", widget: "number", value_type: "int" }
-      - {
-          label: "Type",
-          name: "type",
-          widget: "select",
-          options: ["International", "Domestic"],
-        }
-      - { label: "Authors", name: "authors", widget: "string", required: false }
-      - { label: "Journal", name: "journal", widget: "string", required: false }
-      - { label: "Date", name: "date", widget: "datetime", required: false }
-      - { label: "Link", name: "link", widget: "string", required: false }
-      - { label: "Body", name: "body", widget: "markdown", required: false }
 
-  - name: "conference"
-    label: "Conference"
-    folder: "src/content/publication/conference"
+  - name: journal
+    label: Journal
+    folder: src/content/publication/journal
     create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{{year}}-{{slug}}"
     fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Year", name: "year", widget: "number", value_type: "int" }
-      - {
-          label: "Type",
-          name: "type",
-          widget: "select",
-          options: ["International", "Domestic"],
-        }
-      - { label: "Authors", name: "authors", widget: "string", required: false }
-      - {
-          label: "Conference",
-          name: "conference",
-          widget: "string",
-          required: false,
-        }
-      - { label: "Date", name: "date", widget: "datetime", required: false }
-      - { label: "Link", name: "link", widget: "string", required: false }
-      - { label: "Body", name: "body", widget: "markdown", required: false }
+      - { label: Title, name: title, widget: string }
+      - { label: Year, name: year, widget: number, value_type: int }
+      - { label: Authors, name: authors, widget: string, required: false }
+      - { label: Journal, name: journal, widget: string, required: false }
+      - { label: Date, name: date, widget: datetime, required: false }
+      - { label: Link, name: link, widget: string, required: false }
+      - { label: Body, name: body, widget: markdown, required: false }
+
+  - name: conference
+    label: Conference
+    folder: src/content/publication/conference
+    create: true
+    slug: "{{year}}-{{slug}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Year, name: year, widget: number, value_type: int }
+      - { label: Authors, name: authors, widget: string, required: false }
+      - { label: Conference, name: conference, widget: string, required: false }
+      - { label: Date, name: date, widget: datetime, required: false }
+      - { label: Link, name: link, widget: string, required: false }
+      - { label: Body, name: body, widget: markdown, required: false }

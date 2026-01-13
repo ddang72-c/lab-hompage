@@ -18,10 +18,12 @@ const entries = await Promise.all(
   })
 );
 
+// order(숫자) 오름차순 → name 오름차순
 entries.sort((a, b) => {
-  const ay = a.entry.frontmatter?.year ?? a.entry.frontmatter?.endYear ?? 0;
-  const by = b.entry.frontmatter?.year ?? b.entry.frontmatter?.endYear ?? 0;
-  if (ay !== by) return Number(by) - Number(ay);
+  const ao = a.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
+  const bo = b.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
+  if (ao !== bo) return ao - bo;
+
   const an = (a.entry.frontmatter?.name ?? "").toString();
   const bn = (b.entry.frontmatter?.name ?? "").toString();
   return an.localeCompare(bn);
@@ -36,11 +38,10 @@ entries.sort((a, b) => {
       const { Content, frontmatter } = entry;
 
       const name = frontmatter.name ?? "";
-      const role = frontmatter.role ?? frontmatter.position ?? "";
+      const role = frontmatter.role ?? "";
       const email = frontmatter.email ?? "";
       const photo = frontmatter.photo ?? "";
-      const page = frontmatter.page ?? "";
-      const year = frontmatter.year ?? frontmatter.endYear ?? "";
+      const period = frontmatter.period ?? "";
 
       return (
         <article style="display:flex; gap:20px; padding:16px; border:1px solid #eee; border-radius:14px;">
@@ -54,28 +55,21 @@ entries.sort((a, b) => {
           )}
 
           <div style="flex:1;">
-            <div style="display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;">
-              <h2 style="margin:0;">{name}</h2>
-              {year && <span style="opacity:.75;">({year})</span>}
-            </div>
+            <h2 style="margin:0 0 6px 0;">{name}</h2>
 
-            {role && <div style="opacity:.8; margin:6px 0 10px 0;">{role}</div>}
+            {(role || period) && (
+              <div style="opacity:.8; margin:6px 0 10px 0;">
+                {role}
+                {role && period ? " · " : ""}
+                {period}
+              </div>
+            )}
 
-            <div style="display:grid; gap:6px; margin-bottom:10px;">
-              {email && (
-                <div>
-                  <b>Email:</b> {email}
-                </div>
-              )}
-              {page && (
-                <div>
-                  <b>Page:</b>{" "}
-                  <a href={page} target="_blank" rel="noreferrer">
-                    {page}
-                  </a>
-                </div>
-              )}
-            </div>
+            {email && (
+              <div style="margin-bottom:10px;">
+                <b>Email:</b> {email}
+              </div>
+            )}
 
             <div style="margin-top:10px; line-height:1.7;">
               <Content />

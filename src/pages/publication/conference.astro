@@ -5,7 +5,6 @@ import type { MarkdownInstance } from "astro";
 type FM = {
   title?: string;
   year?: number;
-  type?: "International" | "Domestic";
   authors?: string;
   conference?: string;
   date?: string;
@@ -18,6 +17,7 @@ const nav = [
 ];
 
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/publication/conference/*.md");
+
 const items = await Promise.all(
   Object.entries(modules).map(async ([path, loader]) => {
     const entry = await loader();
@@ -26,20 +26,15 @@ const items = await Promise.all(
   })
 );
 
-const typeRank = (t?: string) => (t === "International" ? 0 : 1);
-
+// 정렬: year 내림차순 → title 오름차순
 items.sort((a, b) => {
   const ay = Number(a.fm.year ?? -1);
   const by = Number(b.fm.year ?? -1);
   if (ay !== by) return by - ay;
 
-  const at = typeRank(a.fm.type);
-  const bt = typeRank(b.fm.type);
-  if (at !== bt) return at - bt;
-
-  const an = (a.fm.title ?? "").toString();
-  const bn = (b.fm.title ?? "").toString();
-  return an.localeCompare(bn);
+  const at = (a.fm.title ?? "").toString();
+  const bt = (b.fm.title ?? "").toString();
+  return at.localeCompare(bt);
 });
 
 // group by year
@@ -51,18 +46,8 @@ for (const it of items) {
 }
 const years = Array.from(byYear.keys()).sort((a, b) => b - a);
 
-const splitByType = (arr: typeof items) => {
-  const intl = arr.filter((x) => x.fm.type === "International");
-  const dom = arr.filter((x) => x.fm.type !== "International");
-  return { intl, dom };
-};
-
 const metaLine = (fm: FM) => {
-  const parts = [
-    fm.conference,
-    fm.authors,
-    fm.date,
-  ].filter(Boolean);
+  const parts = [fm.conference, fm.authors, fm.date].filter(Boolean);
   return parts.join(" · ");
 };
 ---
@@ -72,58 +57,33 @@ const metaLine = (fm: FM) => {
   sectionLabel="PUBLICATION"
   navItems={nav}
   currentLabel="Conference"
-  heroImage="/images/sub-hero.jpg"
+  heroSrc="/images/sub-hero.jpg"
 >
   <h1>Conference</h1>
 
   {years.map((y) => {
     const list = byYear.get(y)!;
-    const { intl, dom } = splitByType(list);
 
     return (
       <section class="pub-year">
         <div class="pub-year-left">{y}</div>
 
-        <div>
-          {intl.length > 0 && (
-            <>
-              <div class="pub-section">International</div>
-              <div class="pub-items">
-                {intl.map(({ fm }) => (
-                  <div class="pub-item">
-                    <div class="pub-title">{fm.title}</div>
-                    <div class="pub-meta">{metaLine(fm)}</div>
-                    {fm.link && (
-                      <a class="pub-btn" href={fm.link} target="_blank" rel="noreferrer">
-                        link
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {dom.length > 0 && (
-            <>
-              <div class="pub-section">Domestic</div>
-              <div class="pub-items">
-                {dom.map(({ fm }) => (
-                  <div class="pub-item">
-                    <div class="pub-title">{fm.title}</div>
-                    <div class="pub-meta">{metaLine(fm)}</div>
-                    {fm.link && (
-                      <a class="pub-btn" href={fm.link} target="_blank" rel="noreferrer">
-                        link
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
+        <div class="pub-items">
+          {list.map(({ fm }) => (
+            <div class="pub-item">
+              <div class="pub-title">{fm.title}</div>
+              <div class="pub-meta">{metaLine(fm)}</div>
+              {fm.link && (
+                <a class="pub-btn" href={fm.link} target="_blank" rel="noreferrer">
+                  link
+                </a>
+              )}
+            </div>
+          ))}
         </div>
       </section>
     );
   })}
+
+  {items.length === 0 && <p class="muted">No conference entries yet.</p>}
 </SectionLayout>
