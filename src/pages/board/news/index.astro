@@ -7,7 +7,36 @@ const nav = [
   { label: "Gallery", href: "/board/gallery/" },
 ];
 
+type MediaItem = string | { photo?: string; image?: string; src?: string; url?: string };
 type FM = Record<string, any>;
+
+const toMediaUrls = (v: any): string[] => {
+  const out: string[] = [];
+
+  const push = (x: any) => {
+    if (typeof x === "string" && x.trim()) out.push(x.trim());
+  };
+
+  // gallery 스타일: photos: [{photo: "..."}] or images: [{image:"..."}] or string[]
+  const readList = (arr: any[]) => {
+    for (const it of arr) {
+      if (typeof it === "string") push(it);
+      else if (it && typeof it === "object") push(it.photo ?? it.image ?? it.src ?? it.url);
+    }
+  };
+
+  if (Array.isArray(v?.photos)) readList(v.photos);
+  if (Array.isArray(v?.images)) readList(v.images);
+
+  // 단일 커버류도 지원
+  push(v?.cover);
+  push(v?.thumbnail);
+  push(v?.thumb);
+
+  // dedupe
+  return Array.from(new Set(out));
+};
+
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/news/*.md");
 
 const items = await Promise.all(
@@ -17,7 +46,8 @@ const items = await Promise.all(
     const fm = entry.frontmatter ?? {};
     const dateStr = (fm.date ?? fm.published ?? fm.created ?? "").toString();
     const date = dateStr ? new Date(dateStr) : null;
-    return { slug, entry, fm, date };
+    const media = toMediaUrls(fm);
+    return { slug, entry, fm, date, media };
   })
 );
 
@@ -29,35 +59,63 @@ items.sort((a, b) => {
   const bt = (b.fm.title ?? "").toString();
   return at.localeCompare(bt);
 });
+
+const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
 ---
 
 <SectionLayout title="News" sectionLabel="BOARD" navItems={nav} heroSrc="/images/sub-hero.jpg">
   <h1>News</h1>
 
-  <div class="pub-list" style="margin-top:18px;">
-    {items.map(({ slug, fm, date, entry }) => {
+  <div class="news-list">
+    {items.map(({ fm, date, entry, media }) => {
       const title = fm.title ?? "Untitled";
-      const summary = fm.summary ?? fm.description ?? "";
-      const when = date ? date.toISOString().slice(0, 10) : "";
+      const when = fmt(date);
+      const summary = (fm.summary ?? fm.description ?? "").toString();
+      const { Content } = entry;
 
       return (
-        <div class="pub-row">
-          <div>
-            <div class="pub-title">
-              <a href={`/board/news/${slug}/`}>{title}</a>
+        <article class="news-item">
+          <header class="news-head">
+            <h2 class="news-title">{title}</h2>
+            {(when || summary) && (
+              <div class="news-meta">
+                {when && <span>{when}</span>}
+                {when && summary && <span> · </span>}
+                {summary && <span>{summary}</span>}
+              </div>
+            )}
+          </header>
+
+          {media.length > 0 && (
+            <div class="media-grid">
+              {media.map((src) => (
+                <a class="media" href={src} target="_blank" rel="noreferrer">
+                  <img src={src} alt="" loading="lazy" />
+                </a>
+              ))}
             </div>
-            <div class="pub-meta">
-              {when && <span>{when}</span>}
-              {summary && <span>{when ? " · " : ""}{summary}</span>}
-            </div>
+          )}
+
+          {/* 본문(선택): 이미지 밑에 나오게 */}
+          <div class="news-body">
+            <Content />
           </div>
-          <div class="pub-actions">
-            <a class="btn" href={`/board/news/${slug}/`}>Read</a>
-          </div>
-        </div>
+        </article>
       );
     })}
 
     {items.length === 0 && <p class="muted">No news posts yet.</p>}
   </div>
+
+  <style>
+    {`
+      .news-list { margin-top: 18px; display: grid; gap: 18px; }
+      .news-item { border: 1px solid #eee; border-radius: 14px; padding: 16px; }
+      .news-title { margin: 0; font-size: 20px; }
+      .news-meta { margin-top: 6px; color: #6b7280; font-size: 14px; }
+      .media-grid { margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+      .media img { width: 100%; height: 140px; object-fit: cover; border-radius: 10px; display:block; }
+      .news-body { margin-top: 12px; line-height: 1.75; }
+    `}
+  </style>
 </SectionLayout>

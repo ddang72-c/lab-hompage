@@ -8,18 +8,45 @@ const nav = [
 ];
 
 type FM = Record<string, any>;
+
+const toImageUrls = (fm: any): string[] => {
+  const out: string[] = [];
+  const push = (x: any) => {
+    if (typeof x === "string" && x.trim()) out.push(x.trim());
+  };
+
+  const readList = (arr: any[]) => {
+    for (const it of arr) {
+      if (typeof it === "string") push(it);
+      else if (it && typeof it === "object") push(it.photo ?? it.image ?? it.src ?? it.url);
+    }
+  };
+
+  // Decap에서 우리가 쓰는 형식: photos(list of image) 우선
+  if (Array.isArray(fm?.photos)) readList(fm.photos);
+
+  // 과거 상세페이지가 쓰던 images도 지원
+  if (Array.isArray(fm?.images)) readList(fm.images);
+
+  // cover류도 혹시 있으면 마지막 보조
+  push(fm?.cover);
+  push(fm?.thumbnail);
+  push(fm?.thumb);
+
+  return Array.from(new Set(out));
+};
+
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
 
 const items = await Promise.all(
   Object.entries(modules).map(async ([path, loader]) => {
     const entry = await loader();
-    const slug = path.split("/").pop()?.replace(/\.md$/, "") ?? path;
     const fm = entry.frontmatter ?? {};
     const title = fm.title ?? "Untitled";
-    const cover = fm.cover ?? fm.thumbnail ?? fm.thumb ?? "";
     const dateStr = (fm.date ?? fm.published ?? fm.created ?? "").toString();
     const date = dateStr ? new Date(dateStr) : null;
-    return { slug, entry, fm, title, cover, date };
+    const images = toImageUrls(fm);
+    return { entry, fm, title, date, images };
   })
 );
 
@@ -29,27 +56,57 @@ items.sort((a, b) => {
   if (ad !== bd) return bd - ad;
   return a.title.localeCompare(b.title);
 });
+
+const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
 ---
 
 <SectionLayout title="Gallery" sectionLabel="BOARD" navItems={nav} heroSrc="/images/sub-hero.jpg">
   <h1>Gallery</h1>
 
-  <div class="gallery-grid" style="margin-top:18px;">
-    {items.map(({ slug, title, cover }) => (
-      <a class="gallery-card" href={`/board/gallery/${slug}/`}>
-        <div class="thumb">
-          {cover ? (
-            <img src={cover} alt={title} loading="lazy" />
+  <div class="gallery-sections">
+    {items.map(({ title, date, images, entry }) => {
+      const when = fmt(date);
+      const { Content } = entry;
+
+      return (
+        <section class="g-section">
+          <header class="g-head">
+            <h2 class="g-title">{title}</h2>
+            {when && <div class="g-meta">{when}</div>}
+          </header>
+
+          {images.length > 0 ? (
+            <div class="g-grid">
+              {images.map((src) => (
+                <a class="g-photo" href={src} target="_blank" rel="noreferrer">
+                  <img src={src} alt="" loading="lazy" />
+                </a>
+              ))}
+            </div>
           ) : (
-            <div class="thumb-empty">No image</div>
+            <div class="muted" style="margin-top:10px;">No images.</div>
           )}
-        </div>
-        <div class="g-info">
-          <div class="g-title">{title}</div>
-        </div>
-      </a>
-    ))}
+
+          {/* 본문(선택): 사진 밑에 */}
+          <div class="g-body">
+            <Content />
+          </div>
+        </section>
+      );
+    })}
+
+    {items.length === 0 && <p class="muted" style="margin-top:18px;">No gallery posts yet.</p>}
   </div>
 
-  {items.length === 0 && <p class="muted" style="margin-top:18px;">No gallery posts yet.</p>}
+  <style>
+    {`
+      .gallery-sections { margin-top: 18px; display: grid; gap: 26px; }
+      .g-section { padding-bottom: 18px; border-bottom: 1px solid #eee; }
+      .g-title { margin: 0; font-size: 20px; }
+      .g-meta { margin-top: 6px; color:#6b7280; font-size:14px; }
+      .g-grid { margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+      .g-photo img { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; display:block; }
+      .g-body { margin-top: 12px; line-height: 1.75; }
+    `}
+  </style>
 </SectionLayout>

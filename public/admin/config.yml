@@ -17,7 +17,13 @@ collections:
     fields:
       - { label: Title, name: title, widget: string }
       - { label: Date, name: date, widget: datetime }
-      - { label: Body, name: body, widget: markdown }
+      - label: Photos
+        name: photos
+        widget: list
+        required: false
+        field: { label: Photo, name: photo, widget: image }
+
+      - { label: Body, name: body, widget: markdown, required: false }
 
   - name: gallery
     label: Gallery
