@@ -1,11 +1,7 @@
 ---
 import SectionLayout from "../../../layouts/SectionLayout.astro";
+import GalleryPost from "../../../components/gallery/GalleryPost.tsx";
 import type { MarkdownInstance } from "astro";
-
-const nav = [
-  { label: "News", href: "/board/news/" },
-  { label: "Gallery", href: "/board/gallery/" },
-];
 
 type FM = Record<string, any>;
 
@@ -14,7 +10,6 @@ const toImageUrls = (fm: any): string[] => {
   const push = (x: any) => {
     if (typeof x === "string" && x.trim()) out.push(x.trim());
   };
-
   const readList = (arr: any[]) => {
     for (const it of arr) {
       if (typeof it === "string") push(it);
@@ -22,13 +17,11 @@ const toImageUrls = (fm: any): string[] => {
     }
   };
 
-  // Decap에서 우리가 쓰는 형식: photos(list of image) 우선
-  if (Array.isArray(fm?.photos)) readList(fm.photos);
-
-  // 과거 상세페이지가 쓰던 images도 지원
   if (Array.isArray(fm?.images)) readList(fm.images);
+  if (Array.isArray(fm?.photos)) readList(fm.photos);
+  if (Array.isArray(fm?.gallery)) readList(fm.gallery);
+  if (Array.isArray(fm?.media)) readList(fm.media);
 
-  // cover류도 혹시 있으면 마지막 보조
   push(fm?.cover);
   push(fm?.thumbnail);
   push(fm?.thumb);
@@ -36,21 +29,34 @@ const toImageUrls = (fm: any): string[] => {
   return Array.from(new Set(out));
 };
 
+const toFeaturedIndex = (fm: any): number | null => {
+  const raw = fm?.featuredIndex ?? fm?.featured_index ?? null;
+  if (raw === null || raw === undefined) return null;
+  const n = Number(raw);
+  if (!Number.isFinite(n)) return null;
+  return Math.max(0, Math.floor(n));
+};
+
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
 
-const items = await Promise.all(
-  Object.entries(modules).map(async ([path, loader]) => {
+const posts = await Promise.all(
+  Object.entries(modules).map(async ([, loader]) => {
     const entry = await loader();
     const fm = entry.frontmatter ?? {};
-    const title = fm.title ?? "Untitled";
+    const title = (fm.title ?? "Untitled").toString();
     const dateStr = (fm.date ?? fm.published ?? fm.created ?? "").toString();
     const date = dateStr ? new Date(dateStr) : null;
     const images = toImageUrls(fm);
-    return { entry, fm, title, date, images };
+    const featuredIndex = toFeaturedIndex(fm);
+
+    // (선택) 게시물 단위 정책: auto | cover | contain
+    const fit = (fm.fit ?? "auto").toString();
+
+    return { title, date, images, featuredIndex, fit };
   })
 );
 
-items.sort((a, b) => {
+posts.sort((a, b) => {
   const ad = a.date ? a.date.getTime() : 0;
   const bd = b.date ? b.date.getTime() : 0;
   if (ad !== bd) return bd - ad;
@@ -60,53 +66,36 @@ items.sort((a, b) => {
 const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
 ---
 
-<SectionLayout title="Gallery" sectionLabel="BOARD" navItems={nav} heroSrc="/images/sub-hero.jpg">
-  <h1>Gallery</h1>
-
-  <div class="gallery-sections">
-    {items.map(({ title, date, images, entry }) => {
-      const when = fmt(date);
-      const { Content } = entry;
-
-      return (
-        <section class="g-section">
-          <header class="g-head">
-            <h2 class="g-title">{title}</h2>
-            {when && <div class="g-meta">{when}</div>}
-          </header>
-
-          {images.length > 0 ? (
-            <div class="g-grid">
-              {images.map((src) => (
-                <a class="g-photo" href={src} target="_blank" rel="noreferrer">
-                  <img src={src} alt="" loading="lazy" />
-                </a>
-              ))}
-            </div>
-          ) : (
-            <div class="muted" style="margin-top:10px;">No images.</div>
-          )}
-
-          {/* 본문(선택): 사진 밑에 */}
-          <div class="g-body">
-            <Content />
-          </div>
-        </section>
-      );
-    })}
-
-    {items.length === 0 && <p class="muted" style="margin-top:18px;">No gallery posts yet.</p>}
-  </div>
-
-  <style>
+<SectionLayout title="Gallery">
+  <style is:global>
     {`
-      .gallery-sections { margin-top: 18px; display: grid; gap: 26px; }
-      .g-section { padding-bottom: 18px; border-bottom: 1px solid #eee; }
-      .g-title { margin: 0; font-size: 20px; }
-      .g-meta { margin-top: 6px; color:#6b7280; font-size:14px; }
-      .g-grid { margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
-      .g-photo img { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; display:block; }
-      .g-body { margin-top: 12px; line-height: 1.75; }
+      .gallery-list{
+        display:grid;
+        gap: 56px;
+        margin-top: 18px;
+      }
+      .gallery-post{
+        padding-bottom: 28px;
+        border-bottom: 1px solid var(--line, #eee);
+      }
+      @media (max-width: 640px){
+        .gallery-list{ gap: 44px; }
+      }
     `}
   </style>
+
+  <div class="gallery-list">
+    {posts.map((p) => (
+      <div class="gallery-post">
+        <GalleryPost
+          client:load
+          title={p.title}
+          date={fmt(p.date)}
+          images={p.images}
+          featuredIndex={p.featuredIndex}
+          fit={p.fit}
+        />
+      </div>
+    ))}
+  </div>
 </SectionLayout>

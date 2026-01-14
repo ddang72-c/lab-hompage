@@ -14,11 +14,8 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+html, body {
+  overflow-x: visible;
 }
 
 body {
@@ -49,8 +46,11 @@ a:hover {
 ========================= */
 .site-header {
   width: 100%;
-  position: relative;
-  z-index: 1000;
+  position: sticky;
+  top: 0;
+  z-index: 3000;
+  background: #fff;             /* 스크롤 시 뒤가 비치지 않게 */
+  border-bottom: 1px solid var(--line);
 }
 
 .header-main {
