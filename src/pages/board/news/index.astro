@@ -5,29 +5,7 @@ import type { MarkdownInstance } from "astro";
 
 type FM = Record<string, any>;
 
-const stripFrontmatter = (raw: string) => raw.replace(/^---[\s\S]*?---\s*/m, "").trim();
-
-const extractImagesFromBody = (body: string): string[] => {
-  const out: string[] = [];
-
-  // Markdown: ![alt](url)
-  const mdRe = /!\[[^\]]*\]\(([^)]+)\)/g;
-  for (const m of body.matchAll(mdRe)) {
-    const url = (m[1] ?? "").trim().split(/\s+/)[0];
-    if (url) out.push(url);
-  }
-
-  // HTML: <img src="...">
-  const htmlRe = /<img[^>]+src=["']([^"']+)["']/g;
-  for (const m of body.matchAll(htmlRe)) {
-    const url = (m[1] ?? "").trim();
-    if (url) out.push(url);
-  }
-
-  return Array.from(new Set(out));
-};
-
-const toImageUrls = (fm: any, body: string): string[] => {
+const toImageUrls = (fm: any): string[] => {
   const out: string[] = [];
   const push = (x: any) => {
     if (typeof x === "string" && x.trim()) out.push(x.trim());
@@ -39,23 +17,19 @@ const toImageUrls = (fm: any, body: string): string[] => {
     }
   };
 
-  // frontmatter 후보들
   if (Array.isArray(fm?.images)) readList(fm.images);
   if (Array.isArray(fm?.photos)) readList(fm.photos);
   if (Array.isArray(fm?.gallery)) readList(fm.gallery);
   if (Array.isArray(fm?.media)) readList(fm.media);
-  if (Array.isArray(fm?.attachments)) readList(fm.attachments);
 
   push(fm?.cover);
   push(fm?.thumbnail);
   push(fm?.thumb);
-  push(fm?.image);
-
-  // ✅ 본문에 들어간 이미지까지 흡수
-  for (const url of extractImagesFromBody(body)) out.push(url);
 
   return Array.from(new Set(out));
 };
+
+const stripFrontmatter = (raw: string) => raw.replace(/^---[\s\S]*?---\s*/m, "").trim();
 
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/news/*.md");
 
@@ -68,12 +42,11 @@ const posts = await Promise.all(
     const dateStr = (fm.date ?? fm.published ?? fm.created ?? "").toString();
     const date = dateStr ? new Date(dateStr) : null;
 
-    const body = stripFrontmatter(entry.rawContent());
-    const images = toImageUrls(fm, body);
+    const images = toImageUrls(fm);
     const fit = (fm.fit ?? "auto").toString();
 
     const Content = entry.Content;
-    const hasBody = body.length > 0;
+    const hasBody = stripFrontmatter(entry.rawContent()).length > 0;
 
     return { title, date, images, fit, Content, hasBody };
   })
@@ -91,10 +64,6 @@ const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
 
 <SectionLayout title="News">
   <style is:global>
-    :root{
-      --kr-font: "Noto Sans KR", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-    }
-
     .news-wrap{
       max-width: 1180px;
       margin: 0 auto;
@@ -103,7 +72,7 @@ const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
 
     .news-list{
       display: grid !important;
-      row-gap: 100px !important;
+      row-gap: 72px !important;
     }
 
     .news-post{
@@ -111,44 +80,8 @@ const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
       border-bottom: 0;
     }
 
-    .gpost-header{
-      text-align: left;
-      margin-bottom: 18px;
-    }
-    .gpost-title{
-      margin: 0;
-      font-family: var(--kr-font);
-      font-weight: 800;
-      font-size: 30px;
-      line-height: 1.12;
-      letter-spacing: -0.02em;
-    }
-    .gpost-date{
-      margin-top: 10px;
-      font-family: var(--kr-font);
-      font-size: 16px;
-      color: var(--muted, #6b7280);
-    }
-
-    .gpost-body{
-      margin-top: 18px;
-      font-family: var(--kr-font);
-      font-size: 17px;
-      line-height: 1.85;
-      color: var(--text, #111827);
-    }
-    .gpost-body :global(p){ margin: 0 0 12px 0; }
-    .gpost-body :global(a){ text-decoration: underline; }
-
-    @media (max-width: 900px){
-      .news-list{ row-gap: 90px !important; }
-      .gpost-title{ font-size: 36px; }
-    }
     @media (max-width: 520px){
-      .news-wrap{ padding: 0 14px; }
-      .news-list{ row-gap: 72px !important; }
-      .gpost-title{ font-size: 30px; }
-      .gpost-body{ font-size: 16px; }
+      .news-list{ row-gap: 56px !important; }
     }
   </style>
 
@@ -162,7 +95,16 @@ const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
           </header>
 
           {p.images.length > 0 && (
-            <GalleryAlbum client:load images={p.images} fit={p.fit} />
+            <GalleryAlbum
+              client:load
+              images={p.images}
+              fit="contain"
+              singleMaxWidth={620}
+              singleMaxHeight={200}
+              rowHeightScale={0.72}
+              gapScale={0.9}
+              align="left"
+            />
           )}
 
           {p.hasBody && (

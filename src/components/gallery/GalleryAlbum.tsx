@@ -4,14 +4,25 @@ import type { Photo } from "react-photo-album";
 import "react-photo-album/rows.css";
 
 type FitMode = "auto" | "cover" | "contain";
+type AlignMode = "left" | "center";
 
 export type GalleryAlbumProps = {
   images: string[];
   fit?: FitMode;
+
+  /** ✅ 1장(단일) 이미지일 때만 적용되는 크기 제한 */
+  singleMaxWidth?: number; // desktop 기준 px
+  singleMaxHeight?: number; // desktop 기준 px
+
+  /** ✅ 2장 이상(rows)일 때 크기/간격 스케일 */
+  rowHeightScale?: number; // 1 = 기본, 0.7~0.85 추천
+  gapScale?: number; // 1 = 기본
+
+  /** ✅ 단일 이미지 정렬 (뉴스는 left) */
+  align?: AlignMode;
 };
 
 function isExtremeGraphicAR(ar: number) {
-  // 로고/포스터류(cover에 취약)로 추정되는 극단 비율
   return ar >= 2.2 || ar <= 0.45;
 }
 
@@ -30,7 +41,15 @@ async function loadMeta(src: string): Promise<Photo | null> {
   });
 }
 
-export default function GalleryAlbum({ images, fit = "auto" }: GalleryAlbumProps) {
+export default function GalleryAlbum({
+  images,
+  fit = "auto",
+  singleMaxWidth = 860,
+  singleMaxHeight = 420,
+  rowHeightScale = 1,
+  gapScale = 1,
+  align = "center",
+}: GalleryAlbumProps) {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [ready, setReady] = useState(false);
 
@@ -50,8 +69,6 @@ export default function GalleryAlbum({ images, fit = "auto" }: GalleryAlbumProps
     };
   }, [images.join("|")]);
 
-  // ✅ Google Sites 느낌: “한 줄 최대 3장”
-  // ✅ 1장만 있어도 문제 없게 minPhotos=1
   const rowConstraints = useMemo(
     () => ({
       minPhotos: 1,
@@ -61,60 +78,50 @@ export default function GalleryAlbum({ images, fit = "auto" }: GalleryAlbumProps
     []
   );
 
-  // ✅ 사진 크기(행 높이)
   const targetRowHeight = useMemo(
     () => (containerWidth: number) => {
-      if (containerWidth < 520) return 220;
-      if (containerWidth < 900) return 280;
-      return 340;
+      const base =
+        containerWidth < 520 ? 220 : containerWidth < 900 ? 280 : 340;
+      return Math.max(120, Math.round(base * rowHeightScale));
     },
-    []
+    [rowHeightScale]
   );
 
-  // ✅ 사진 사이 간격(더 넓게)
   const spacing = useMemo(
     () => (containerWidth: number) => {
-      if (containerWidth < 520) return 14;
-      if (containerWidth < 900) return 18;
-      return 22;
+      const base = containerWidth < 520 ? 14 : containerWidth < 900 ? 18 : 22;
+      return Math.max(6, Math.round(base * gapScale));
     },
-    []
+    [gapScale]
   );
 
-  if (!ready) {
-    return <div className="gpost-loading">Loading images…</div>;
-  }
+  if (!ready) return <div className="gpost-loading">Loading images…</div>;
 
-  // ✅ 사진이 1장인 경우: rows 알고리즘 대신 “큰 단일 이미지”로 안정 렌더
+  // ✅ 1장일 때
   if (photos.length === 1) {
     const p = photos[0];
     const ar = (p.width || 1) / (p.height || 1);
     const contain = fit === "contain" || (fit === "auto" && isExtremeGraphicAR(ar));
-    const objectFit =
-      fit === "contain" ? "contain" : fit === "cover" ? "cover" : contain ? "contain" : "cover";
+    const objectFit = fit === "cover" ? "cover" : contain ? "contain" : "contain";
+
+    const mdW = Math.round(singleMaxWidth * 0.84);
+    const mdH = Math.round(singleMaxHeight * 0.86);
+    const smH = Math.round(singleMaxHeight * 0.62);
+
+    // ✅ 핵심: left면 block으로 렌더링해서 "글 시작선=이미지 시작선" 강제
+    const outerDisplay = align === "left" ? "block" : "flex";
+    const outerJustify = align === "left" ? "initial" : "center";
+    const imgMargin = align === "left" ? "0" : "0 auto";
 
     return (
       <>
-        <div
-          style={{
-            borderRadius: 0, // ✅ 직각
-            overflow: "hidden",
-            background: contain ? "rgba(255,255,255,0.95)" : "rgba(0,0,0,0.04)",
-          }}
-        >
+        <div className="single-outer">
           <img
             src={p.src}
             alt=""
             draggable={false}
-            style={{
-              width: "100%",
-              height: "auto",
-              display: "block",
-              objectFit,
-              objectPosition: "center",
-              userSelect: "none",
-              pointerEvents: "none",
-            }}
+            className="single-img"
+            style={{ objectFit }}
           />
         </div>
 
@@ -123,11 +130,48 @@ export default function GalleryAlbum({ images, fit = "auto" }: GalleryAlbumProps
             color: var(--muted, #6b7280);
             font-size: 14px;
           }
+
+          .single-outer{
+            width: 100%;
+            display: ${outerDisplay};
+            justify-content: ${outerJustify};
+            align-items: center;
+            border-radius: 0;
+            overflow: hidden;
+            background: transparent;
+          }
+
+          .single-img{
+            display: block;
+            width: min(${singleMaxWidth}px, 100%);
+            max-height: ${singleMaxHeight}px;
+            height: auto;
+            object-position: center;
+            user-select: none;
+            pointer-events: none;
+            background: transparent;
+            margin: ${imgMargin}; /* ✅ left면 0, center면 auto */
+          }
+
+          @media (max-width: 900px){
+            .single-img{
+              width: min(${mdW}px, 100%);
+              max-height: ${mdH}px;
+            }
+          }
+
+          @media (max-width: 520px){
+            .single-img{
+              width: 100%;
+              max-height: ${smH}px;
+            }
+          }
         `}</style>
       </>
     );
   }
 
+  // ✅ 2장 이상
   return (
     <>
       <RowsPhotoAlbum
@@ -145,7 +189,7 @@ export default function GalleryAlbum({ images, fit = "auto" }: GalleryAlbumProps
                 {...props}
                 style={{
                   ...props.style,
-                  borderRadius: 0, // ✅ 직각
+                  borderRadius: 0,
                   overflow: "hidden",
                   background: contain ? "rgba(255,255,255,0.95)" : "rgba(0,0,0,0.04)",
                 }}
