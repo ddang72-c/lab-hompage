@@ -1,11 +1,7 @@
 ---
 import SectionLayout from "../../../layouts/SectionLayout.astro";
+import GalleryAlbum from "../../../components/gallery/GalleryAlbum.tsx";
 import type { MarkdownInstance } from "astro";
-
-const nav = [
-  { label: "News", href: "/board/news/" },
-  { label: "Gallery", href: "/board/gallery/" },
-];
 
 type FM = Record<string, any>;
 
@@ -21,30 +17,49 @@ const toImageUrls = (fm: any): string[] => {
     }
   };
 
-  if (Array.isArray(fm?.photos)) readList(fm.photos);
+  // ✅ 뉴스 컬렉션에서 쓰는 필드명이 달라도 최대한 다 받아오게
   if (Array.isArray(fm?.images)) readList(fm.images);
+  if (Array.isArray(fm?.photos)) readList(fm.photos);
+  if (Array.isArray(fm?.gallery)) readList(fm.gallery);
+  if (Array.isArray(fm?.media)) readList(fm.media);
+
+  // ✅ 단일 대표 이미지 필드(있으면 포함)
   push(fm?.cover);
   push(fm?.thumbnail);
   push(fm?.thumb);
+  push(fm?.image);
 
   return Array.from(new Set(out));
 };
 
+const stripFrontmatter = (raw: string) => {
+  // --- ... --- (frontmatter) 제거 후 남은 본문만 반환
+  return raw.replace(/^---[\s\S]*?---\s*/m, "").trim();
+};
+
+// ✅ 여기만 gallery -> news 로 변경
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/news/*.md");
 
-const items = await Promise.all(
+const posts = await Promise.all(
   Object.entries(modules).map(async ([, loader]) => {
     const entry = await loader();
     const fm = entry.frontmatter ?? {};
+
     const title = (fm.title ?? "Untitled").toString();
     const dateStr = (fm.date ?? fm.published ?? fm.created ?? "").toString();
     const date = dateStr ? new Date(dateStr) : null;
+
     const images = toImageUrls(fm);
-    return { entry, title, date, images };
+    const fit = (fm.fit ?? "auto").toString();
+
+    const Content = entry.Content; // ✅ Decap BODY(본문)
+    const hasBody = stripFrontmatter(entry.rawContent()).length > 0;
+
+    return { title, date, images, fit, Content, hasBody };
   })
 );
 
-items.sort((a, b) => {
+posts.sort((a, b) => {
   const ad = a.date ? a.date.getTime() : 0;
   const bd = b.date ? b.date.getTime() : 0;
   if (ad !== bd) return bd - ad;
@@ -54,161 +69,86 @@ items.sort((a, b) => {
 const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
 ---
 
-<SectionLayout title="News" sectionLabel="BOARD" navItems={nav} heroSrc="/images/sub-hero.jpg">
-
+<SectionLayout title="News">
   <style is:global>
-    {`
-      /* ✅ PC에서 최소 2~3열 보장 (auto-fit 대신 고정 컬럼) */
-      .quilt{
-        width:100%;
-        display:grid;
-        grid-template-columns: repeat(1, minmax(0, 1fr));
-        gap: 12px;
-        grid-auto-flow: dense;
-        grid-auto-rows: 10px; /* JS ROW와 동일 */
-        align-items: start;
-      }
-      @media (min-width: 720px){
-        .quilt{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      }
-      @media (min-width: 1100px){
-        .quilt{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      }
+    /* ✅ 갤러리 최종본과 동일한 레이아웃(가운데 폭 제한 + 내부는 왼쪽 정렬) */
+    .news-wrap{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 18px;
+    }
 
-      .q-item{
-        display:block;
-        border:1px solid #eee;
-        border-radius:12px;
-        overflow:hidden;
-        background:#f3f4f6;
-      }
-      .q-item img{
-        width:100%;
-        height:100%;
-        object-fit: contain;  /* ✅ 절대 안 잘림 */
-        display:block;
-      }
-    `}
+    .news-list{
+      display: grid !important;
+      row-gap: 100px !important;
+    }
+
+    .news-post{
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    /* ✅ 제목은 중앙정렬 X → 사진 시작 라인과 동일하게 */
+    .gpost-header{
+      text-align: left;
+      margin-bottom: 18px;
+    }
+    .gpost-title{
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .gpost-date{
+      margin-top: 10px;
+      font-size: 15px;
+      color: var(--muted, #6b7280);
+    }
+    .gpost-body{
+      margin-top: 18px;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text, #111827);
+    }
+    .gpost-body :global(p){
+      margin: 0 0 10px 0;
+    }
+    .gpost-body :global(a){
+      text-decoration: underline;
+    }
+
+    @media (max-width: 900px){
+      .news-list{ row-gap: 100px !important; }
+      .gpost-title{ font-size: 30px; }
+    }
+    @media (max-width: 520px){
+      .news-wrap{ padding: 0 14px; }
+      .news-list{ row-gap: 72px !important; }
+      .gpost-title{ font-size: 26px; }
+      .gpost-body{ font-size: 15px; }
+    }
   </style>
 
-  <div style="display:grid; gap:56px; margin-top:18px;">
-    {items.map(({ title, date, images, entry }) => {
-      const when = fmt(date);
-      const { Content } = entry;
-
-      return (
-        <section style="padding-bottom:28px; border-bottom:1px solid #eee;">
-          <header style="margin-bottom:14px;">
-            <h2 style="margin:0; font-size:20px;">{title}</h2>
-            {when && <div style="margin-top:6px; color:#6b7280; font-size:14px;">{when}</div>}
+  <div class="news-wrap">
+    <div class="news-list">
+      {posts.map((p) => (
+        <article class="news-post">
+          <header class="gpost-header">
+            <h2 class="gpost-title">{p.title}</h2>
+            {p.date && <div class="gpost-date">{fmt(p.date)}</div>}
           </header>
 
-          {images.length > 0 ? (
-            <div class="quilt" data-mode="quilt">
-              {images.map((src) => (
-                <a class="q-item" href={src} target="_blank" rel="noreferrer">
-                  <img src={src} alt="" loading="lazy" decoding="async" />
-                </a>
-              ))}
-            </div>
-          ) : (
-            <div style="color:#6b7280;">No images.</div>
+          {p.images.length > 0 && (
+            <GalleryAlbum client:load images={p.images} fit={p.fit} />
           )}
 
-          <div style="margin-top:14px; line-height:1.75;">
-            <Content />
-          </div>
-        </section>
-      );
-    })}
-
-    {items.length === 0 && <p style="color:#6b7280;">No news posts yet.</p>}
+          {p.hasBody && (
+            <div class="gpost-body">
+              <p.Content />
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
   </div>
-
-  <script is:inline>
-    // Quilt 콜라주: 비율 기반 자동 배치 + dense로 빈칸 최소화
-    // ✅ 세로 사진이 혼자 너무 커지지 않게 MAX_H 낮춤
-
-    const ROW = 10;   // CSS grid-auto-rows와 동일
-    const GAP = 12;   // CSS gap과 동일
-
-    const MIN_H = 170;  // 너무 작아지지 않게
-    const MAX_H = 360;  // ✅ 너무 커지는 것 방지(여기 더 줄이면 더 컴팩트)
-
-    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-
-    async function ensureMeta(img){
-      if (img.naturalWidth > 0 && img.naturalHeight > 0) return;
-      try { if (img.decode) await img.decode(); } catch(_) {}
-      if (img.naturalWidth > 0 && img.naturalHeight > 0) return;
-      await new Promise(res => img.addEventListener("load", res, { once:true }));
-    }
-
-    function pickColSpan(aspect, idx, cols){
-      // 3열 이상일 때만 가끔 2칸짜리(큰 사진) 허용
-      if (cols < 3) return 1;
-      if (aspect >= 1.55 && (idx % 6 === 0)) return 2;
-      if (aspect >= 1.90 && (idx % 4 === 0)) return 2;
-      return 1;
-    }
-
-    function getCols(container){
-      // 현재 grid 컬럼 개수 계산
-      const cs = getComputedStyle(container).gridTemplateColumns;
-      if (!cs) return 1;
-      return cs.split(" ").length;
-    }
-
-    function relayout(container){
-      const items = Array.from(container.querySelectorAll(".q-item"));
-      if (!items.length) return;
-
-      const cols = getCols(container);
-
-      // 1) col-span 결정
-      items.forEach((a, idx) => {
-        const img = a.querySelector("img");
-        const w = img?.naturalWidth || 1;
-        const h = img?.naturalHeight || 1;
-        const aspect = w / h;
-
-        const colSpan = pickColSpan(aspect, idx, cols);
-        a.style.gridColumnEnd = `span ${colSpan}`;
-      });
-
-      // 2) width 확정 후 row-span 계산
-      requestAnimationFrame(() => {
-        items.forEach((a) => {
-          const img = a.querySelector("img");
-          const w0 = img?.naturalWidth || 1;
-          const h0 = img?.naturalHeight || 1;
-          const aspect = w0 / h0;
-
-          const width = a.getBoundingClientRect().width;
-          let h = width / aspect;        // 비율 유지
-          h = clamp(h, MIN_H, MAX_H);    // ✅ 과하게 커지는 것 차단
-
-          const rowSpan = Math.ceil((h + GAP) / ROW);
-          a.style.gridRowEnd = `span ${rowSpan}`;
-        });
-      });
-    }
-
-    async function layoutAll(){
-      const containers = Array.from(document.querySelectorAll(".quilt[data-mode='quilt']"));
-      for (const c of containers){
-        const imgs = Array.from(c.querySelectorAll("img"));
-        await Promise.all(imgs.map(ensureMeta));
-        relayout(c);
-      }
-    }
-
-    let t = null;
-    window.addEventListener("resize", () => {
-      clearTimeout(t);
-      t = setTimeout(layoutAll, 150);
-    });
-
-    layoutAll();
-  </script>
 </SectionLayout>
