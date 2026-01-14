@@ -12,7 +12,27 @@ const { title = "Lab" } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>{title}</title>
+
+    <!-- ✅ Noto Sans KR 로드 (사이트 전체 공통) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- ✅ 사이트 전체 기본 글꼴 적용 -->
+    <style is:global>
+      :root{
+        --kr-font: "Noto Sans KR", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+                   Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      }
+      body{
+        font-family: var(--kr-font);
+      }
+    </style>
   </head>
+
   <body>
     <Header />
     <main class="site-main">

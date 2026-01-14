@@ -50,12 +50,13 @@ export default function GalleryAlbum({ images, fit = "auto" }: GalleryAlbumProps
     };
   }, [images.join("|")]);
 
-  // ✅ Google Sites 느낌: 한 줄 최대 3장 정도로 정돈
+  // ✅ Google Sites 느낌: “한 줄 최대 3장”
+  // ✅ 1장만 있어도 문제 없게 minPhotos=1
   const rowConstraints = useMemo(
     () => ({
-      minPhotos: 2,
+      minPhotos: 1,
       maxPhotos: 3,
-      singleRowMaxHeight: 460,
+      singleRowMaxHeight: 520,
     }),
     []
   );
@@ -70,18 +71,61 @@ export default function GalleryAlbum({ images, fit = "auto" }: GalleryAlbumProps
     []
   );
 
-  // ✅ 사진 간격
+  // ✅ 사진 사이 간격(더 넓게)
   const spacing = useMemo(
     () => (containerWidth: number) => {
-      if (containerWidth < 520) return 10;
-      if (containerWidth < 900) return 12;
-      return 14;
+      if (containerWidth < 520) return 14;
+      if (containerWidth < 900) return 18;
+      return 22;
     },
     []
   );
 
   if (!ready) {
     return <div className="gpost-loading">Loading images…</div>;
+  }
+
+  // ✅ 사진이 1장인 경우: rows 알고리즘 대신 “큰 단일 이미지”로 안정 렌더
+  if (photos.length === 1) {
+    const p = photos[0];
+    const ar = (p.width || 1) / (p.height || 1);
+    const contain = fit === "contain" || (fit === "auto" && isExtremeGraphicAR(ar));
+    const objectFit =
+      fit === "contain" ? "contain" : fit === "cover" ? "cover" : contain ? "contain" : "cover";
+
+    return (
+      <>
+        <div
+          style={{
+            borderRadius: 0, // ✅ 직각
+            overflow: "hidden",
+            background: contain ? "rgba(255,255,255,0.95)" : "rgba(0,0,0,0.04)",
+          }}
+        >
+          <img
+            src={p.src}
+            alt=""
+            draggable={false}
+            style={{
+              width: "100%",
+              height: "auto",
+              display: "block",
+              objectFit,
+              objectPosition: "center",
+              userSelect: "none",
+              pointerEvents: "none",
+            }}
+          />
+        </div>
+
+        <style>{`
+          .gpost-loading{
+            color: var(--muted, #6b7280);
+            font-size: 14px;
+          }
+        `}</style>
+      </>
+    );
   }
 
   return (
@@ -95,12 +139,13 @@ export default function GalleryAlbum({ images, fit = "auto" }: GalleryAlbumProps
           wrapper: (props, ctx) => {
             const ar = (ctx.photo.width || 1) / (ctx.photo.height || 1);
             const contain = fit === "contain" || (fit === "auto" && isExtremeGraphicAR(ar));
+
             return (
               <div
                 {...props}
                 style={{
                   ...props.style,
-                  borderRadius: 8,
+                  borderRadius: 0, // ✅ 직각
                   overflow: "hidden",
                   background: contain ? "rgba(255,255,255,0.95)" : "rgba(0,0,0,0.04)",
                 }}
@@ -131,7 +176,7 @@ export default function GalleryAlbum({ images, fit = "auto" }: GalleryAlbumProps
                   objectFit,
                   objectPosition: "center",
                   userSelect: "none",
-                  pointerEvents: "none", // ✅ 클릭 무반응
+                  pointerEvents: "none",
                 }}
               />
             );

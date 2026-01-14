@@ -5,7 +5,29 @@ import type { MarkdownInstance } from "astro";
 
 type FM = Record<string, any>;
 
-const toImageUrls = (fm: any): string[] => {
+const stripFrontmatter = (raw: string) => raw.replace(/^---[\s\S]*?---\s*/m, "").trim();
+
+const extractImagesFromBody = (body: string): string[] => {
+  const out: string[] = [];
+
+  // Markdown: ![alt](url)
+  const mdRe = /!\[[^\]]*\]\(([^)]+)\)/g;
+  for (const m of body.matchAll(mdRe)) {
+    const url = (m[1] ?? "").trim().split(/\s+/)[0];
+    if (url) out.push(url);
+  }
+
+  // HTML: <img src="...">
+  const htmlRe = /<img[^>]+src=["']([^"']+)["']/g;
+  for (const m of body.matchAll(htmlRe)) {
+    const url = (m[1] ?? "").trim();
+    if (url) out.push(url);
+  }
+
+  return Array.from(new Set(out));
+};
+
+const toImageUrls = (fm: any, body: string): string[] => {
   const out: string[] = [];
   const push = (x: any) => {
     if (typeof x === "string" && x.trim()) out.push(x.trim());
@@ -17,27 +39,24 @@ const toImageUrls = (fm: any): string[] => {
     }
   };
 
-  // ✅ 뉴스 컬렉션에서 쓰는 필드명이 달라도 최대한 다 받아오게
+  // frontmatter 후보들
   if (Array.isArray(fm?.images)) readList(fm.images);
   if (Array.isArray(fm?.photos)) readList(fm.photos);
   if (Array.isArray(fm?.gallery)) readList(fm.gallery);
   if (Array.isArray(fm?.media)) readList(fm.media);
+  if (Array.isArray(fm?.attachments)) readList(fm.attachments);
 
-  // ✅ 단일 대표 이미지 필드(있으면 포함)
   push(fm?.cover);
   push(fm?.thumbnail);
   push(fm?.thumb);
   push(fm?.image);
 
+  // ✅ 본문에 들어간 이미지까지 흡수
+  for (const url of extractImagesFromBody(body)) out.push(url);
+
   return Array.from(new Set(out));
 };
 
-const stripFrontmatter = (raw: string) => {
-  // --- ... --- (frontmatter) 제거 후 남은 본문만 반환
-  return raw.replace(/^---[\s\S]*?---\s*/m, "").trim();
-};
-
-// ✅ 여기만 gallery -> news 로 변경
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/news/*.md");
 
 const posts = await Promise.all(
@@ -49,11 +68,12 @@ const posts = await Promise.all(
     const dateStr = (fm.date ?? fm.published ?? fm.created ?? "").toString();
     const date = dateStr ? new Date(dateStr) : null;
 
-    const images = toImageUrls(fm);
+    const body = stripFrontmatter(entry.rawContent());
+    const images = toImageUrls(fm, body);
     const fit = (fm.fit ?? "auto").toString();
 
-    const Content = entry.Content; // ✅ Decap BODY(본문)
-    const hasBody = stripFrontmatter(entry.rawContent()).length > 0;
+    const Content = entry.Content;
+    const hasBody = body.length > 0;
 
     return { title, date, images, fit, Content, hasBody };
   })
@@ -71,7 +91,10 @@ const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
 
 <SectionLayout title="News">
   <style is:global>
-    /* ✅ 갤러리 최종본과 동일한 레이아웃(가운데 폭 제한 + 내부는 왼쪽 정렬) */
+    :root{
+      --kr-font: "Noto Sans KR", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+
     .news-wrap{
       max-width: 1180px;
       margin: 0 auto;
@@ -88,44 +111,44 @@ const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
       border-bottom: 0;
     }
 
-    /* ✅ 제목은 중앙정렬 X → 사진 시작 라인과 동일하게 */
     .gpost-header{
       text-align: left;
       margin-bottom: 18px;
     }
     .gpost-title{
       margin: 0;
-      font-size: 34px;
-      line-height: 1.15;
+      font-family: var(--kr-font);
+      font-weight: 800;
+      font-size: 30px;
+      line-height: 1.12;
       letter-spacing: -0.02em;
     }
     .gpost-date{
       margin-top: 10px;
-      font-size: 15px;
+      font-family: var(--kr-font);
+      font-size: 16px;
       color: var(--muted, #6b7280);
     }
+
     .gpost-body{
       margin-top: 18px;
-      font-size: 16px;
-      line-height: 1.7;
+      font-family: var(--kr-font);
+      font-size: 17px;
+      line-height: 1.85;
       color: var(--text, #111827);
     }
-    .gpost-body :global(p){
-      margin: 0 0 10px 0;
-    }
-    .gpost-body :global(a){
-      text-decoration: underline;
-    }
+    .gpost-body :global(p){ margin: 0 0 12px 0; }
+    .gpost-body :global(a){ text-decoration: underline; }
 
     @media (max-width: 900px){
-      .news-list{ row-gap: 100px !important; }
-      .gpost-title{ font-size: 30px; }
+      .news-list{ row-gap: 90px !important; }
+      .gpost-title{ font-size: 36px; }
     }
     @media (max-width: 520px){
       .news-wrap{ padding: 0 14px; }
       .news-list{ row-gap: 72px !important; }
-      .gpost-title{ font-size: 26px; }
-      .gpost-body{ font-size: 15px; }
+      .gpost-title{ font-size: 30px; }
+      .gpost-body{ font-size: 16px; }
     }
   </style>
 
