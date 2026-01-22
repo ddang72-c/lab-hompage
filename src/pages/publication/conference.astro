@@ -11,11 +11,6 @@ type FM = {
   logoUrl?: string;
 };
 
-const nav = [
-  { label: "Journal", href: "/publication/journal/" },
-  { label: "Conference", href: "/publication/conference/" },
-];
-
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/publication/conference/*.md");
 const items = await Promise.all(
   Object.entries(modules).map(async ([path, loader]) => {
@@ -49,14 +44,7 @@ const metaLine = (fm: FM) => (fm.authors ?? "").toString();
 const logoSrc = (fm: FM) => fm.logoImage || fm.logoUrl || "";
 ---
 
-<SectionLayout
-  title="Conference"
-  sectionLabel="PUBLICATION"
-  navItems={nav}
-  currentLabel="Conference"
-  heroSrc="/images/sub-hero.jpg"
->
-
+<SectionLayout title="Conference">
   {years.map((y) => {
     const list = byYear.get(y)!;
 

@@ -1,0 +1,8 @@
+﻿
+FullName                                                              
+--------                                                              
+C:\Users\na\Desktop\LETS.PUSAN\src\components\gallery\GalleryAlbum.tsx
+C:\Users\na\Desktop\LETS.PUSAN\src\components\site\Footer.astro       
+C:\Users\na\Desktop\LETS.PUSAN\src\components\site\Header.astro       
+
+

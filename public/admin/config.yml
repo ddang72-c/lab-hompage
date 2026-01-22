@@ -42,25 +42,18 @@ collections:
 
   - name: professor
     label: Professor
+    folder: "src/content/people"
+    create: false
+    delete: false
+    extension: md
+    format: frontmatter
     files:
-      - label: Professor Profile
-        name: professor
-        file: src/content/people/professor.md
+      - name: professor
+        label: Professor Profile
+        file: "src/content/people/professor.md"
         fields:
-          - { label: Name, name: name, widget: string }
-          - { label: Role/Position, name: role, widget: string }
-          - { label: Office, name: office, widget: string, required: false }
-          - { label: Email, name: email, widget: string, required: false }
-          - { label: Phone, name: phone, widget: string, required: false }
-          - { label: Photo, name: photo, widget: image, required: false }
-          - label: Links
-            name: links
-            widget: list
-            required: false
-            fields:
-              - { label: Label, name: label, widget: string }
-              - { label: URL, name: url, widget: string }
-          - { label: Body, name: body, widget: markdown, required: false }
+          - { label: "Name", name: "name", widget: "string", required: true }
+          - { label: "Body", name: "body", widget: "markdown", required: false }
 
   - name: students
     label: Students

@@ -7,14 +7,10 @@ type FM = {
   year?: number;
   authors?: string;
   link?: string;
+  journal?: string;
   logoImage?: string;
   logoUrl?: string;
 };
-
-const nav = [
-  { label: "Journal", href: "/publication/journal/" },
-  { label: "Conference", href: "/publication/conference/" },
-];
 
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/publication/journal/*.md");
 const items = await Promise.all(
@@ -31,9 +27,9 @@ items.sort((a, b) => {
   const by = Number(b.fm.year ?? -1);
   if (ay !== by) return by - ay;
 
-  const an = (a.fm.title ?? "").toString();
-  const bn = (b.fm.title ?? "").toString();
-  return an.localeCompare(bn);
+  const at = (a.fm.title ?? "").toString();
+  const bt = (b.fm.title ?? "").toString();
+  return at.localeCompare(bt);
 });
 
 // group by year
@@ -46,21 +42,13 @@ for (const it of items) {
 const years = Array.from(byYear.keys()).sort((a, b) => b - a);
 
 const metaLine = (fm: FM) => {
-  // 너가 제거한 컬럼(journal/date 등)은 더 이상 쓰지 않음
-  return (fm.authors ?? "").toString();
+  const parts = [fm.authors, fm.journal].filter(Boolean);
+  return parts.join(" · ");
 };
-
 const logoSrc = (fm: FM) => fm.logoImage || fm.logoUrl || "";
 ---
 
-<SectionLayout
-  title="Journal"
-  sectionLabel="PUBLICATION"
-  navItems={nav}
-  currentLabel="Journal"
-  heroSrc="/images/sub-hero.jpg"
->
-
+<SectionLayout title="Journal">
   {years.map((y) => {
     const list = byYear.get(y)!;
 

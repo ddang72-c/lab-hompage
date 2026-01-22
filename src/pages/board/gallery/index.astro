@@ -1,36 +1,10 @@
 ---
 import SectionLayout from "../../../layouts/SectionLayout.astro";
 import GalleryAlbum from "../../../components/gallery/GalleryAlbum.tsx";
+import { stripFrontmatter, toImageUrls } from "../../../lib/board";
 import type { MarkdownInstance } from "astro";
 
 type FM = Record<string, any>;
-
-const toImageUrls = (fm: any): string[] => {
-  const out: string[] = [];
-  const push = (x: any) => {
-    if (typeof x === "string" && x.trim()) out.push(x.trim());
-  };
-  const readList = (arr: any[]) => {
-    for (const it of arr) {
-      if (typeof it === "string") push(it);
-      else if (it && typeof it === "object") push(it.photo ?? it.image ?? it.src ?? it.url);
-    }
-  };
-
-  if (Array.isArray(fm?.images)) readList(fm.images);
-  if (Array.isArray(fm?.photos)) readList(fm.photos);
-  if (Array.isArray(fm?.gallery)) readList(fm.gallery);
-  if (Array.isArray(fm?.media)) readList(fm.media);
-
-  push(fm?.cover);
-  push(fm?.thumbnail);
-  push(fm?.thumb);
-  push(fm?.image);
-
-  return Array.from(new Set(out));
-};
-
-const stripFrontmatter = (raw: string) => raw.replace(/^---[\s\S]*?---\s*/m, "").trim();
 
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/gallery/*.md");
 
@@ -65,10 +39,6 @@ const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
 
 <SectionLayout title="Gallery">
   <style is:global>
-    :root{
-      --kr-font: "Noto Sans KR", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-    }
-
     .gallery-wrap{
       max-width: 1180px;
       margin: 0 auto;
@@ -85,46 +55,12 @@ const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
       border-bottom: 0;
     }
 
-    /* ✅ 제목: 중앙정렬 X, 폰트 Noto Sans KR, 크기 “뉴스 화면처럼” */
-    .gpost-header{
-      text-align: left;
-      margin-bottom: 18px;
-    }
-    .gpost-title{
-      margin: 0;
-      font-family: var(--kr-font);
-      font-weight: 800;
-      font-size: 30px;      /* ✅ 크게 */
-      line-height: 1.12;
-      letter-spacing: -0.02em;
-    }
-    .gpost-date{
-      margin-top: 10px;
-      font-family: var(--kr-font);
-      font-size: 16px;
-      color: var(--muted, #6b7280);
-    }
-
-    /* ✅ 본문도 Noto Sans KR + 크기/행간 */
-    .gpost-body{
-      margin-top: 18px;
-      font-family: var(--kr-font);
-      font-size: 17px;
-      line-height: 1.85;
-      color: var(--text, #111827);
-    }
-    .gpost-body :global(p){ margin: 0 0 12px 0; }
-    .gpost-body :global(a){ text-decoration: underline; }
-
     @media (max-width: 900px){
       .gallery-list{ row-gap: 90px !important; }
-      .gpost-title{ font-size: 36px; }
     }
     @media (max-width: 520px){
       .gallery-wrap{ padding: 0 14px; }
       .gallery-list{ row-gap: 72px !important; }
-      .gpost-title{ font-size: 30px; }
-      .gpost-body{ font-size: 16px; }
     }
   </style>
 

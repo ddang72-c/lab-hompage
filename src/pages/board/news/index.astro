@@ -1,35 +1,10 @@
 ---
 import SectionLayout from "../../../layouts/SectionLayout.astro";
 import GalleryAlbum from "../../../components/gallery/GalleryAlbum.tsx";
+import { stripFrontmatter, toImageUrls } from "../../../lib/board";
 import type { MarkdownInstance } from "astro";
 
 type FM = Record<string, any>;
-
-const toImageUrls = (fm: any): string[] => {
-  const out: string[] = [];
-  const push = (x: any) => {
-    if (typeof x === "string" && x.trim()) out.push(x.trim());
-  };
-  const readList = (arr: any[]) => {
-    for (const it of arr) {
-      if (typeof it === "string") push(it);
-      else if (it && typeof it === "object") push(it.photo ?? it.image ?? it.src ?? it.url);
-    }
-  };
-
-  if (Array.isArray(fm?.images)) readList(fm.images);
-  if (Array.isArray(fm?.photos)) readList(fm.photos);
-  if (Array.isArray(fm?.gallery)) readList(fm.gallery);
-  if (Array.isArray(fm?.media)) readList(fm.media);
-
-  push(fm?.cover);
-  push(fm?.thumbnail);
-  push(fm?.thumb);
-
-  return Array.from(new Set(out));
-};
-
-const stripFrontmatter = (raw: string) => raw.replace(/^---[\s\S]*?---\s*/m, "").trim();
 
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/board/news/*.md");
 

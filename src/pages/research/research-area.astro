@@ -2,11 +2,6 @@
 import SectionLayout from "../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
-const nav = [
-  { label: "Research area", href: "/research/research-area/" },
-  { label: "Facilities", href: "/research/facilities/" },
-];
-
 const modules = import.meta.glob<MarkdownInstance<any>>("/src/content/research/research-area.md");
 const page = (await Promise.all(Object.values(modules).map((fn) => fn())))[0];
 if (!page) throw new Error("Missing: /src/content/research/research-area.md");
@@ -15,11 +10,6 @@ const { Content, frontmatter } = page;
 const t = frontmatter.title ?? "Research area";
 ---
 
-<SectionLayout
-  title={t}
-  sectionLabel="RESEARCH"
-  navItems={nav}
-  heroImage="/images/sub-hero.jpg"
->
+<SectionLayout title={t}>
   <Content />
 </SectionLayout>
