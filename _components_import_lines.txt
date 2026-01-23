@@ -1,2 +1,0 @@
-﻿import Footer from "../components/site/Footer.astro";
-import Header from "../components/site/Header.astro";

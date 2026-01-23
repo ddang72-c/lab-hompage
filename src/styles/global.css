@@ -20,7 +20,12 @@
 }
 
 html, body {
-  overflow-x: visible;
+  overflow-x: hidden;
+}
+
+img, svg, video, canvas {
+  max-width: 100%;
+  height: auto;
 }
 
 body {
@@ -49,18 +54,32 @@ a:hover {
 /* =========================
    Header
 ========================= */
-.site-header {
+:root{
+  --header-h: 74px; /* 데스크탑 헤더 높이(필요하면 70~86 사이로 조절) */
+}
+
+@media (max-width: 768px){
+  :root{
+    --header-h: 62px; /* 모바일 헤더 높이(필요하면 58~70 사이) */
+  }
+}
+
+.site-header{
   width: 100%;
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 3000;
-  background: #fff;             /* 스크롤 시 뒤가 비치지 않게 */
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  background: #fff;
   border-bottom: 1px solid var(--line);
 }
 
-.header-main {
-  border-bottom: 1px solid var(--line);
-  background: #fff;
+/* 기존 .header-main sticky는 불필요하니 제거하거나 position 지정 안 해도 됨 */
+.header-main{
+  position: relative;
+  z-index: 1;
+  background: transparent;
 }
 
 .header-main-inner {
@@ -68,7 +87,7 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 13px 0;
+  padding: 0;
 }
 
 .brand {
@@ -78,30 +97,14 @@ a:hover {
   text-decoration: none;
 }
 
-.brand-logo {
-  width: 60px;
-  height: 60px;
+.brand-logo{
+  height: 63px;        /* 데스크탑에서 적당 */
+  width: auto;
+  max-width: 220px;    /* 220x63 로고가 잘리지 않게 */
   object-fit: contain;
-  flex: 0 0 auto;
-}
+  display: block;
 
-.brand-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.brand-title {
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  font-size: 16px;
-  color: var(--brand);
-}
-
-.brand-sub {
-  margin-top: 2px;
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--brand);
+  transform: translateY(-1px); /* ✅ 필요할 때만 */
 }
 
 .nav-toggle {
@@ -114,15 +117,21 @@ a:hover {
   line-height: 1;
 }
 
+.header-main-inner--wide{
+  width: 100%;
+  padding-left: var(--main-pad);
+  padding-right: var(--main-pad);
+}
+
 /* main nav (desktop) */
-.gnb {
-  position: relative;
+.gnb{
+  transform: translateY(-2.5px);
 }
 
 .gnb .gnb-list {
   list-style: none;
   display: flex;
-  gap: 90px;
+  gap: 20px;
   padding: 0;
   margin: 0;
   align-items: center;
@@ -132,22 +141,34 @@ a:hover {
   position: relative;
 }
 
-.gnb-link {
+.gnb-link{
   font-weight: 700;
-  font-size: 20px;
+  font-size: 22px;
   text-decoration: none;
-  padding: 9px 9px;
-  display: inline-block;
+
+  display: flex;           /* inline-block -> flex */
+  align-items: center;     /* ✅ 글자를 세로 중앙에 */
+  line-height: 1;          /* ✅ 아래로 처져 보이는 느낌 제거 */
+  padding: 10px 10px;
+
   color: #3a4048;
 }
 
-/* dropdown */
-.dropdown {
+/* 기준점(li) */
+.gnb-item{
+  position: relative;
+}
+
+/* 드롭다운 박스 */
+.dropdown{
   list-style: none;
   position: absolute;
-  top: 34px;
+  top: 100%;              /* 끊김 방지: 메뉴에 "딱 붙게" */
   left: 0;
-  min-width: 180px;
+
+  width: 100%;            /* ✅ 메뉴(gnb-item) 폭과 동일 */
+  min-width: 0;           /* 기존 min-width:180px 무력화 */
+
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -155,22 +176,30 @@ a:hover {
   margin: 0;
   display: none;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-  z-index: 2000;
+  z-index: 9999;
+
+  text-align: center;     /* ✅ 드롭다운 글자 중앙정렬 */
 }
 
-.gnb-item:hover .dropdown {
+/* hover 시 보이기 */
+.gnb-item:hover .dropdown{
   display: block;
 }
 
-.dropdown-item a {
+/* 항목 */
+.dropdown-item a{
   display: block;
   padding: 8px 10px;
   border-radius: 8px;
+  text-align: center;     /* ✅ 링크도 중앙정렬 확실히 */
+  font-size: 14px;
 }
-.dropdown-item a:hover {
+
+.dropdown-item a:hover{
   background: var(--bg-soft);
   text-decoration: none;
 }
+
 
 /* ✅ 모바일 오버레이 (기본은 숨김) */
 .mobile-overlay {
@@ -181,7 +210,7 @@ a:hover {
    Main
 ========================= */
 main.site-main {
-  padding: var(--main-pad) 0 60px;
+  padding: calc(var(--main-pad) + var(--header-h)) 0 60px;
 }
 
 h1 {
@@ -308,152 +337,6 @@ h2 {
 }
 
 /* =========================
-   Home (Main)
-========================= */
-.home-hero {
-  position: relative;
-  min-height: 520px;
-  overflow: hidden;
-
-  /* 풀폭 */
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-}
-
-/* 배경 이미지 */
-.home-hero-bg {
-  position: absolute;
-  inset: 0;
-  background-image: var(--home-hero-url);
-  background-size: cover;
-  background-position: center;
-  transform: scale(1.02);
-}
-
-/* 오버레이 (텍스트 가독성용) */
-.home-hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.65) 0%,
-    rgba(255, 255, 255, 0.55) 35%,
-    rgba(255, 255, 255, 0.35) 100%
-  );
-}
-
-.home-hero-inner {
-  position: relative;
-  z-index: 1;
-  min-height: 520px;
-  display: grid;
-  place-items: center;
-  padding: 54px 0 60px;
-  text-align: center;
-}
-
-.home-hero-line {
-  width: 44px;
-  height: 4px;
-  background: var(--brand);
-  margin: 0 auto 18px;
-  border-radius: 999px;
-}
-
-.home-hero-title {
-  margin: 0;
-  font-size: 44px;
-  line-height: 1.15;
-  font-weight: 800;
-  color: #1f2937;
-  letter-spacing: -0.02em;
-}
-
-.home-hero-sub {
-  margin-top: 14px;
-  font-size: 34px;
-  font-weight: 900;
-  color: var(--brand);
-  letter-spacing: -0.03em;
-}
-
-.home-quick {
-  margin-top: 36px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  width: min(760px, 100%);
-  border-radius: 0;
-  overflow: hidden;
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.18);
-}
-
-.home-quick-btn {
-  display: grid;
-  place-items: center;
-  gap: 10px;
-  padding: 26px 10px;
-  color: #fff;
-  text-decoration: none;
-  font-weight: 800;
-}
-
-/* 4칸 컬러(원하면 조정) */
-.home-quick-btn:nth-child(1) {
-  background: #1c94ef;
-}
-.home-quick-btn:nth-child(2) {
-  background: #23c0db;
-}
-.home-quick-btn:nth-child(3) {
-  background: #0da8b6;
-}
-.home-quick-btn:nth-child(4) {
-  background: #427edf;
-}
-
-.home-quick-btn:hover {
-  text-decoration: none;
-  filter: brightness(0.98);
-}
-
-.home-quick-icon {
-  line-height: 0;
-}
-
-.home-quick-icon .qi {
-  width: 44px;
-  height: 44px;
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.95);
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.home-quick-label {
-  font-size: 14px;
-  letter-spacing: 0.04em;
-}
-
-/* 모바일 */
-@media (max-width: 900px) {
-  .home-hero,
-  .home-hero-inner {
-    min-height: 520px;
-  }
-  .home-hero-title {
-    font-size: 32px;
-  }
-  .home-hero-sub {
-    font-size: 26px;
-  }
-  .home-quick {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* =========================
    Footer
 ========================= */
 .site-footer {
@@ -496,7 +379,7 @@ h2 {
 /* =========================
    Mobile
 ========================= */
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .nav-toggle {
     display: inline-block;
   }
@@ -618,8 +501,8 @@ h2 {
   }
 
   .brand-logo {
-    width: 44px;
-    height: 44px;
+    height: 44px;      /* 모바일에서 체감 크게 */
+    max-width: 220px;  /* 로고 원본 가로폭 근처로 */
   }
 
   .pub-year {

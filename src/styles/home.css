@@ -1,0 +1,208 @@
+/* Home slider */
+.home-slider{
+  width: min(1080px, 90%);  /* ✅ 슬라이드 크기 90% */
+  margin: 0 auto;
+  padding: 9px 0 8px;       /* ✅ 헤더와 간격: 기존 대비 절반 수준 */
+}
+
+.home-slider-viewport{
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 0px;
+  background: #fff;
+}
+
+.home-slider-track{
+  display: flex;
+  transition: transform 420ms ease;
+  will-change: transform;
+}
+
+.home-slide{
+  flex: 0 0 100%;
+  margin: 0;
+}
+
+.home-slide img{
+  width: 100%;
+  height: clamp(260px, 42vw, 520px);
+  object-fit: cover;
+  display: block;
+}
+
+/* Arrow buttons */
+.slider-btn{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 2;
+
+  /* ✅ 기본은 완전 숨김 */
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 180ms ease, background 180ms ease;
+}
+
+.slider-btn svg{
+  width: 22px;
+  height: 22px;
+}
+
+.slider-btn--prev{ left: 16px; }
+.slider-btn--next{ right: 16px; }
+
+.slider-btn:hover{ background: rgba(0,0,0,0.45); }
+.slider-btn:active{ background: rgba(0,0,0,0.55); }
+
+/* ✅ 슬라이더 영역에 마우스 올리거나, 버튼에 키보드 포커스 들어오면 표시 */
+.home-slider:hover .slider-btn,
+.home-slider:focus-within .slider-btn{
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+
+
+.slider-btn svg{
+  width: 22px;
+  height: 22px;
+}
+
+.slider-btn--prev{ left: 16px; }
+.slider-btn--next{ right: 16px; }
+
+.slider-btn:hover{ background: rgba(0,0,0,0.45); }
+.slider-btn:active{ background: rgba(0,0,0,0.55); }
+
+@media (max-width: 768px){
+  .home-slider{
+    padding-top: 5px; /* 모바일에서도 간격 절반 */
+    width: 92%;       /* 모바일은 90%가 답답하면 92% 정도가 예쁨(원하면 90%로 통일 가능) */
+  }
+
+  .home-slide img{ height: clamp(200px, 52vw, 340px); }
+
+  .slider-btn{ width: 40px; height: 40px; }
+  .slider-btn--prev{ left: 10px; }
+  .slider-btn--next{ right: 10px; }
+}
+
+/* Dots (display only) */
+.home-slider-dots{
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+
+  /* ✅ 사진(슬라이더)와 도트 사이 여유 */
+  padding: 15px 0 28px;   /* 위/아래 간격 조절 */
+}
+
+.dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.18);
+}
+
+.dot.is-active{
+  background: rgba(0,0,0,0.55);
+}
+
+/* Thin gray rule under dots */
+.home-slider-rule{
+  width: 100%;            /* ✅ 슬라이드(= .home-slider) 폭과 동일 */
+  height: 1px;
+  background: rgba(0,0,0,0.12);
+
+  /* ✅ 도트와 회색선 사이 여유 */
+  margin: 5px auto 5px;    /* 위쪽만 띄우고 아래는 0 */
+}
+
+/* About section (under slider rule) */
+.home-about{
+  width: min(1080px, 90%);
+  margin: 0 auto;
+  padding: 44px 0 36px;
+}
+
+.home-about-inner{
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr;
+  gap: 36px;
+  align-items: center;
+}
+
+.home-about-media{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-about-image{
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  display: block;
+}
+
+.home-about-title{
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.home-about-text{
+  margin: 0 0 18px;
+  line-height: 1.7;
+  color: rgba(0,0,0,0.75);
+  font-size: 15px;
+}
+
+.home-about-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: min(520px, 100%);
+  height: 42px;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 4px;         /* HRG 느낌(각진 버튼) */
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(0,0,0,0.75);
+}
+
+.home-about-btn:hover{
+  border-color: rgba(0,0,0,0.35);
+}
+
+.home-section-rule{
+  width: min(1080px, 90%);
+  margin: 0 auto;
+  height: 1px;
+  background: rgba(0,0,0,0.12);
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .home-about{
+    padding: 34px 0 26px;
+  }
+  .home-about-inner{
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .home-about-btn{
+    width: 100%;
+  }
+}
