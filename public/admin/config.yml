@@ -42,15 +42,11 @@ collections:
 
   - name: professor
     label: Professor
-    folder: "src/content/people"
-    create: false
-    delete: false
-    extension: md
-    format: frontmatter
     files:
       - name: professor
         label: Professor Profile
         file: "src/content/people/professor.md"
+        format: frontmatter
         fields:
           - { label: "Name", name: "name", widget: "string", required: true }
           - { label: "Body", name: "body", widget: "markdown", required: false }
