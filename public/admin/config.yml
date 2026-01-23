@@ -135,7 +135,13 @@ collections:
       - { label: Year, name: year, widget: number, value_type: int }
 
       - { label: Logo Image (optional), name: logoImage, widget: image, required: false }
-      - { label: Logo URL (optional), name: logoUrl, widget: string, required: false, hint: "업로드 대신 로고 이미지 URL을 넣을 수 있음" }
+      - {
+          label: Logo URL (optional),
+          name: logoUrl,
+          widget: string,
+          required: false,
+          hint: "업로드 대신 로고 이미지 URL을 넣을 수 있음",
+        }
 
       - { label: Authors, name: authors, widget: string, required: false }
       - { label: Link, name: link, widget: string, required: false }
@@ -151,7 +157,13 @@ collections:
       - { label: Year, name: year, widget: number, value_type: int }
 
       - { label: Logo Image (optional), name: logoImage, widget: image, required: false }
-      - { label: Logo URL (optional), name: logoUrl, widget: string, required: false, hint: "업로드 대신 로고 이미지 URL을 넣을 수 있음" }
+      - {
+          label: Logo URL (optional),
+          name: logoUrl,
+          widget: string,
+          required: false,
+          hint: "업로드 대신 로고 이미지 URL을 넣을 수 있음",
+        }
 
       - { label: Authors, name: authors, widget: string, required: false }
       - { label: Link, name: link, widget: string, required: false }
@@ -165,6 +177,7 @@ collections:
         file: "src/content/home/home.md"
         fields:
           - { label: "Title", name: "title", widget: "string", required: false }
+
           - label: "Slides"
             name: "slides"
             widget: "list"
@@ -173,12 +186,12 @@ collections:
               - { label: "Image", name: "image", widget: "image" }
               - { label: "Alt", name: "alt", widget: "string", required: false }
 
-  - label: "About section"
-    name: "about"
-    widget: "object"
-    fields:
-      - { label: "Image", name: "image", widget: "image", required: false }
-      - { label: "Title", name: "title", widget: "string", required: false }
-      - { label: "Text", name: "text", widget: "text", required: false }
-      - { label: "Button text", name: "buttonText", widget: "string", required: false }
-      - { label: "Button link", name: "buttonLink", widget: "string", required: false }
+          - label: "About section"
+            name: "about"
+            widget: "object"
+            fields:
+              - { label: "Image", name: "image", widget: "image", required: false }
+              - { label: "Title", name: "title", widget: "string", required: false }
+              - { label: "Text", name: "text", widget: "text", required: false }
+              - { label: "Button text", name: "buttonText", widget: "string", required: false }
+              - { label: "Button link", name: "buttonLink", widget: "string", required: false }
