@@ -11,7 +11,7 @@ title: Research Area
 
 (중간에 그림을 끼워 넣고 싶은 위치에 아래 Figure 블록을 넣으면 됨)
 
-<figure class="rc-figure rc-figure--full" style="--rc-w: 20%;">
+<figure class="rc-figure rc-figure--center" style="--rc-w: 20%;">
   <img src="/uploads/스크린샷-2024-12-21-221820.png" alt="" />
   <figcaption>Figure 1. (캡션을 여기에)</figcaption>
 </figure>
