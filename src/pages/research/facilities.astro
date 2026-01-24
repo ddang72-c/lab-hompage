@@ -2,14 +2,101 @@
 import SectionLayout from "../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
-const modules = import.meta.glob<MarkdownInstance<any>>("/src/content/research/facilities.md");
-const page = (await Promise.all(Object.values(modules).map((fn) => fn())))[0];
-if (!page) throw new Error("Missing: /src/content/research/facilities.md");
+type FM = { title?: string; image?: string };
 
-const { Content, frontmatter } = page;
-const t = frontmatter.title ?? "Facilities";
+const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/research/facilities/*.md");
+
+const items = await Promise.all(
+  Object.entries(modules).map(async ([path, loader]) => {
+    const entry = await loader();
+    const title = (entry.frontmatter?.title ?? "Untitled").toString();
+    const image = (entry.frontmatter?.image ?? "").toString();
+    const Content = entry.Content;
+    return { path, title, image, Content };
+  })
+);
+
+// 정렬: title 기준(원하면 파일명 기준으로 바꿔도 됨)
+items.sort((a, b) => a.title.localeCompare(b.title));
 ---
 
-<SectionLayout title={t}>
-  <Content />
+<SectionLayout title="Facilities">
+  <style is:global>
+    .fac-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 18px;
+      margin-top: 24px;
+    }
+
+    /* ✅ 한 줄에 2개 카드 */
+    .fac-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    /* ✅ 카드(직각 모서리) */
+    .fac-card {
+      display: flex;
+      gap: 18px;
+      padding: 16px;
+      border: 1px solid #eee;
+      border-radius: 0; /* 직각 */
+      background: #fff;
+    }
+
+    /* ✅ 사진 크기: 학생 사진 정도(160) */
+    .fac-img {
+      width: 160px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 0; /* 직각 */
+      flex: 0 0 auto;
+    }
+
+    .fac-title {
+      margin: 0 0 10px 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .fac-body {
+      line-height: 1.7;
+      margin-top: 6px;
+    }
+
+    /* 모바일에서는 1열 */
+    @media (max-width: 900px) {
+      .fac-grid {
+        grid-template-columns: 1fr;
+      }
+      .fac-card {
+        flex-direction: column;
+      }
+      .fac-img {
+        width: 100%;
+        height: 220px;
+      }
+    }
+  </style>
+
+  <div class="fac-wrap">
+    <div class="fac-grid">
+      {items.map((it) => (
+        <article class="fac-card">
+          {it.image && <img class="fac-img" src={it.image} alt="" loading="lazy" />}
+          <div style="flex:1; min-width:0;">
+            <h2 class="fac-title">{it.title}</h2>
+            <div class="fac-body">
+              <it.Content />
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    {items.length === 0 && <p class="muted" style="margin-top: 18px;">No facilities yet.</p>}
+  </div>
 </SectionLayout>
