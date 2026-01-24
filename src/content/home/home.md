@@ -14,21 +14,7 @@ about:
     concept and method are very simple, transport measurement is very powerful
     tool to explore the properties of materials from metal to insulator with
     optimized electrode configuration and under various experimental
-    environments. For example, we can distinguish metal and semiconductor by
-    resistance behavior depending on temperature, we can modulate the
-    conductance of semiconductors by applying gate voltage with three-electrode
-    transistor configuration, we can construct Fermi surface of metal by
-    magnetoresistance oscillations depending on magnetic field and so on.
-    Recently, I am interested in the two dimensional materials like graphene and
-    transition metal dichalcogenides from their basic properties to device
-    applications. Different from previous research, the functional oxides with
-    unique properties such as high-k or ferroelectrics are used as substrates to
-    control the physical properties and to improve the device performance. The
-    features of functional oxide thin films can be well characterized by quantum
-    conductance of graphene, which is utilized to design high performance
-    devices. Moreover, the heterostructures with two-dimensional materials and
-    oxide thin film have been expected to show interesting phenomena due to
-    interface effects.
+    environments.
   buttonText: More about Research Area
   buttonLink: /research/research-area/
 ---
