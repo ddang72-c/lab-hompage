@@ -1,7 +1,7 @@
 ---
 title: Research Area
 ---
-\## Bandgap opening in few-layered monoclinic MoTe2  
+##  **   Bandgap opening in few-layered monoclinic MoTe2**  
 
 \*\*Nature Physics 11, 482\*\*
 
