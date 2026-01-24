@@ -512,3 +512,108 @@ h2 {
     font-size: 20px;
   }
 }
+/* =========================
+   Rich Content Blocks (CMS)
+   - Use inside markdown body
+   - Figure / Float / Two-up
+========================= */
+
+/* 기본 figure */
+.rc-figure {
+  margin: 26px auto;
+  max-width: var(--rc-w, 820px);
+}
+
+.rc-figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
+
+.rc-figure figcaption {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  opacity: 0.75;
+}
+
+/* align variants */
+.rc-figure--full {
+  max-width: 100%;
+}
+
+.rc-figure--left {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.rc-figure--right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* float (텍스트 감싸기) */
+.rc-float {
+  width: min(var(--rc-w, 320px), 100%);
+  margin: 6px 0 16px 18px;
+}
+
+.rc-float--right {
+  float: right;
+  margin-left: 18px;
+  margin-right: 0;
+}
+
+.rc-float--left {
+  float: left;
+  margin-right: 18px;
+  margin-left: 0;
+}
+
+.rc-float img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
+
+.rc-float figcaption {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+
+/* float 해제 */
+.rc-clear {
+  clear: both;
+}
+
+/* two-up grid */
+.rc-two-up {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 26px 0;
+  clear: both; /* float 위/아래 충돌 방지 */
+}
+
+.rc-two-up .rc-figure {
+  margin: 0;
+  max-width: 100%;
+}
+
+/* mobile */
+@media (max-width: 900px) {
+  .rc-float--left,
+  .rc-float--right {
+    float: none;
+    margin: 18px auto;
+    width: min(var(--rc-w, 520px), 100%);
+  }
+
+  .rc-two-up {
+    grid-template-columns: 1fr;
+  }
+}
