@@ -22,7 +22,6 @@ collections:
         widget: list
         required: false
         field: { label: Photo, name: photo, widget: image }
-
       - { label: Body, name: body, widget: markdown, required: false }
 
   - name: gallery
@@ -129,7 +128,6 @@ collections:
     fields:
       - { label: Title, name: title, widget: string }
       - { label: Year, name: year, widget: number, value_type: int }
-
       - { label: Logo Image (optional), name: logoImage, widget: image, required: false }
       - {
           label: Logo URL (optional),
@@ -138,7 +136,6 @@ collections:
           required: false,
           hint: "업로드 대신 로고 이미지 URL을 넣을 수 있음",
         }
-
       - { label: Authors, name: authors, widget: string, required: false }
       - { label: Link, name: link, widget: string, required: false }
       - { label: Body, name: body, widget: markdown, required: false }
@@ -151,7 +148,6 @@ collections:
     fields:
       - { label: Title, name: title, widget: string }
       - { label: Year, name: year, widget: number, value_type: int }
-
       - { label: Logo Image (optional), name: logoImage, widget: image, required: false }
       - {
           label: Logo URL (optional),
@@ -160,27 +156,26 @@ collections:
           required: false,
           hint: "업로드 대신 로고 이미지 URL을 넣을 수 있음",
         }
-
       - { label: Authors, name: authors, widget: string, required: false }
       - { label: Link, name: link, widget: string, required: false }
       - { label: Body, name: body, widget: markdown, required: false }
 
-  - name: "home"
-    label: "Home"
+  - name: home
+    label: Home
     files:
-      - name: "home"
-        label: "Home Page"
+      - name: home
+        label: Home Page
         file: "src/content/home/home.md"
+        format: frontmatter
         fields:
           - { label: "Title", name: "title", widget: "string", required: false }
 
           - label: "Slides"
             name: "slides"
             widget: "list"
-            summary: "{{fields.alt}}"
+            summary: "{{fields.image}}"
             fields:
               - { label: "Image", name: "image", widget: "image" }
-              - { label: "Alt", name: "alt", widget: "string", required: false }
 
           - label: "About section"
             name: "about"
@@ -191,3 +186,15 @@ collections:
               - { label: "Text", name: "text", widget: "text", required: false }
               - { label: "Button text", name: "buttonText", widget: "string", required: false }
               - { label: "Button link", name: "buttonLink", widget: "string", required: false }
+
+  - name: research
+    label: Research
+    files:
+      - name: research_area
+        label: Research Area
+        file: "src/content/research/research-area.md"
+        format: frontmatter
+        fields:
+          # 기존 파일에 title이 있다면, CMS 저장 시 날아가지 않게 hidden으로 유지
+          - { label: "Title", name: "title", widget: "hidden", default: "Research Area" }
+          - { label: "Body", name: "body", widget: "markdown", required: false }
