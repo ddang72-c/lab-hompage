@@ -2,14 +2,74 @@
 import SectionLayout from "../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
-const modules = import.meta.glob<MarkdownInstance<any>>("/src/content/research/research-area.md");
-const page = (await Promise.all(Object.values(modules).map((fn) => fn())))[0];
-if (!page) throw new Error("Missing: /src/content/research/research-area.md");
+type FM = Record<string, any>;
 
-const { Content, frontmatter } = page;
-const t = frontmatter.title ?? "Research area";
+const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/research/posts/*.md");
+
+const posts = await Promise.all(
+  Object.entries(modules).map(async ([path, loader]) => {
+    const entry = await loader();
+    const title = (entry.frontmatter?.title ?? "Untitled").toString();
+    const order = Number(entry.frontmatter?.order ?? 0);
+    const Content = entry.Content;
+    return { path, title, order, Content };
+  })
+);
+
+// ✅ 정렬: order 큰 글이 위, 동점이면 파일명(path) 기준 보조 정렬
+posts.sort((a, b) => (b.order - a.order) || b.path.localeCompare(a.path));
 ---
 
-<SectionLayout title={t}>
-  <Content />
+<SectionLayout title="Research area">
+  <style is:global>
+    .research-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 18px;
+    }
+
+    /* 카드 느낌 제거 + float 포함해도 레이아웃 안정 */
+    .research-post {
+      display: flow-root;
+      padding: 28px 0;
+    }
+
+    /* ✅ 글과 글 사이 얇은 회색선 */
+    .research-post + .research-post {
+      border-top: 1px solid #e5e5e5;
+    }
+
+    .research-title {
+      margin: 0 0 14px 0;
+      font-size: 1.55rem;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    /* float가 들어가도 마지막에 깨끗하게 정리 */
+    .research-body::after {
+      content: "";
+      display: block;
+      clear: both;
+    }
+
+    /* ✅ Figure(이미지+캡션) 중앙 정렬 보강 */
+    .rc-figure {
+      text-align: center;
+    }
+    .rc-figure figcaption {
+      text-align: center;
+    }
+  </style>
+
+  <div class="research-wrap">
+    {posts.map((p) => (
+      <article class="research-post">
+        <h2 class="research-title">{p.title}</h2>
+        <div class="research-body">
+          <p.Content />
+        </div>
+      </article>
+    ))}
+  </div>
 </SectionLayout>

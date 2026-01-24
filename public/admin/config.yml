@@ -189,12 +189,18 @@ collections:
 
   - name: research
     label: Research
-    files:
-      - name: research_area
-        label: Research Area
-        file: "src/content/research/research-area.md"
-        format: frontmatter
-        fields:
-          # 기존 파일에 title이 있다면, CMS 저장 시 날아가지 않게 hidden으로 유지
-          - { label: "Title", name: "title", widget: "hidden", default: "Research Area" }
-          - { label: "Body", name: "body", widget: "markdown", required: false }
+    folder: src/content/research/posts
+    create: true
+    slug: "{{slug}}"
+    summary: "{{order}} - {{title}}"
+    fields:
+      - {
+          label: "Order",
+          name: "order",
+          widget: "number",
+          value_type: "int",
+          required: false,
+          hint: "큰 숫자가 위로. 예: 100, 90, 80...",
+        }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Body", name: "body", widget: "markdown", required: false }
