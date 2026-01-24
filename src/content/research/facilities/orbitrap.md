@@ -1,7 +1,5 @@
 ---
-title: "Orbitrap analyzer"
-image: "/uploads/orbitrap.png"
+title: 드론
+image: /uploads/스크린샷-2025-02-04-104823.png
 ---
-
-여기에 내용(설명)을 쓰면 돼.  
-마크다운으로 자유롭게 작성 가능.
+이것은 드론입니다.
