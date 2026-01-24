@@ -617,3 +617,11 @@ h2 {
     grid-template-columns: 1fr;
   }
 }
+.rc-figure { 
+  margin: 26px auto;
+  text-align: center;   /* ✅ 캡션/내부 요소 가운데 */
+}
+
+.rc-figure figcaption {
+  text-align: center;   /* ✅ 캡션 가운데 */
+}
