@@ -4,11 +4,11 @@ title: Quantum Transport Measurements under Extreme Conditions 극한 환경에�
 ---
 
 
-
-
 <figure class="rc-float rc-float--right" style="--rc-w: 60%;">
   <img src="/uploads/ppt1.png" alt="" />
 </figure>
+
+
 
 **KR:**
 저온, 고자기장 등 극한 환경에서 전하 수송 특성을 정밀 측정하여 저차원 시스템에서 나타나는 양자 수송 현상과 상전이를 연구.
