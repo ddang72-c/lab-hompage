@@ -2,17 +2,20 @@
 import SectionLayout from "../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
-type FM = { title?: string; image?: string };
+type FM = { title?: string; image?: string; link?: string };
 
-const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/research/facilities/*.md");
+const modules = import.meta.glob<MarkdownInstance<FM>>(
+  "/src/content/research/facilities/*.md"
+);
 
 const items = await Promise.all(
   Object.entries(modules).map(async ([path, loader]) => {
     const entry = await loader();
     const title = (entry.frontmatter?.title ?? "Untitled").toString();
     const image = (entry.frontmatter?.image ?? "").toString();
+    const link = (entry.frontmatter?.link ?? "").toString().trim(); // ✅ 옵션
     const Content = entry.Content;
-    return { path, title, image, Content };
+    return { path, title, image, link, Content };
   })
 );
 
@@ -56,7 +59,7 @@ items.sort((a, b) => a.title.localeCompare(b.title));
     }
 
     .fac-title {
-      margin: 0 0 10px 0;
+      margin: 0 0 6px 0;
       font-size: 1.2rem;
       font-weight: 700;
       line-height: 1.25;
@@ -87,8 +90,19 @@ items.sort((a, b) => a.title.localeCompare(b.title));
       {items.map((it) => (
         <article class="fac-card">
           {it.image && <img class="fac-img" src={it.image} alt="" loading="lazy" />}
+
           <div style="flex:1; min-width:0;">
             <h2 class="fac-title">{it.title}</h2>
+
+            {/* ✅ link는 옵션: 있으면 저널처럼 "link"만 표시 */}
+            {it.link && (
+              <div style="margin-top: 2px;">
+                <a class="pub-btn" href={it.link} target="_blank" rel="noreferrer">
+                  link
+                </a>
+              </div>
+            )}
+
             <div class="fac-body">
               <it.Content />
             </div>

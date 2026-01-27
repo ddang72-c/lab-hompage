@@ -56,33 +56,20 @@ collections:
     folder: src/content/people/students
     create: true
     slug: "{{slug}}"
-    summary: "{{order}} - {{name}}"
+    summary: "{{order}} - {{title}}"
     fields:
-      - { label: Name, name: name, widget: string }
-      - {
-          label: Role/Status,
-          name: role,
-          widget: string,
-          required: false,
-          hint: "예: Ph.D / M.S / Undergrad 등",
-        }
-      - { label: Email, name: email, widget: string, required: false }
+      - { label: Title, name: title, widget: string }
+      - { label: Affiliation, name: Affiliation, widget: string, required: false }
+      - { label: Position, name: position, widget: string, required: false, hint: "예: Ph.D / M.S / Undergrad 등" }
+      - { label: Contact, name: contact, widget: string, required: false, hint: "이메일 또는 링크" }
       - { label: Photo, name: photo, widget: image, required: false }
-      - {
-          label: Period,
-          name: period,
-          widget: string,
-          required: false,
-          hint: "예: 2023–present, 2019–2023",
-        }
-      - { label: Note, name: body, widget: markdown, required: false }
       - {
           label: Order,
           name: order,
           widget: number,
           value_type: int,
           required: false,
-          hint: "정렬용 숫자(작을수록 위). 비우면 이름순",
+          hint: "정렬용 숫자(작을수록 위). 비우면 title순",
         }
 
   - name: alumni
@@ -91,33 +78,20 @@ collections:
     folder: src/content/people/alumni
     create: true
     slug: "{{slug}}"
-    summary: "{{order}} - {{name}}"
+    summary: "{{order}} - {{title}}"
     fields:
-      - { label: Name, name: name, widget: string }
-      - {
-          label: Role/Status,
-          name: role,
-          widget: string,
-          required: false,
-          hint: "예: Ph.D / M.S / Undergrad / Alumni 등",
-        }
-      - { label: Email, name: email, widget: string, required: false }
+      - { label: Title, name: title, widget: string }
+      - { label: Position, name: position, widget: string, required: false, hint: "예: Ph.D / M.S / Undergrad 등" }
+      - { label: Duration, name: duration, widget: string, required: false, hint: "예: 2022–2025, 2025~" }
+      - { label: Contact, name: contact, widget: string, required: false, hint: "이메일 또는 링크" }
       - { label: Photo, name: photo, widget: image, required: false }
-      - {
-          label: Period,
-          name: period,
-          widget: string,
-          required: false,
-          hint: "예: 2019–2023",
-        }
-      - { label: Note, name: body, widget: markdown, required: false }
       - {
           label: Order,
           name: order,
           widget: number,
           value_type: int,
           required: false,
-          hint: "정렬용 숫자(작을수록 위). 비우면 이름순",
+          hint: "정렬용 숫자(작을수록 위). 비우면 title순",
         }
 
   - name: journal
@@ -202,7 +176,7 @@ collections:
           required: false,
           hint: "큰 숫자가 위로. 예: 100, 90, 80...",
         }
-      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Title", name: "title", widget: "string", required: false }
       - { label: "Body", name: "body", widget: "markdown", required: false }
 
   - name: facilities
@@ -213,4 +187,5 @@ collections:
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Image", name: "image", widget: "image" }
+      - { label: "Link", name: "link", widget: "string", required: false }
       - { label: "Body", name: "body", widget: "markdown", required: false }

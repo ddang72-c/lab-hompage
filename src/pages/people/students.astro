@@ -2,7 +2,15 @@
 import SectionLayout from "../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
-type FM = Record<string, any>;
+type FM = {
+  title?: string;
+  Affiliation?: string;
+  position?: string;
+  contact?: string;
+  photo?: string;
+  order?: number;
+};
+
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/people/students/*.md");
 
 const entries = await Promise.all(
@@ -12,60 +20,134 @@ const entries = await Promise.all(
   })
 );
 
-// order(숫자) 오름차순 → name 오름차순
+const asText = (v: unknown) => (typeof v === "string" ? v.trim() : v == null ? "" : String(v).trim());
+
+const contactHref = (c: string) => {
+  const t = c.trim();
+  if (!t) return "";
+  if (/^https?:\/\//i.test(t)) return t;
+  if (t.includes("@")) return `mailto:${t}`;
+  return t;
+};
+
+// order(숫자) 오름차순 → title 오름차순
 entries.sort((a, b) => {
   const ao = a.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
   const bo = b.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
   if (ao !== bo) return ao - bo;
 
-  const an = (a.entry.frontmatter?.name ?? "").toString();
-  const bn = (b.entry.frontmatter?.name ?? "").toString();
-  return an.localeCompare(bn);
+  const at = asText(a.entry.frontmatter?.title);
+  const bt = asText(b.entry.frontmatter?.title);
+  return at.localeCompare(bt);
 });
 ---
 
 <SectionLayout title="Students">
-  <div style="display:grid; gap:24px; margin-top:24px;">
-    {entries.map(({ entry }) => {
-      const { Content, frontmatter } = entry;
+  <style is:global>
+    .people-list {
+      display: grid;
+      gap: 18px;
+      margin-top: 24px;
+    }
 
-      const name = frontmatter.name ?? "";
-      const role = frontmatter.role ?? "";
-      const email = frontmatter.email ?? "";
-      const photo = frontmatter.photo ?? "";
-      const period = frontmatter.period ?? "";
+    /* 사진처럼: 카드 테두리 없이 아래 구분선 */
+    .people-card {
+      display: flex;
+      gap: 22px;
+      align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .people-photo {
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 0;
+      flex: 0 0 auto;
+      background: #f3f3f3;
+    }
+
+    .people-title {
+      margin: 0;
+      font-size: 1.55rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .people-meta {
+      margin: 10px 0 0 0;
+      padding-left: 20px; /* 불릿 들여쓰기 */
+      line-height: 1.8;
+    }
+
+    .people-meta li b {
+      font-weight: 700;
+    }
+
+    .people-contact a {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 700px) {
+      .people-card {
+        gap: 16px;
+      }
+      .people-photo {
+        width: 92px;
+        height: 92px;
+      }
+      .people-title {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+
+  <div class="people-list">
+    {entries.map(({ entry }) => {
+      const fm = entry.frontmatter ?? {};
+
+      const title = asText(fm.title);
+      const affiliation = asText(fm.Affiliation);
+      const position = asText(fm.position);
+      const contact = asText(fm.contact);
+      const photo = asText(fm.photo);
+
+      const href = contactHref(contact);
 
       return (
-        <article style="display:flex; gap:20px; padding:16px; border:1px solid #eee; border-radius:14px;">
-          {photo && (
-            <img
-              src={photo}
-              alt={name}
-              style="width:160px; height:160px; object-fit:cover; border-radius:12px;"
-              loading="lazy"
-            />
-          )}
+        <article class="people-card">
+          {photo && <img class="people-photo" src={photo} alt={title} loading="lazy" />}
 
-          <div style="flex:1;">
-            <h2 style="margin:0 0 6px 0;">{name}</h2>
+          <div style="flex:1; min-width:0;">
+            <h2 class="people-title">{title}</h2>
 
-            {(role || period) && (
-              <div style="opacity:.8; margin-bottom:10px;">
-                {role}
-                {role && period ? " · " : ""}
-                {period}
-              </div>
+            {(affiliation || position || contact) && (
+              <ul class="people-meta">
+                {affiliation && (
+                  <li>
+                    <b>Affiliation :</b> {affiliation}
+                  </li>
+                )}
+                {position && (
+                  <li>
+                    <b>Position :</b> {position}
+                  </li>
+                )}
+                {contact && (
+                  <li class="people-contact">
+                    <b>Contact :</b>{" "}
+                    {href ? (
+                      <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer">
+                        {contact}
+                      </a>
+                    ) : (
+                      contact
+                    )}
+                  </li>
+                )}
+              </ul>
             )}
-
-            {email && (
-              <div style="margin-bottom:10px;">
-                <b>Email:</b> {email}
-              </div>
-            )}
-
-            <div style="margin-top:12px; line-height:1.7;">
-              <Content />
-            </div>
           </div>
         </article>
       );

@@ -2,16 +2,20 @@
 import SectionLayout from "../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
-type FM = Record<string, any>;
+type FM = { title?: string; order?: number };
 
 const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/research/posts/*.md");
 
 const posts = await Promise.all(
   Object.entries(modules).map(async ([path, loader]) => {
     const entry = await loader();
-    const title = (entry.frontmatter?.title ?? "Untitled").toString();
+
+    const rawTitle = entry.frontmatter?.title;
+    const title = typeof rawTitle === "string" ? rawTitle.trim() : ""; // ✅ 옵션
+
     const order = Number(entry.frontmatter?.order ?? 0);
     const Content = entry.Content;
+
     return { path, title, order, Content };
   })
 );
@@ -65,7 +69,9 @@ posts.sort((a, b) => (b.order - a.order) || b.path.localeCompare(a.path));
   <div class="research-wrap">
     {posts.map((p) => (
       <article class="research-post">
-        <h2 class="research-title">{p.title}</h2>
+        {/* ✅ title은 옵션: 있을 때만 표시 */}
+        {p.title && <h2 class="research-title">{p.title}</h2>}
+
         <div class="research-body">
           <p.Content />
         </div>
