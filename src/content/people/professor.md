@@ -1,6 +1,8 @@
 ---
 name: Haeyong Kang
 ---
+![](/uploads/이현경.jpg)
+
 ## Personal
 
 * ##### Office: 공동연구기기동(311) 508호
