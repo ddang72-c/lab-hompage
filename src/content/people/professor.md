@@ -1,7 +1,9 @@
 ---
 name: Haeyong Kang
 ---
-![](/uploads/이현경.jpg)
+<figure class="rc-float rc-float--right" style="--rc-w: 30%;">
+  <img src="/uploads/이현경.jpg" alt="" />
+</figure>
 
 ## Personal
 
