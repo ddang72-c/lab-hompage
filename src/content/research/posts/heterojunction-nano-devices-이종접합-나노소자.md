@@ -2,7 +2,7 @@
 order: 99
 title: Heterojunction Nano Devices 이종접합 나노소자
 ---
-<figure class="rc-float rc-float--right" style="--rc-w: 60%;">
+<figure class="rc-float rc-float--right" style="--rc-w: 59%;">
   <img src="/uploads/ppt2.png" alt="" />
 </figure>
 
