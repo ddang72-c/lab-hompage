@@ -1,20 +1,18 @@
 ---
 title: Home
 slides:
-  - image: /uploads/스크린샷-2025-02-04-131821.png
-  - image: /uploads/스크린샷-2025-07-10-151816.png
-  - image: /uploads/스크린샷-2025-07-10-153100.png
+  - image: /uploads/ppt1.png
+  - image: /uploads/ppt2.png
+  - image: /uploads/ppt3.png
+  - image: /uploads/ppt4.png
 about:
-  image: /uploads/스크린샷-2024-12-21-221820.png
-  title: About Laboratory of Electronic Transport in Solids
-  text: Electrical transport measurement under various conditions is the main tool
-    of my research. Simple experimental method where current (voltage) is
-    applied through the sample and voltage (current) is measured is conducted to
-    get the information of resistance based on Ohm’s law. Even though the basic
-    concept and method are very simple, transport measurement is very powerful
-    tool to explore the properties of materials from metal to insulator with
-    optimized electrode configuration and under various experimental
-    environments.
+  image: /uploads/스크린샷-2026-01-27-203949.png
+  title: Heterojunction Nano Devices 이종접합 나노소자
+  text: We design and fabricate heterojunction nano devices by integrating 2D
+    materials (graphene and TMDs) with functional substrates and oxides. We
+    develop various fabrication and patterning methods and extend toward
+    applications such as graphene-based oxide detectors and new concepts of
+    transistors.
   buttonText: More about Research Area
   buttonLink: /research/research-area/
 ---
