@@ -60,7 +60,7 @@ collections:
     fields:
       - { label: Title, name: title, widget: string }
       - { label: Affiliation, name: Affiliation, widget: string, required: false }
-      - { label: Position, name: position, widget: string, required: false, hint: "예: Ph.D / M.S / Undergrad 등" }
+      - { label: Joined, name: joined, widget: string, required: false }
       - { label: Contact, name: contact, widget: string, required: false, hint: "이메일 또는 링크" }
       - { label: Photo, name: photo, widget: image, required: false }
       - {

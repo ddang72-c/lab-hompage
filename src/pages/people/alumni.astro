@@ -20,7 +20,8 @@ const entries = await Promise.all(
   })
 );
 
-const asText = (v: unknown) => (typeof v === "string" ? v.trim() : v == null ? "" : String(v).trim());
+const asText = (v: unknown) =>
+  typeof v === "string" ? v.trim() : v == null ? "" : String(v).trim();
 
 const contactHref = (c: string) => {
   const t = c.trim();
@@ -30,7 +31,7 @@ const contactHref = (c: string) => {
   return t;
 };
 
-// order(숫자) 오름차순 → title 오름차순
+// order 오름차순 → title 오름차순
 entries.sort((a, b) => {
   const ao = a.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
   const bo = b.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
@@ -44,104 +45,127 @@ entries.sort((a, b) => {
 
 <SectionLayout title="Alumni">
   <style is:global>
-    .people-list {
-      display: grid;
-      gap: 18px;
+    .people-wrap {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 18px;
       margin-top: 24px;
     }
+
+    .people-list {
+      display: grid;
+      gap: 22px;
+    }
+
     .people-card {
       display: flex;
-      gap: 22px;
+      gap: 34px;
       align-items: flex-start;
-      padding: 14px 0;
+      padding: 22px 0;
       border-bottom: 1px solid #eee;
     }
+
     .people-photo {
-      width: 110px;
-      height: 135px;
+      width: 180px;
+      height: 230px;
       object-fit: cover;
+      object-position: 50% 15%;
       border-radius: 0;
       flex: 0 0 auto;
       background: #f3f3f3;
     }
+
     .people-title {
       margin: 0;
-      font-size: 1.55rem;
+      font-size: 2rem;
       font-weight: 800;
       line-height: 1.2;
     }
+
     .people-meta {
-      margin: 10px 0 0 0;
-      padding-left: 20px;
-      line-height: 1.8;
+      margin: 14px 0 0 0;
+      padding-left: 22px;
+      line-height: 1.9;
+      font-size: 1.05rem;
     }
+
+    .people-meta li b {
+      font-weight: 800;
+    }
+
     .people-contact a {
       text-decoration: underline;
     }
-    @media (max-width: 700px) {
+
+    @media (max-width: 800px) {
       .people-card {
-        gap: 16px;
+        gap: 18px;
       }
       .people-photo {
-        width: 92px;
-        height: 92px;
+        width: 140px;
+        height: 180px;
       }
       .people-title {
-        font-size: 1.3rem;
+        font-size: 1.55rem;
+      }
+      .people-meta {
+        font-size: 1rem;
       }
     }
   </style>
 
-  <div class="people-list">
-    {entries.map(({ entry }) => {
-      const fm = entry.frontmatter ?? {};
+  <div class="people-wrap">
+    <div class="people-list">
+      {entries.map(({ entry }) => {
+        const fm = entry.frontmatter ?? {};
 
-      const title = asText(fm.title);
-      const position = asText(fm.position);
-      const duration = asText(fm.duration);
-      const contact = asText(fm.contact);
-      const photo = asText(fm.photo);
+        const title = asText(fm.title);
+        const position = asText(fm.position);
+        const duration = asText(fm.duration);
+        const contact = asText(fm.contact);
+        const photo = asText(fm.photo);
 
-      const href = contactHref(contact);
+        const href = contactHref(contact);
 
-      return (
-        <article class="people-card">
-          {photo && <img class="people-photo" src={photo} alt={title} loading="lazy" />}
+        return (
+          <article class="people-card">
+            {photo && <img class="people-photo" src={photo} alt={title} loading="lazy" />}
 
-          <div style="flex:1; min-width:0;">
-            <h2 class="people-title">{title}</h2>
+            <div style="flex:1; min-width:0;">
+              <h2 class="people-title">{title}</h2>
 
-            {(position || duration || contact) && (
-              <ul class="people-meta">
-                {position && (
-                  <li>
-                    <b>Position :</b> {position}
-                  </li>
-                )}
-                {duration && (
-                  <li>
-                    <b>Duration :</b> {duration}
-                  </li>
-                )}
-                {contact && (
-                  <li class="people-contact">
-                    <b>Contact :</b>{" "}
-                    {href ? (
-                      <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer">
-                        {contact}
-                      </a>
-                    ) : (
-                      contact
-                    )}
-                  </li>
-                )}
-              </ul>
-            )}
-          </div>
-        </article>
-      );
-    })}
+              {(position || duration || contact) && (
+                <ul class="people-meta">
+                  {position && (
+                    <li>
+                      <b>Position :</b> {position}
+                    </li>
+                  )}
+                  {duration && (
+                    <li>
+                      <b>Duration :</b> {duration}
+                    </li>
+                  )}
+                  {contact && (
+                    <li class="people-contact">
+                      <b>Contact :</b>{" "}
+                      {href ? (
+                        <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer">
+                          {contact}
+                        </a>
+                      ) : (
+                        contact
+                      )}
+                    </li>
+                  )}
+                </ul>
+              )}
+            </div>
+          </article>
+        );
+      })}
 
-    {entries.length === 0 && <p class="muted">No alumni entries yet.</p>}
+      {entries.length === 0 && <p class="muted">No alumni entries yet.</p>}
+    </div>
   </div>
 </SectionLayout>
