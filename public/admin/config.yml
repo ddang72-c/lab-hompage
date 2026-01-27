@@ -165,7 +165,10 @@ collections:
     label: Research
     folder: src/content/research/posts
     create: true
-    slug: "{{slug}}"
+
+    identifier_field: order
+    slug: "{{order}}"
+
     summary: "{{order}} - {{title}}"
     fields:
       - {
@@ -173,7 +176,7 @@ collections:
           name: "order",
           widget: "number",
           value_type: "int",
-          required: false,
+          required: true,
           hint: "큰 숫자가 위로. 예: 100, 90, 80...",
         }
       - { label: "Title", name: "title", widget: "string", required: false }
