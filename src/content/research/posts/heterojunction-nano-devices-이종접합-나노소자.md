@@ -6,10 +6,10 @@ title: Heterojunction Nano Devices 이종접합 나노소자
   <img src="/uploads/ppt2.png" alt="" />
 </figure>
 
-KR:
+**KR:**
 그래핀 및 TMD 등 이차원 물질을 기능성 기판 및 산화물과 결합하여 새로운 개념의 이종접합 소자와 나노 디바이스를 구현.
 
-EN:
+**EN:**
 We design and fabricate heterojunction nano devices by integrating 2D materials (graphene and TMDs) with functional substrates and oxides. We develop various fabrication and patterning methods and extend toward applications such as graphene-based oxide detectors and new concepts of transistors.
 
 **Keywords:** 2D materials + functional substrates, Various methods for fabrication, Heterojunction, Graphene detector of oxides, New concept of transistors
