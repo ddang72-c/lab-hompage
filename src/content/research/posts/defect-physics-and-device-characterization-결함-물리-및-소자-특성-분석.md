@@ -15,10 +15,10 @@ bias stress, and optical excitation are systematized toward a defect-control dat
 
 **Keywords:** Characterization method development, DOS analysis inside energy gap, Defect control database, Defect engineering
 
-·결함 분석을 위한 새로운 전기적 특성 평가 기법 개발
+· 결함 분석을 위한 새로운 전기적 특성 평가 기법 개발
 
-·에너지 갭 내 DOS (Density of States) 분석
+· 에너지 갭 내 DOS (Density of States) 분석
 
-·온도, 바이어스 스트레스, 광자극에 따른 결함 거동 연구
+· 온도, 바이어스 스트레스, 광자극에 따른 결함 거동 연구
 
-·결함 제어 데이터베이스 구축 및 defect engineering
+· 결함 제어 데이터베이스 구축 및 defect engineering
