@@ -1,7 +1,7 @@
 ---
 name: Haeyong Kang
 ---
-<figure class="rc-float rc-float--right" style="--rc-w: 15%;">
+<figure class="rc-float rc-float--right" style="--rc-w: 20%;">
   <img src="/uploads/이현경.jpg" alt="" />
 </figure>
 
