@@ -151,14 +151,16 @@ collections:
           widget: number,
           value_type: int,
           required: true,
-          hint: "오래된 것=1, 최신일수록 큰 번호",
+          hint: "정렬용(오래된 것=1, 최신일수록 큰 번호)",
         }
       - { label: Title, name: title, widget: string }
-      - { label: Author, name: author, widget: string, required: false }
+      - { label: Authors, name: authors, widget: string, required: false }
       - { label: Conference, name: conference, widget: string, required: false }
       - { label: Year, name: year, widget: number, value_type: int, required: false }
       - { label: Link, name: link, widget: string, required: false }
-      - { label: Logo, name: logo, widget: image, required: false }
+      - { label: Logo Image (optional), name: logoImage, widget: image, required: false }
+      - { label: Logo URL (optional), name: logoUrl, widget: string, required: false }
+
       - { label: Body, name: body, widget: markdown, required: false }
 
   - name: home

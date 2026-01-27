@@ -3,16 +3,16 @@ import SectionLayout from "../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
 type FM = {
-  number?: number; // (운영상 필수)
-  title?: string;  // (운영상 필수)
+  number?: number; // 필수 운영
+  title?: string;  // 필수 운영
 
-  author?: string;      // 옵션
+  authors?: string;     // 옵션
   conference?: string;  // 옵션
   year?: number;        // 옵션
   link?: string;        // 옵션
-  logo?: string;        // 옵션(이미지 경로)
 
-  body?: string;        // 옵션(현재는 미사용, 필요하면 렌더 가능)
+  logoImage?: string;   // 옵션(업로드)
+  logoUrl?: string;     // 옵션(URL)
 };
 
 const modules = import.meta.glob<MarkdownInstance<FM>>(
@@ -27,7 +27,7 @@ const items = await Promise.all(
   })
 );
 
-// ✅ 정렬: year 내림차순(없으면 0) → number 내림차순 → title 오름차순
+// 정렬: year 내림차순(없으면 0) → number 내림차순 → title 오름차순
 items.sort((a, b) => {
   const ay = Number(a.fm.year ?? 0);
   const by = Number(b.fm.year ?? 0);
@@ -42,7 +42,7 @@ items.sort((a, b) => {
   return at.localeCompare(bt);
 });
 
-// ✅ year별 그룹핑 (year 없으면 0으로 묶어서 맨 아래)
+// year별 그룹핑 (year 없으면 0으로 묶어서 맨 아래)
 const byYear = new Map<number, typeof items>();
 for (const it of items) {
   const y = Number(it.fm.year ?? 0);
@@ -51,28 +51,24 @@ for (const it of items) {
 }
 const years = Array.from(byYear.keys()).sort((a, b) => b - a);
 
-const asText = (v: unknown) =>
-  typeof v === "string" ? v.trim() : v == null ? "" : String(v).trim();
+const logoSrc = (fm: FM) => (fm.logoImage || fm.logoUrl || "").trim();
 
 const linkHref = (raw?: string) => {
   const t = (raw ?? "").trim();
   if (!t) return "";
   if (/^https?:\/\//i.test(t)) return t;
-  if (t.startsWith("/")) return t; // 내부 경로
-  // 그냥 문자열이면 URL로 취급(필요하면 규칙 더 엄격하게 가능)
+  if (t.startsWith("/")) return t;
   return t;
 };
 ---
 
 <SectionLayout title="Conference">
   <style is:global>
-    /* ✅ Journal과 동일한 번호/행 스타일 */
     .pub-row {
       display: flex;
       gap: 14px;
       align-items: flex-start;
     }
-
     .pub-no {
       width: 44px;
       flex: 0 0 auto;
@@ -82,10 +78,8 @@ const linkHref = (raw?: string) => {
       padding-top: 2px;
       text-align: right;
     }
-
-    /* ✅ link 버튼을 (year) 옆에 살짝 붙이기 */
     .pub-link {
-      margin-left: 6px;
+      margin-left: 6px; /* (year) 옆에 살짝 붙이기 */
       white-space: nowrap;
     }
   </style>
@@ -100,12 +94,11 @@ const linkHref = (raw?: string) => {
 
         <div class="pub-items">
           {list.map(({ fm }) => {
-            const title = asText(fm.title);
-            const author = asText(fm.author);
-            const conf = asText(fm.conference);
-            const yy = fm.year ? String(fm.year) : "";
+            const ls = logoSrc(fm);
             const link = linkHref(fm.link);
-            const logo = asText(fm.logo);
+
+            const conf = (fm.conference ?? "").trim();
+            const yy = fm.year ? String(fm.year) : "";
 
             return (
               <div class="pub-item">
@@ -113,9 +106,9 @@ const linkHref = (raw?: string) => {
                   <div class="pub-no">{fm.number ?? ""}</div>
 
                   <div style="display:flex; gap:14px; align-items:flex-start; flex:1;">
-                    {logo && (
+                    {ls && (
                       <img
-                        src={logo}
+                        src={ls}
                         alt=""
                         style="width:70px; height:auto; object-fit:contain;"
                         loading="lazy"
@@ -123,12 +116,12 @@ const linkHref = (raw?: string) => {
                     )}
 
                     <div style="flex:1;">
-                      <div class="pub-title">{title}</div>
+                      <div class="pub-title">{fm.title}</div>
 
-                      {/* Author (옵션) */}
-                      {author && <div class="pub-meta">{author}</div>}
+                      {/* Authors (옵션) */}
+                      {fm.authors && <div class="pub-meta">{fm.authors}</div>}
 
-                      {/* Conference(볼드) + (year) + link 버튼(옵션) */}
+                      {/* Conference(볼드) + (year) + link(옵션) */}
                       {(conf || yy || link) && (
                         <div class="pub-meta">
                           {conf && <b>{conf}</b>}
