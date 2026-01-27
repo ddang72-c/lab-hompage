@@ -98,20 +98,42 @@ collections:
     label: Journal
     folder: src/content/publication/journal
     create: true
-    slug: "{{year}}-{{slug}}"
+    identifier_field: number
+    slug: "{{number}}"
+    summary: "{{number}}. {{title}}"
+
     fields:
+      - {
+          label: Number,
+          name: number,
+          widget: number,
+          value_type: int,
+          required: true,
+          hint: "오래된 논문 = 1, 최신일수록 큰 번호",
+        }
       - { label: Title, name: title, widget: string }
-      - { label: Year, name: year, widget: number, value_type: int }
+      - { label: Authors, name: authors, widget: string, required: false }
+      - { label: Journal, name: journal, widget: string, required: false }
+      - { label: Volume, name: volume, widget: string, required: false }
+      - { label: Page, name: page, widget: string, required: false }
+      - { label: Year, name: year, widget: number, value_type: int, required: false }
+
+      - {
+          label: DOI,
+          name: doi,
+          widget: string,
+          required: false,
+          hint: "예: 10.xxxx 또는 https://doi.org/10.xxxx",
+        }
+
       - { label: Logo Image (optional), name: logoImage, widget: image, required: false }
       - {
           label: Logo URL (optional),
           name: logoUrl,
           widget: string,
           required: false,
-          hint: "업로드 대신 로고 이미지 URL을 넣을 수 있음",
+          hint: "업로드 대신 로고 이미지 URL 가능",
         }
-      - { label: Authors, name: authors, widget: string, required: false }
-      - { label: Link, name: link, widget: string, required: false }
       - { label: Body, name: body, widget: markdown, required: false }
 
   - name: conference
