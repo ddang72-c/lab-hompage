@@ -2,21 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import "../styles/home.css";
 
-/**
- * CMS에서 관리되는 홈 데이터
- * 파일: src/content/home/home.md
- *
- * frontmatter 예시:
- * slides:
- *   - image: /uploads/slide-1.jpg
- *     alt: Slide 1
- * about:
- *   image: /uploads/wordcloud.png
- *   title: About ...
- *   text: ...
- *   buttonText: More...
- *   buttonLink: /research/research-area/
- */
+
 const homeEntries = await Astro.glob("../content/home/home.md");
 const home = homeEntries[0];
 
@@ -29,7 +15,6 @@ const about = home?.frontmatter?.about ?? {};
 ---
 
 <BaseLayout title="LETS">
-  <!-- Slider -->
   <section class="home-slider" aria-label="Home slider" data-slider>
     <div class="home-slider-viewport" data-viewport>
       <div class="home-slider-track" data-track>
@@ -79,7 +64,6 @@ const about = home?.frontmatter?.about ?? {};
       )}
     </div>
 
-    <!-- dots (display only) -->
     {slides.length > 1 && (
       <div class="home-slider-dots" aria-hidden="true" data-dots>
         {slides.map((_, i) => (
@@ -88,11 +72,9 @@ const about = home?.frontmatter?.about ?? {};
       </div>
     )}
 
-    <!-- thin gray rule under dots -->
     <div class="home-slider-rule" aria-hidden="true"></div>
   </section>
 
-  <!-- About section under slider -->
   <section class="home-about" aria-label="About section">
     <div class="home-about-inner">
       <div class="home-about-media">
@@ -116,7 +98,6 @@ const about = home?.frontmatter?.about ?? {};
 
   <div class="home-section-rule" aria-hidden="true"></div>
 
-  <!-- (다음 단계) Highlights / News 섹션 자리 -->
 </BaseLayout>
 
 <script is:inline>
@@ -137,7 +118,7 @@ const about = home?.frontmatter?.about ?? {};
     let idx = 0;
 
     const setIndex = (next) => {
-      idx = (next + slides.length) % slides.length; // 무한 루프
+      idx = (next + slides.length) % slides.length;
       track.style.transform = `translateX(-${idx * 100}%)`;
 
       if (dots.length) {
@@ -148,13 +129,11 @@ const about = home?.frontmatter?.about ?? {};
     prevBtn.addEventListener("click", () => setIndex(idx - 1));
     nextBtn.addEventListener("click", () => setIndex(idx + 1));
 
-    // 키보드(좌우 화살표) 지원
     root.addEventListener("keydown", (e) => {
       if (e.key === "ArrowLeft") setIndex(idx - 1);
       if (e.key === "ArrowRight") setIndex(idx + 1);
     });
 
-    // 포커스 가능하게(키보드 조작 위해)
     root.tabIndex = 0;
 
     setIndex(0);

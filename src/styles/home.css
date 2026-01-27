@@ -1,8 +1,8 @@
 /* Home slider */
 .home-slider{
-  width: min(1080px, 90%);  /* ✅ 슬라이드 크기 90% */
+  width: min(1080px, 90%); 
   margin: 0 auto;
-  padding: 9px 0 8px;       /* ✅ 헤더와 간격: 기존 대비 절반 수준 */
+  padding: 9px 0 8px;       
 }
 
 .home-slider-viewport{
@@ -47,7 +47,6 @@
   cursor: pointer;
   z-index: 2;
 
-  /* ✅ 기본은 완전 숨김 */
   opacity: 0 !important;
   pointer-events: none !important;
   transition: opacity 180ms ease, background 180ms ease;
@@ -64,7 +63,6 @@
 .slider-btn:hover{ background: rgba(0,0,0,0.45); }
 .slider-btn:active{ background: rgba(0,0,0,0.55); }
 
-/* ✅ 슬라이더 영역에 마우스 올리거나, 버튼에 키보드 포커스 들어오면 표시 */
 .home-slider:hover .slider-btn,
 .home-slider:focus-within .slider-btn{
   opacity: 1 !important;
@@ -86,8 +84,8 @@
 
 @media (max-width: 768px){
   .home-slider{
-    padding-top: 5px; /* 모바일에서도 간격 절반 */
-    width: 92%;       /* 모바일은 90%가 답답하면 92% 정도가 예쁨(원하면 90%로 통일 가능) */
+    padding-top: 5px; 
+    width: 92%;       
   }
 
   .home-slide img{ height: clamp(200px, 52vw, 340px); }
@@ -103,8 +101,7 @@
   justify-content: center;
   gap: 10px;
 
-  /* ✅ 사진(슬라이더)와 도트 사이 여유 */
-  padding: 15px 0 28px;   /* 위/아래 간격 조절 */
+  padding: 15px 0 28px;   
 }
 
 .dot{
@@ -120,12 +117,11 @@
 
 /* Thin gray rule under dots */
 .home-slider-rule{
-  width: 100%;            /* ✅ 슬라이드(= .home-slider) 폭과 동일 */
+  width: 100%;            
   height: 1px;
   background: rgba(0,0,0,0.12);
 
-  /* ✅ 도트와 회색선 사이 여유 */
-  margin: 5px auto 5px;    /* 위쪽만 띄우고 아래는 0 */
+  margin: 5px auto 5px;    
 }
 
 /* About section (under slider rule) */
@@ -175,7 +171,7 @@
   width: min(520px, 100%);
   height: 42px;
   border: 1px solid rgba(0,0,0,0.2);
-  border-radius: 4px;         /* HRG 느낌(각진 버튼) */
+  border-radius: 4px;         
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;

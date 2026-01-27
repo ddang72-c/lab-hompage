@@ -3,8 +3,8 @@ import SectionLayout from "../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
 type FM = {
-  number?: number; // (운영상 필수)
-  title?: string;  // (운영상 필수)
+  number?: number; 
+  title?: string;  
 
   authors?: string;
   journal?: string;
@@ -14,7 +14,6 @@ type FM = {
   doi?: string;
   link?: string;
 
-  // 로고 이미지 유지
   logoImage?: string;
   logoUrl?: string;
 };
@@ -31,7 +30,6 @@ const items = await Promise.all(
   })
 );
 
-// 정렬: year 내림차순(없으면 0) → number 내림차순 → title 오름차순
 items.sort((a, b) => {
   const ay = Number(a.fm.year ?? 0);
   const by = Number(b.fm.year ?? 0);
@@ -46,7 +44,6 @@ items.sort((a, b) => {
   return at.localeCompare(bt);
 });
 
-// year별 그룹핑 (year 없으면 0으로 묶어서 맨 아래)
 const byYear = new Map<number, typeof items>();
 for (const it of items) {
   const y = Number(it.fm.year ?? 0);
@@ -83,9 +80,8 @@ const doiHref = (doiRaw?: string) => {
       text-align: right;
     }
 
-    /* ✅ doi를 한 칸 왼쪽으로 */
     .pub-doi {
-      margin-left: 6px; /* 10px → 6px */
+      margin-left: 6px; 
       white-space: nowrap;
     }
   </style>
@@ -127,10 +123,8 @@ const doiHref = (doiRaw?: string) => {
                     <div style="flex:1;">
                       <div class="pub-title">{fm.title}</div>
 
-                      {/* 저자(옵션) */}
                       {fm.authors && <div class="pub-meta">{fm.authors}</div>}
 
-                      {/* ✅ 저널명만 볼드 + (year) 옆에 doi 버튼 */}
                       {(j || vp || y2 || doi) && (
                         <div class="pub-meta">
                           {j && <b>{j}</b>}
@@ -149,7 +143,6 @@ const doiHref = (doiRaw?: string) => {
                         </div>
                       )}
 
-                      {/* (선택) 별도 링크(PDF 등) */}
                       {fm.link && (
                         <a class="pub-btn" href={fm.link} target="_blank" rel="noreferrer">
                           link

@@ -5,7 +5,6 @@ import type { MarkdownInstance } from "astro";
 type FM = {
   title?: string;
   Affiliation?: string;
-  // ✅ joined를 새로 지원 + 기존 position도 호환
   joined?: string;
   position?: string;
 
@@ -34,7 +33,6 @@ const contactHref = (c: string) => {
   return t;
 };
 
-// order 오름차순 → title 오름차순
 entries.sort((a, b) => {
   const ao = a.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
   const bo = b.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
@@ -48,7 +46,6 @@ entries.sort((a, b) => {
 
 <SectionLayout title="Students">
   <style is:global>
-    /* ✅ 구글 사이트 느낌: 폭 넓고, 카드도 크게 */
     .people-wrap {
       max-width: 1040px;
       margin: 0 auto;
@@ -61,7 +58,6 @@ entries.sort((a, b) => {
       gap: 22px;
     }
 
-    /* 카드 테두리 없이 아래 구분선 + 여백 확대 */
     .people-card {
       display: flex;
       gap: 34px;
@@ -70,12 +66,11 @@ entries.sort((a, b) => {
       border-bottom: 1px solid #eee;
     }
 
-    /* ✅ 사진 크게 (세로 증명사진에 맞게) */
     .people-photo {
       width: 180px;
       height: 230px;
       object-fit: cover;
-      object-position: 50% 15%; /* 머리 덜 잘리게 */
+      object-position: 50% 15%; 
       border-radius: 0;
       flex: 0 0 auto;
       background: #f3f3f3;
@@ -128,7 +123,6 @@ entries.sort((a, b) => {
         const title = asText(fm.title);
         const affiliation = asText(fm.Affiliation);
 
-        // ✅ Joined 우선, 없으면 기존 position 사용(호환)
         const joined = asText(fm.joined ?? fm.position);
 
         const contact = asText(fm.contact);
@@ -151,7 +145,6 @@ entries.sort((a, b) => {
                     </li>
                   )}
 
-                  {/* ✅ Position → Joined 라벨로 표시 */}
                   {joined && (
                     <li>
                       <b>Joined :</b> {joined}

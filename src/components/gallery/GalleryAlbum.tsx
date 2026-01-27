@@ -10,15 +10,12 @@ export type GalleryAlbumProps = {
   images: string[];
   fit?: FitMode;
 
-  /** ✅ 1장(단일) 이미지일 때만 적용되는 크기 제한 */
-  singleMaxWidth?: number; // desktop 기준 px
-  singleMaxHeight?: number; // desktop 기준 px
+  singleMaxWidth?: number; 
+  singleMaxHeight?: number; 
 
-  /** ✅ 2장 이상(rows)일 때 크기/간격 스케일 */
-  rowHeightScale?: number; // 1 = 기본, 0.7~0.85 추천
-  gapScale?: number; // 1 = 기본
+  rowHeightScale?: number; 
+  gapScale?: number; 
 
-  /** ✅ 단일 이미지 정렬 (뉴스는 left) */
   align?: AlignMode;
 };
 
@@ -97,7 +94,6 @@ export default function GalleryAlbum({
 
   if (!ready) return <div className="gpost-loading">Loading images…</div>;
 
-  // ✅ 1장일 때
   if (photos.length === 1) {
     const p = photos[0];
     const ar = (p.width || 1) / (p.height || 1);
@@ -108,7 +104,6 @@ export default function GalleryAlbum({
     const mdH = Math.round(singleMaxHeight * 0.86);
     const smH = Math.round(singleMaxHeight * 0.62);
 
-    // ✅ 핵심: left면 block으로 렌더링해서 "글 시작선=이미지 시작선" 강제
     const outerDisplay = align === "left" ? "block" : "flex";
     const outerJustify = align === "left" ? "initial" : "center";
     const imgMargin = align === "left" ? "0" : "0 auto";
@@ -150,7 +145,7 @@ export default function GalleryAlbum({
             user-select: none;
             pointer-events: none;
             background: transparent;
-            margin: ${imgMargin}; /* ✅ left면 0, center면 auto */
+            margin: ${imgMargin}; /*
           }
 
           @media (max-width: 900px){
@@ -171,7 +166,6 @@ export default function GalleryAlbum({
     );
   }
 
-  // ✅ 2장 이상
   return (
     <>
       <RowsPhotoAlbum

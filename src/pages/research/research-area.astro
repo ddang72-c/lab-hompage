@@ -11,7 +11,7 @@ const posts = await Promise.all(
     const entry = await loader();
 
     const rawTitle = entry.frontmatter?.title;
-    const title = typeof rawTitle === "string" ? rawTitle.trim() : ""; // ✅ 옵션
+    const title = typeof rawTitle === "string" ? rawTitle.trim() : ""; 
 
     const order = Number(entry.frontmatter?.order ?? 0);
     const Content = entry.Content;
@@ -20,7 +20,6 @@ const posts = await Promise.all(
   })
 );
 
-// ✅ 정렬: order 큰 글이 위, 동점이면 파일명(path) 기준 보조 정렬
 posts.sort((a, b) => (b.order - a.order) || b.path.localeCompare(a.path));
 ---
 
@@ -32,13 +31,11 @@ posts.sort((a, b) => (b.order - a.order) || b.path.localeCompare(a.path));
       padding: 0 18px;
     }
 
-    /* 카드 느낌 제거 + float 포함해도 레이아웃 안정 */
     .research-post {
       display: flow-root;
       padding: 28px 0;
     }
 
-    /* ✅ 글과 글 사이 얇은 회색선 */
     .research-post + .research-post {
       border-top: 1px solid #e5e5e5;
     }
@@ -50,14 +47,12 @@ posts.sort((a, b) => (b.order - a.order) || b.path.localeCompare(a.path));
       line-height: 1.25;
     }
 
-    /* float가 들어가도 마지막에 깨끗하게 정리 */
     .research-body::after {
       content: "";
       display: block;
       clear: both;
     }
 
-    /* ✅ Figure(이미지+캡션) 중앙 정렬 보강 */
     .rc-figure {
       text-align: center;
     }
@@ -69,7 +64,6 @@ posts.sort((a, b) => (b.order - a.order) || b.path.localeCompare(a.path));
   <div class="research-wrap">
     {posts.map((p) => (
       <article class="research-post">
-        {/* ✅ title은 옵션: 있을 때만 표시 */}
         {p.title && <h2 class="research-title">{p.title}</h2>}
 
         <div class="research-body">

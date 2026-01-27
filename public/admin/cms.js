@@ -1,6 +1,3 @@
-/* public/admin/cms.js */
-/* Decap CMS Editor Components: figure / float / two-up / clear-float */
-
 (function () {
   const CMS = window.CMS;
   if (!CMS) return;
@@ -15,9 +12,6 @@
 
   const normalizeWidth = (w = "") => String(w).trim();
 
-  /**
-   * 1) Figure (image + caption, alignable)
-   */
   CMS.registerEditorComponent({
     id: "rc-figure",
     label: "Figure (Image + Caption)",
@@ -45,7 +39,6 @@
       { name: "caption", label: "Caption (optional)", widget: "string", required: false },
     ],
 
-    // Match blocks previously inserted
     pattern:
       /^<figure class="rc-figure rc-figure--(center|left|right|full)"(?: style="--rc-w:\s*([^;"]+)\s*;")?>\s*<img src="([^"]+)" alt=""\s*\/>\s*(?:<figcaption>([\s\S]*?)<\/figcaption>\s*)?<\/figure>\s*$/m,
 
@@ -73,7 +66,6 @@
 </figure>`;
     },
 
-    // Preview inside CMS editor
     toPreview(data) {
       const src = (data.src || "").trim();
       const caption = (data.caption || "").trim();
@@ -90,10 +82,6 @@
     },
   });
 
-  /**
-   * 2) Float image (wrap text like Word/PPT)
-   * Insert anywhere; next paragraphs will wrap around it.
-   */
   CMS.registerEditorComponent({
     id: "rc-float",
     label: "Float Image (Wrap text)",
@@ -162,7 +150,6 @@
         ? `<div style="opacity:.75;margin-top:8px;font-size:12px">${escapeHtml(caption)}</div>`
         : "";
 
-      // Using a wrapper to contain float in preview
       return `<div style="margin:12px 0; overflow:auto;">
   <div style="${floatStyle}">
     <img src="${escapeHtml(src)}" style="width:100%;height:auto;display:block;" />
@@ -175,9 +162,6 @@
     },
   });
 
-  /**
-   * 3) Two images side-by-side (each caption)
-   */
   CMS.registerEditorComponent({
     id: "rc-two-up",
     label: "Two Images (Side-by-side)",
@@ -237,10 +221,6 @@
     },
   });
 
-  /**
-   * 4) Clear floats (stop text wrapping)
-   * Insert this after a float block when you want next content to start below.
-   */
   CMS.registerEditorComponent({
     id: "rc-clear-float",
     label: "Clear Float (Stop wrapping)",

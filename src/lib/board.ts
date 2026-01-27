@@ -1,11 +1,3 @@
-/**
- * Shared helpers for board pages (News/Gallery)
- *
- * Why this exists:
- * - News and Gallery pages had duplicate logic for extracting image URLs
- *   and stripping markdown frontmatter.
- */
-
 export type Frontmatter = Record<string, any>;
 
 export function toImageUrls(fm: Frontmatter | undefined | null): string[] {
@@ -25,19 +17,16 @@ export function toImageUrls(fm: Frontmatter | undefined | null): string[] {
     }
   };
 
-  // Arrays commonly used by Decap CMS templates
   if (Array.isArray(fm?.images)) readList(fm.images);
   if (Array.isArray(fm?.photos)) readList(fm.photos);
   if (Array.isArray(fm?.gallery)) readList(fm.gallery);
   if (Array.isArray(fm?.media)) readList(fm.media);
 
-  // Single fields
   push((fm as any)?.cover);
   push((fm as any)?.thumbnail);
   push((fm as any)?.thumb);
   push((fm as any)?.image);
 
-  // De-dupe while preserving order
   return Array.from(new Set(out));
 }
 

@@ -45,19 +45,16 @@ const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
       padding: 0 18px;
     }
 
-    /* ✅ 간격(row-gap) 대신 "구분선 + 패딩"으로 */
     .news-list{
       display: grid !important;
       row-gap: 0 !important;
     }
 
-    /* 각 게시물 위아래 여백 */
     .news-post{
       padding: 44px 0;
       border: 0;
     }
 
-    /* ✅ 두 번째 게시물부터 얇은 회색선 */
     .news-post + .news-post{
       border-top: 1px solid #e5e5e5;
     }

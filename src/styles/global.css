@@ -3,7 +3,6 @@
   --main-pad: 22px;
 
 
-  /* Global font */
   --kr-font: "Noto Sans KR", system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 
@@ -55,12 +54,12 @@ a:hover {
    Header
 ========================= */
 :root{
-  --header-h: 74px; /* 데스크탑 헤더 높이(필요하면 70~86 사이로 조절) */
+  --header-h: 74px; 
 }
 
 @media (max-width: 768px){
   :root{
-    --header-h: 62px; /* 모바일 헤더 높이(필요하면 58~70 사이) */
+    --header-h: 62px; 
   }
 }
 
@@ -75,7 +74,6 @@ a:hover {
   border-bottom: 1px solid var(--line);
 }
 
-/* 기존 .header-main sticky는 불필요하니 제거하거나 position 지정 안 해도 됨 */
 .header-main{
   position: relative;
   z-index: 1;
@@ -98,13 +96,13 @@ a:hover {
 }
 
 .brand-logo{
-  height: 63px;        /* 데스크탑에서 적당 */
+  height: 63px;        
   width: auto;
-  max-width: 220px;    /* 220x63 로고가 잘리지 않게 */
+  max-width: 220px;    
   object-fit: contain;
   display: block;
 
-  transform: translateY(-1px); /* ✅ 필요할 때만 */
+  transform: translateY(-1px); 
 }
 
 .nav-toggle {
@@ -146,9 +144,9 @@ a:hover {
   font-size: 22px;
   text-decoration: none;
 
-  display: flex;           /* inline-block -> flex */
-  align-items: center;     /* ✅ 글자를 세로 중앙에 */
-  line-height: 1;          /* ✅ 아래로 처져 보이는 느낌 제거 */
+  display: flex;          
+  align-items: center;     
+  line-height: 1;          
   padding: 10px 10px;
 
   color: #3a4048;
@@ -163,11 +161,11 @@ a:hover {
 .dropdown{
   list-style: none;
   position: absolute;
-  top: 100%;              /* 끊김 방지: 메뉴에 "딱 붙게" */
+  top: 100%;              
   left: 0;
 
-  width: 100%;            /* ✅ 메뉴(gnb-item) 폭과 동일 */
-  min-width: 0;           /* 기존 min-width:180px 무력화 */
+  width: 100%;            
+  min-width: 0;           
 
   background: #fff;
   border: 1px solid var(--line);
@@ -178,10 +176,9 @@ a:hover {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   z-index: 9999;
 
-  text-align: center;     /* ✅ 드롭다운 글자 중앙정렬 */
+  text-align: center;     
 }
 
-/* hover 시 보이기 */
 .gnb-item:hover .dropdown{
   display: block;
 }
@@ -191,7 +188,7 @@ a:hover {
   display: block;
   padding: 8px 10px;
   border-radius: 8px;
-  text-align: center;     /* ✅ 링크도 중앙정렬 확실히 */
+  text-align: center;     
   font-size: 14px;
 }
 
@@ -201,7 +198,6 @@ a:hover {
 }
 
 
-/* ✅ 모바일 오버레이 (기본은 숨김) */
 .mobile-overlay {
   display: none;
 }
@@ -271,6 +267,13 @@ h2 {
 .gpost-body a {
   text-decoration: underline;
 }
+.gpost-body,
+.gpost-body p,
+.gpost-body a {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 
 @media (max-width: 900px) {
   .gpost-title {
@@ -384,17 +387,15 @@ h2 {
     display: inline-block;
   }
 
-  /* 모바일에선 데스크탑 GNB 숨김 */
   .gnb {
     display: none;
   }
 
-  /* ✅ 모바일 오버레이 (배경은 '중간에서 끊김') */
   .mobile-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: transparent; /* ✅ 배경은 pseudo로 처리 */
+    background: transparent; 
     z-index: 6000;
     overflow-y: auto;
   }
@@ -402,7 +403,6 @@ h2 {
     display: block;
   }
 
-  /* ✅ 파란 배경을 여기 높이에서 끊기 (원하면 60~80vh로 조절) */
   .mobile-overlay::before {
     content: "";
     position: fixed;
@@ -425,7 +425,6 @@ h2 {
     padding: 22px 18px 28px;
   }
 
-  /* ✅ X만 우측 상단 */
   .mobile-topbar {
     display: flex;
     justify-content: flex-end;
@@ -501,8 +500,8 @@ h2 {
   }
 
   .brand-logo {
-    height: 44px;      /* 모바일에서 체감 크게 */
-    max-width: 220px;  /* 로고 원본 가로폭 근처로 */
+    height: 44px;     
+    max-width: 220px; 
   }
 
   .pub-year {
@@ -518,7 +517,7 @@ h2 {
    - Figure / Float / Two-up
 ========================= */
 
-/* 기본 figure */
+
 .rc-figure {
   margin: 26px auto;
   max-width: var(--rc-w, 820px);
@@ -538,7 +537,6 @@ h2 {
   opacity: 0.75;
 }
 
-/* align variants */
 .rc-figure--full {
   max-width: 100%;
 }
@@ -553,7 +551,6 @@ h2 {
   margin-right: 0;
 }
 
-/* float (텍스트 감싸기) */
 .rc-float {
   width: min(var(--rc-w, 320px), 100%);
   margin: 6px 0 16px 18px;
@@ -585,18 +582,16 @@ h2 {
   opacity: 0.75;
 }
 
-/* float 해제 */
 .rc-clear {
   clear: both;
 }
 
-/* two-up grid */
 .rc-two-up {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
   margin: 26px 0;
-  clear: both; /* float 위/아래 충돌 방지 */
+  clear: both; 
 }
 
 .rc-two-up .rc-figure {
@@ -619,9 +614,9 @@ h2 {
 }
 .rc-figure { 
   margin: 26px auto;
-  text-align: center;   /* ✅ 캡션/내부 요소 가운데 */
+  text-align: center;   
 }
 
 .rc-figure figcaption {
-  text-align: center;   /* ✅ 캡션 가운데 */
+  text-align: center;   
 }

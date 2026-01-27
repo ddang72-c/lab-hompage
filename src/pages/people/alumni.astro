@@ -31,7 +31,6 @@ const contactHref = (c: string) => {
   return t;
 };
 
-// order 오름차순 → title 오름차순
 entries.sort((a, b) => {
   const ao = a.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;
   const bo = b.entry.frontmatter?.order ?? Number.POSITIVE_INFINITY;

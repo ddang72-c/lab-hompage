@@ -19,7 +19,6 @@ const items = await Promise.all(
   })
 );
 
-// 정렬: title 기준
 items.sort((a, b) => a.title.localeCompare(b.title));
 ---
 
@@ -32,14 +31,12 @@ items.sort((a, b) => a.title.localeCompare(b.title));
       margin-top: 24px;
     }
 
-    /* ✅ 한 줄에 2개 카드 */
     .fac-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 24px;
     }
 
-    /* ✅ 카드(직각 모서리) */
     .fac-card {
       display: flex;
       gap: 18px;
@@ -49,7 +46,6 @@ items.sort((a, b) => a.title.localeCompare(b.title));
       background: #fff;
     }
 
-    /* ✅ 사진 크기 */
     .fac-img {
       width: 160px;
       height: 160px;
@@ -70,7 +66,6 @@ items.sort((a, b) => a.title.localeCompare(b.title));
       margin-top: 6px;
     }
 
-    /* 모바일에서는 1열 */
     @media (max-width: 900px) {
       .fac-grid {
         grid-template-columns: 1fr;
@@ -98,7 +93,6 @@ items.sort((a, b) => a.title.localeCompare(b.title));
               <it.Content />
             </div>
 
-            {/* ✅ link는 옵션 + 맨 아래에 표시 */}
             {it.link && (
               <div style="margin-top: 10px;">
                 <a class="pub-btn" href={it.link} target="_blank" rel="noreferrer">
