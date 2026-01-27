@@ -14,10 +14,10 @@ We design and fabricate heterojunction nano devices by integrating 2D materials 
 
 **Keywords:** 2D materials + functional substrates, Various methods for fabrication, Heterojunction, Graphene detector of oxides, New concept of transistors
 
-·2D materials + functional substrates 기반 이종접합 구조 설계
+· 2D materials + functional substrates 기반 이종접합 구조 설계
 
-·다양한 소자 제작 공정 및 패터닝 방법 개발
+· 다양한 소자 제작 공정 및 패터닝 방법 개발
 
-·산화물 감지를 위한 그래핀 기반 디텍터 연구
+· 산화물 감지를 위한 그래핀 기반 디텍터 연구
 
-·새로운 개념의 트랜지스터 및 나노 소자 제안
+· 새로운 개념의 트랜지스터 및 나노 소자 제안
