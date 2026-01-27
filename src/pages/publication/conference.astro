@@ -3,35 +3,46 @@ import SectionLayout from "../../layouts/SectionLayout.astro";
 import type { MarkdownInstance } from "astro";
 
 type FM = {
-  title?: string;
-  year?: number;
-  authors?: string;
-  link?: string;
-  logoImage?: string;
-  logoUrl?: string;
+  number?: number; // (운영상 필수)
+  title?: string;  // (운영상 필수)
+
+  author?: string;      // 옵션
+  conference?: string;  // 옵션
+  year?: number;        // 옵션
+  link?: string;        // 옵션
+  logo?: string;        // 옵션(이미지 경로)
+
+  body?: string;        // 옵션(현재는 미사용, 필요하면 렌더 가능)
 };
 
-const modules = import.meta.glob<MarkdownInstance<FM>>("/src/content/publication/conference/*.md");
+const modules = import.meta.glob<MarkdownInstance<FM>>(
+  "/src/content/publication/conference/*.md"
+);
+
 const items = await Promise.all(
   Object.entries(modules).map(async ([path, loader]) => {
     const entry = await loader();
     const fm = entry.frontmatter ?? {};
-    return { path, entry, fm };
+    return { path, fm };
   })
 );
 
-// 정렬: year 내림차순 → title 오름차순
+// ✅ 정렬: year 내림차순(없으면 0) → number 내림차순 → title 오름차순
 items.sort((a, b) => {
-  const ay = Number(a.fm.year ?? -1);
-  const by = Number(b.fm.year ?? -1);
+  const ay = Number(a.fm.year ?? 0);
+  const by = Number(b.fm.year ?? 0);
   if (ay !== by) return by - ay;
+
+  const an = Number(a.fm.number ?? -Infinity);
+  const bn = Number(b.fm.number ?? -Infinity);
+  if (an !== bn) return bn - an;
 
   const at = (a.fm.title ?? "").toString();
   const bt = (b.fm.title ?? "").toString();
   return at.localeCompare(bt);
 });
 
-// group by year
+// ✅ year별 그룹핑 (year 없으면 0으로 묶어서 맨 아래)
 const byYear = new Map<number, typeof items>();
 for (const it of items) {
   const y = Number(it.fm.year ?? 0);
@@ -40,42 +51,96 @@ for (const it of items) {
 }
 const years = Array.from(byYear.keys()).sort((a, b) => b - a);
 
-const metaLine = (fm: FM) => (fm.authors ?? "").toString();
-const logoSrc = (fm: FM) => fm.logoImage || fm.logoUrl || "";
+const asText = (v: unknown) =>
+  typeof v === "string" ? v.trim() : v == null ? "" : String(v).trim();
+
+const linkHref = (raw?: string) => {
+  const t = (raw ?? "").trim();
+  if (!t) return "";
+  if (/^https?:\/\//i.test(t)) return t;
+  if (t.startsWith("/")) return t; // 내부 경로
+  // 그냥 문자열이면 URL로 취급(필요하면 규칙 더 엄격하게 가능)
+  return t;
+};
 ---
 
 <SectionLayout title="Conference">
+  <style is:global>
+    /* ✅ Journal과 동일한 번호/행 스타일 */
+    .pub-row {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .pub-no {
+      width: 44px;
+      flex: 0 0 auto;
+      font-weight: 800;
+      color: #555;
+      line-height: 1.4;
+      padding-top: 2px;
+      text-align: right;
+    }
+
+    /* ✅ link 버튼을 (year) 옆에 살짝 붙이기 */
+    .pub-link {
+      margin-left: 6px;
+      white-space: nowrap;
+    }
+  </style>
+
   {years.map((y) => {
     const list = byYear.get(y)!;
+    const yearLabel = y > 0 ? String(y) : "—";
 
     return (
       <section class="pub-year">
-        <div class="pub-year-left">{y}</div>
+        <div class="pub-year-left">{yearLabel}</div>
 
         <div class="pub-items">
           {list.map(({ fm }) => {
-            const ls = logoSrc(fm);
+            const title = asText(fm.title);
+            const author = asText(fm.author);
+            const conf = asText(fm.conference);
+            const yy = fm.year ? String(fm.year) : "";
+            const link = linkHref(fm.link);
+            const logo = asText(fm.logo);
 
             return (
               <div class="pub-item">
-                <div style="display:flex; gap:14px; align-items:flex-start;">
-                  {ls && (
-                    <img
-                      src={ls}
-                      alt=""
-                      style="width:70px; height:auto; object-fit:contain;"
-                      loading="lazy"
-                    />
-                  )}
+                <div class="pub-row">
+                  <div class="pub-no">{fm.number ?? ""}</div>
 
-                  <div style="flex:1;">
-                    <div class="pub-title">{fm.title}</div>
-                    {metaLine(fm) && <div class="pub-meta">{metaLine(fm)}</div>}
-                    {fm.link && (
-                      <a class="pub-btn" href={fm.link} target="_blank" rel="noreferrer">
-                        link
-                      </a>
+                  <div style="display:flex; gap:14px; align-items:flex-start; flex:1;">
+                    {logo && (
+                      <img
+                        src={logo}
+                        alt=""
+                        style="width:70px; height:auto; object-fit:contain;"
+                        loading="lazy"
+                      />
                     )}
+
+                    <div style="flex:1;">
+                      <div class="pub-title">{title}</div>
+
+                      {/* Author (옵션) */}
+                      {author && <div class="pub-meta">{author}</div>}
+
+                      {/* Conference(볼드) + (year) + link 버튼(옵션) */}
+                      {(conf || yy || link) && (
+                        <div class="pub-meta">
+                          {conf && <b>{conf}</b>}
+                          {yy && <span>{conf ? " " : ""}({yy})</span>}
+                          {link && (
+                            <a class="pub-btn pub-link" href={link} target="_blank" rel="noreferrer">
+                              link
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

@@ -140,20 +140,25 @@ collections:
     label: Conference
     folder: src/content/publication/conference
     create: true
-    slug: "{{year}}-{{slug}}"
+    identifier_field: number
+    slug: "{{number}}"
+    summary: "{{number}}. {{title}}"
+
     fields:
-      - { label: Title, name: title, widget: string }
-      - { label: Year, name: year, widget: number, value_type: int }
-      - { label: Logo Image (optional), name: logoImage, widget: image, required: false }
       - {
-          label: Logo URL (optional),
-          name: logoUrl,
-          widget: string,
-          required: false,
-          hint: "업로드 대신 로고 이미지 URL을 넣을 수 있음",
+          label: Number,
+          name: number,
+          widget: number,
+          value_type: int,
+          required: true,
+          hint: "오래된 것=1, 최신일수록 큰 번호",
         }
-      - { label: Authors, name: authors, widget: string, required: false }
+      - { label: Title, name: title, widget: string }
+      - { label: Author, name: author, widget: string, required: false }
+      - { label: Conference, name: conference, widget: string, required: false }
+      - { label: Year, name: year, widget: number, value_type: int, required: false }
       - { label: Link, name: link, widget: string, required: false }
+      - { label: Logo, name: logo, widget: image, required: false }
       - { label: Body, name: body, widget: markdown, required: false }
 
   - name: home

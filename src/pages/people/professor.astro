@@ -18,10 +18,30 @@ if (loaders.length > 0) {
 ---
 
 <SectionLayout title="Professor">
+  <style is:global>
+    /* ✅ 카드(테두리/배경/둥근모서리) 없이, 그냥 본문처럼 */
+    .prof-wrap {
+      max-width: 1040px;
+      margin: 24px auto 0;
+      padding: 0 18px;
+    }
+
+    .prof-name {
+      margin: 0 0 12px 0;
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .prof-body {
+      line-height: 1.7;
+    }
+  </style>
+
   {Content ? (
-    <article style="padding:16px; border:1px solid #eee; border-radius:14px; margin-top:24px;">
-      {name && <h2 style="margin:0 0 12px 0;">{name}</h2>}
-      <div style="line-height:1.7;">
+    <article class="prof-wrap">
+      {name && <h2 class="prof-name">{name}</h2>}
+      <div class="prof-body">
         <Content />
       </div>
     </article>
