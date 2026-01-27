@@ -14,11 +14,10 @@ title: Oxide Thin Film Transistors 산화물 TFT 및 공정 기반 소자 연구
 Oxide TFTs, Sol-gel/sputtering process, Oxygen vacancy control, Optoelectronic
 properties, Environment-friendly   heterostructures
 
+· Sol-gel 및 sputtering 공정을 이용한 oxide TFT 제작
 
-·Sol-gel 및 sputtering 공정을 이용한 oxide TFT 제작
+· Oxygen vacancy 제어를 통한 전기적 특성 조절
 
-·Oxygen vacancy 제어를 통한 전기적 특성 조절
+· 광응답 특성 및 optoelectronic 특성 분석
 
-·광응답 특성 및 optoelectronic 특성 분석
-
-·친환경 소재 기반 oxide heterostructure 연구
+· 친환경 소재 기반 oxide heterostructure 연구
