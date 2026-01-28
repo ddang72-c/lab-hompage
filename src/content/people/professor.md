@@ -2,7 +2,7 @@
 name: Haeyong Kang
 ---
 <figure class="rc-float rc-float--right" style="--rc-w: 20%;">
-  <img src="/uploads/pr.jpg" alt="" />
+  <img src="/uploads/강해용교수님.png" alt="" />
 </figure>
 
 ## Personal
