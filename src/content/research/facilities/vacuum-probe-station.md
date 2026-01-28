@@ -5,4 +5,4 @@ link: https://www.zeus.go.kr/cloud/resvEq/read/Z-202111256011/Y?cloudId=20210728
 ---
 공동연구기기동 601호
 
-MSCH-5000
+MSCH-5000(MS TECH)
