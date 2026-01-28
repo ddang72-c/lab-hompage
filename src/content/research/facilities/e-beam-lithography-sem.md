@@ -4,4 +4,4 @@ image: /uploads/image2.jpeg
 ---
 물리관 105호
 
-TESCAN MIRA(123-0128)
+TESCAN MIRA(TESCAN)
