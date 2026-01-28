@@ -5,4 +5,5 @@ link: " https://www.zeus.go.kr/cloud/resvEq/read/Z-202110075152?cloudId=20210728
 ---
 공동연구기기동 601호
 
-Keithley 4200-SCS
+
+4200-SCS(Keithley)
