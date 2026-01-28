@@ -5,4 +5,4 @@ link: https://www.zeus.go.kr/cloud/resvEq/read/Z-202407025529?cloudId=2021072824
 ---
 공동연구기기동 601호
 
- NX7
+NX7(Park Systems)
