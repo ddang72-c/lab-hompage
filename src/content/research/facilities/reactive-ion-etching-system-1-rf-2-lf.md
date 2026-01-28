@@ -4,4 +4,4 @@ image: /uploads/image5.jpeg
 ---
  공동연구기기동 601호
 
-FT23-073(COVANCE), FT25-004(CIONE6)
+1(RF): COVANCE(femto science), 2(LF): CIONE6(femto science)
