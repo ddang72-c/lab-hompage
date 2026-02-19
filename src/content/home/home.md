@@ -1,10 +1,6 @@
 ---
 title: Home
 slides:
-  - image: /uploads/ppt1.png
-  - image: /uploads/ppt2.png
-  - image: /uploads/ppt3.png
-  - image: /uploads/ppt4.png
   - image: /uploads/lets로고대문.png
 about:
   image: /uploads/스크린샷-2026-01-27-203949.png
