@@ -2,6 +2,7 @@
 title: Home
 slides:
   - image: /uploads/lets로고대문.png
+  - image: /uploads/image6.jpeg
 about:
   image: /uploads/스크린샷-2026-01-27-203949.png
   title: Heterojunction Nano Devices 이종접합 나노소자
