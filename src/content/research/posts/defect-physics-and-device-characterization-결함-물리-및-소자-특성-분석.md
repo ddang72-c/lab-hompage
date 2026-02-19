@@ -1,5 +1,5 @@
 ---
-order: 97
+order: 101
 title: Defect Physics and Device Characterization 결함 물리 및 소자 특성 분석
 ---
 <figure class="rc-float rc-float--right" style="--rc-w: 60%;">
