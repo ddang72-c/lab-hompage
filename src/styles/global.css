@@ -620,3 +620,17 @@ h2 {
 .rc-figure figcaption {
   text-align: center;   
 }
+/* 전체 UI를 1.25배 확대 (Chrome/Edge/Safari) */
+html {
+  zoom: 1.25;
+}
+
+/* Firefox 대응: transform scale로 대체 */
+@-moz-document url-prefix() {
+  html {
+    transform: scale(1.25);
+    transform-origin: 0 0;
+    width: 80%;   /* 1 / 1.25 = 0.8 */
+    height: 80%;
+  }
+}
