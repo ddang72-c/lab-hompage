@@ -112,15 +112,13 @@ a:hover {
   transform: translateY(-1px);
 }
 
-/* 로고1(가로로 긴 LETS) */
 .brand-logo--logo1{
-  height: 56px;       /* 필요하면 30~40 사이로 조절 */
-  max-width: 420px;   /* 너무 길어지면 제한 */
+  height: 65px;      
+  max-width: 500px;   
 }
 
-/* 로고2(심볼 큰 이미지) */
 .brand-logo--logo2{
-  height: 60px;       /* 필요하면 52~66 사이로 조절 */
+  height: 60px;     
   max-width: 200px;
 }
 
