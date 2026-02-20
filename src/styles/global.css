@@ -80,7 +80,7 @@ a:hover {
   background: transparent;
 }
 
-.header-main-inner {
+.header-main-inner{
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -88,24 +88,59 @@ a:hover {
   padding: 0;
 }
 
-.brand {
+/* Brand (logos only) */
+.brand{
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+
+  flex: 0 0 auto; /* 로고만 있을 때는 늘릴 필요 없음 */
+}
+
+/* 로고 2개 묶음 */
+.brand-logos{
   display: flex;
   align-items: center;
   gap: 12px;
-  text-decoration: none;
 }
 
+/* 공통 로고 스타일 */
 .brand-logo{
-  height: 63px;        
   width: auto;
-  max-width: 220px;    
   object-fit: contain;
   display: block;
-
-  transform: translateY(-1px); 
+  transform: translateY(-1px);
 }
 
-.nav-toggle {
+/* 로고1(가로로 긴 LETS) */
+.brand-logo--logo1{
+  height: 56px;       /* 필요하면 30~40 사이로 조절 */
+  max-width: 420px;   /* 너무 길어지면 제한 */
+}
+
+/* 로고2(심볼 큰 이미지) */
+.brand-logo--logo2{
+  height: 60px;       /* 필요하면 52~66 사이로 조절 */
+  max-width: 200px;
+}
+
+/* 모바일에서는 살짝 축소 */
+@media (max-width: 768px){
+  .brand-logo{
+    transform: translateY(0);
+  }
+  .brand-logo--logo1{
+    height: 26px;
+    max-width: 240px;
+  }
+  .brand-logo--logo2{
+    height: 44px;
+    max-width: 180px;
+  }
+}
+
+/* Mobile toggle */
+.nav-toggle{
   display: none;
   border: 1px solid var(--line);
   background: #fff;
@@ -126,7 +161,7 @@ a:hover {
   transform: translateY(-2.5px);
 }
 
-.gnb .gnb-list {
+.gnb .gnb-list{
   list-style: none;
   display: flex;
   gap: 20px;
@@ -135,7 +170,7 @@ a:hover {
   align-items: center;
 }
 
-.gnb-item {
+.gnb-item{
   position: relative;
 }
 
@@ -144,28 +179,23 @@ a:hover {
   font-size: 22px;
   text-decoration: none;
 
-  display: flex;          
-  align-items: center;     
-  line-height: 1;          
+  display: flex;
+  align-items: center;
+  line-height: 1;
   padding: 10px 10px;
 
   color: #3a4048;
-}
-
-/* 기준점(li) */
-.gnb-item{
-  position: relative;
 }
 
 /* 드롭다운 박스 */
 .dropdown{
   list-style: none;
   position: absolute;
-  top: 100%;              
+  top: 100%;
   left: 0;
 
-  width: 100%;            
-  min-width: 0;           
+  width: 100%;
+  min-width: 0;
 
   background: #fff;
   border: 1px solid var(--line);
@@ -176,7 +206,7 @@ a:hover {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   z-index: 9999;
 
-  text-align: center;     
+  text-align: center;
 }
 
 .gnb-item:hover .dropdown{
@@ -188,7 +218,7 @@ a:hover {
   display: block;
   padding: 8px 10px;
   border-radius: 8px;
-  text-align: center;     
+  text-align: center;
   font-size: 14px;
 }
 
@@ -197,8 +227,7 @@ a:hover {
   text-decoration: none;
 }
 
-
-.mobile-overlay {
+.mobile-overlay{
   display: none;
 }
 

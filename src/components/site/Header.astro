@@ -1,64 +1,36 @@
 ---
-const desktopNav = [
+const navGroups = [
   {
     label: "PEOPLE",
-    items: [
-      { label: "Professor", href: "/people/professor/" },
-      { label: "Students", href: "/people/students/" },
-      { label: "Alumni", href: "/people/alumni/" },
+    href: "/people/professor",
+    dropdown: [
+      { label: "Professor", href: "/people/professor" },
+      { label: "Students", href: "/people/students" },
+      { label: "Alumni", href: "/people/alumni" },
     ],
   },
   {
     label: "RESEARCH",
-    items: [
-      { label: "Research area", href: "/research/research-area/" },
-      { label: "Facilities", href: "/research/facilities/" },
+    href: "/research/research-area",
+    dropdown: [
+      { label: "Research Area", href: "/research/research-area" },
+      { label: "Facilities", href: "/research/facilities" },
     ],
   },
   {
     label: "PUBLICATION",
-    items: [
-      { label: "Journal", href: "/publication/journal/" },
-      { label: "Conference", href: "/publication/conference/" },
+    href: "/publication/journal",
+    dropdown: [
+      { label: "Journal", href: "/publication/journal" },
+      { label: "Conference", href: "/publication/conference" },
     ],
   },
   {
     label: "BOARD",
-    items: [
-      { label: "News", href: "/board/news/" },
-      { label: "Gallery", href: "/board/gallery/" },
-    ],
-  },
-];
-
-const mobileMenu = [
-  {
-    label: "PEOPLE",
-    items: [
-      { label: "Professor", href: "/people/professor/" },
-      { label: "Students", href: "/people/students/" },
-      { label: "Alumni", href: "/people/alumni/" },
-    ],
-  },
-  {
-    label: "RESEARCH",
-    items: [
-      { label: "Research area", href: "/research/research-area/" },
-      { label: "Facilities", href: "/research/facilities/" },
-    ],
-  },
-  {
-    label: "PUBLICATION",
-    items: [
-      { label: "Journal", href: "/publication/journal/" },
-      { label: "Conference", href: "/publication/conference/" },
-    ],
-  },
-  {
-    label: "BOARD",
-    items: [
-      { label: "News", href: "/board/news/" },
-      { label: "Gallery", href: "/board/gallery/" },
+    href: "/board/news",
+    dropdown: [
+      { label: "News", href: "/board/news" },
+      { label: "Gallery", href: "/board/gallery" },
     ],
   },
 ];
@@ -66,56 +38,59 @@ const mobileMenu = [
 
 <header class="site-header">
   <div class="header-main">
-    <ddiv class="header-main-inner header-main-inner--wide">
-      <a class="brand" href="/">
-        <img class="brand-logo" src="/images/pnu-logo.png" alt="PNU logo" />
+    <div class="header-main-inner header-main-inner--wide">
+      <a class="brand" href="/" aria-label="Home">
+        <span class="brand-logos" aria-hidden="true">
+        <!-- 심볼(logo1 파일) -> logo2 스타일(큰 사이즈) 적용 -->
+          <img class="brand-logo brand-logo--logo2" src="/images/logo1.png" alt="" />
+
+        <!-- 글자(logo2 파일) -> logo1 스타일(얇은 가로 로고) 적용 -->
+          <img class="brand-logo brand-logo--logo1" src="/images/logo2.png" alt="" />
+        </span>
       </a>
-
-      <button class="nav-toggle" aria-label="open menu" aria-expanded="false" data-menu-open>
-        ☰
-      </button>
-
+      <!-- Desktop nav with dropdown -->
       <nav class="gnb" aria-label="Main navigation">
         <ul class="gnb-list">
-          {desktopNav.map((group) => (
+          {navGroups.map((g) => (
             <li class="gnb-item">
-              <a class="gnb-link" href={group.items[0]?.href ?? "#"}>{group.label}</a>
+              <a class="gnb-link" href={g.href}>{g.label}</a>
 
-              {group.items?.length ? (
-                <ul class="dropdown">
-                  {group.items.map((it) => (
-                    <li class="dropdown-item">
-                      <a href={it.href}>{it.label}</a>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
+              <ul class="dropdown" aria-label={`${g.label} submenu`}>
+                {g.dropdown.map((it) => (
+                  <li class="dropdown-item">
+                    <a href={it.href}>{it.label}</a>
+                  </li>
+                ))}
+              </ul>
             </li>
           ))}
         </ul>
       </nav>
+
+      <!-- Mobile toggle -->
+      <button class="nav-toggle" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+        ☰
+      </button>
     </div>
   </div>
 
-  <div class="mobile-overlay" data-mobile-overlay aria-hidden="true">
+  <!-- Mobile overlay -->
+  <div id="mobileMenu" class="mobile-overlay" aria-hidden="true">
     <div class="mobile-overlay-inner">
       <div class="mobile-topbar">
-        <button class="mobile-close" aria-label="close menu" data-menu-close>✕</button>
+        <button class="mobile-close" type="button" aria-label="Close menu">×</button>
       </div>
 
-      <div class="mobile-card" role="dialog" aria-label="Mobile menu">
-        {mobileMenu.map((g) => (
+      <div class="mobile-card">
+        {navGroups.map((g) => (
           <details class="mobile-group">
             <summary class="mobile-summary">
               <span class="mobile-summary-label">{g.label}</span>
               <span class="mobile-summary-caret">▾</span>
             </summary>
-
             <ul class="mobile-sub">
-              {g.items.map((it) => (
-                <li>
-                  <a href={it.href}>{it.label}</a>
-                </li>
+              {g.dropdown.map((it) => (
+                <li><a href={it.href}>{it.label}</a></li>
               ))}
             </ul>
           </details>
@@ -125,72 +100,37 @@ const mobileMenu = [
   </div>
 
   <script is:inline>
-    const openBtn = document.querySelector("[data-menu-open]");
-    const closeBtn = document.querySelector("[data-menu-close]");
-    const overlay = document.querySelector("[data-mobile-overlay]");
-    const card = overlay?.querySelector(".mobile-card");
+    {`
+      const overlay = document.getElementById('mobileMenu');
+      const openBtn = document.querySelector('.nav-toggle');
+      const closeBtn = document.querySelector('.mobile-close');
 
-    const BASE_VH = 60; 
+      function openMenu() {
+        if (!overlay || !openBtn) return;
+        overlay.classList.add('is-open');
+        overlay.setAttribute('aria-hidden', 'false');
+        openBtn.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      }
 
-    function updateOverlayHeight() {
-      if (!overlay || !card) return;
+      function closeMenu() {
+        if (!overlay || !openBtn) return;
+        overlay.classList.remove('is-open');
+        overlay.setAttribute('aria-hidden', 'true');
+        openBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
 
-      const basePx = (window.innerHeight * BASE_VH) / 100;
-      const rect = card.getBoundingClientRect();
+      openBtn?.addEventListener('click', openMenu);
+      closeBtn?.addEventListener('click', closeMenu);
 
-      const desired = rect.bottom + 24;
-
-      const h = Math.max(basePx, desired);
-
-      const clamped = Math.min(h, window.innerHeight);
-
-      overlay.style.setProperty("--overlay-h", `${clamped}px`);
-    }
-
-    const openMenu = () => {
-      overlay?.classList.add("is-open");
-      overlay?.setAttribute("aria-hidden", "false");
-      openBtn?.setAttribute("aria-expanded", "true");
-      document.body.style.overflow = "hidden";
-
-      requestAnimationFrame(updateOverlayHeight);
-    };
-
-    const closeMenu = () => {
-      overlay?.classList.remove("is-open");
-      overlay?.setAttribute("aria-hidden", "true");
-      openBtn?.setAttribute("aria-expanded", "false");
-      document.body.style.overflow = "";
-
-      overlay?.style.removeProperty("--overlay-h");
-    };
-
-    openBtn?.addEventListener("click", openMenu);
-    closeBtn?.addEventListener("click", closeMenu);
-
-    const groups = overlay?.querySelectorAll("details.mobile-group");
-
-    groups?.forEach((d) => {
-      d.addEventListener("toggle", () => {
-        if (d.open) {
-          groups.forEach((other) => {
-            if (other !== d) other.open = false;
-          });
-        }
-        requestAnimationFrame(updateOverlayHeight);
+      overlay?.addEventListener('click', (e) => {
+        if (e.target === overlay) closeMenu();
       });
-    });
 
-    window.addEventListener("resize", () => {
-      if (overlay?.classList.contains("is-open")) updateOverlayHeight();
-    });
-
-    overlay?.addEventListener("click", (e) => {
-      if (e.target === overlay) closeMenu();
-    });
-
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeMenu();
-    });
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenu();
+      });
+    `}
   </script>
 </header>
