@@ -452,17 +452,17 @@ h2 {
     display: block;
   }
 
-  /* ✅ 파란 배경을 "일정 높이"까지만 칠하기 */
   .mobile-overlay::before {
     content: "";
     position: fixed;
     left: 0;
     right: 0;
     top: 0;
-    height: var(--overlay-h, 60vh); /* ✅ 여기 숫자만 바꾸면 파란 높이 조절 */
+    height: var(--mobile-blue-h, 60vh);
     background: rgba(24, 75, 143, 0.96);
     z-index: 0;
   }
+
   .mobile-overlay-inner {
     position: relative;
     z-index: 1;

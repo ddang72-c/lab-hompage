@@ -116,6 +116,21 @@ const navGroups = [
 
       const groups = Array.from(overlay.querySelectorAll('details.mobile-group'));
 
+      const syncMobileBlueHeight = () => {
+        const card = overlay.querySelector('.mobile-card');
+        if (!card) return;
+
+        const r = card.getBoundingClientRect();
+
+        // 카드 아래에 항상 남길 파란 여백(px)
+        const extra = 23;
+
+        // 화면 상단부터 (카드 bottom + extra) 까지만 파란색
+        const h = Math.min(window.innerHeight, Math.max(0, r.bottom + extra));
+
+        overlay.style.setProperty('--mobile-blue-h', `${h}px`);
+      };
+
       const closeAllGroups = () => {
         groups.forEach((d) => {
           d.open = false;
@@ -127,6 +142,9 @@ const navGroups = [
         overlay.setAttribute('aria-hidden', 'false');
         openBtn.setAttribute('aria-expanded', 'true');
         document.body.style.overflow = 'hidden';
+
+        // 열자마자 파란 영역 높이 동기화
+        syncMobileBlueHeight();
       };
 
       const closeMenu = () => {
@@ -137,15 +155,24 @@ const navGroups = [
 
         closeAllGroups();
         overlay.scrollTo({ top: 0 });
+
+        // 다음 오픈 때 다시 계산되도록 정리
+        overlay.style.removeProperty('--mobile-blue-h');
       };
 
-      // ✅ 한 번에 하나만 열리는 아코디언
+      // ✅ 한 번에 하나만 열리는 아코디언 + 파란 영역 높이 재계산
       groups.forEach((d) => {
         d.addEventListener('toggle', () => {
-          if (!d.open) return;
+          if (!d.open) {
+            syncMobileBlueHeight();
+            return;
+          }
+
           groups.forEach((other) => {
             if (other !== d) other.open = false;
           });
+
+          syncMobileBlueHeight();
         });
       });
 
@@ -158,6 +185,12 @@ const navGroups = [
 
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeMenu();
+      });
+
+      // 모바일 주소창 높이 변화/회전 등 대응
+      window.addEventListener('resize', () => {
+        if (!overlay.classList.contains('is-open')) return;
+        syncMobileBlueHeight();
       });
     };
 
