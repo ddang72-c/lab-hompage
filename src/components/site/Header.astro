@@ -103,47 +103,69 @@ const navGroups = [
   </div>
   
 <script is:inline>
-  window.menuInited = true;
+  // 중복 바인딩 방지(페이지 이동/리렌더 상황 대비)
+  if (!window.__mobileMenuInited) {
+    window.__mobileMenuInited = true;
 
-  // DOM이 확실히 잡힌 뒤 실행(가끔 Astro/CSR 타이밍 이슈 방지)
-  const initMobileMenu = () => {
-    const overlay = document.getElementById('mobileMenu');
-    const openBtn = document.querySelector('.nav-toggle');
-    const closeBtn = document.querySelector('.mobile-close');
+    const initMobileMenu = () => {
+      const overlay = document.getElementById('mobileMenu');
+      const openBtn = document.querySelector('.nav-toggle');
+      const closeBtn = document.querySelector('.mobile-close');
 
-    // ✅ 요소가 없을 때만 종료
-    if (!overlay || !openBtn || !closeBtn) return;
+      if (!overlay || !openBtn || !closeBtn) return;
 
-    function openMenu() {
-      overlay.classList.add('is-open');
-      overlay.setAttribute('aria-hidden', 'false');
-      openBtn.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
+      const groups = Array.from(overlay.querySelectorAll('details.mobile-group'));
+
+      const closeAllGroups = () => {
+        groups.forEach((d) => {
+          d.open = false;
+        });
+      };
+
+      const openMenu = () => {
+        overlay.classList.add('is-open');
+        overlay.setAttribute('aria-hidden', 'false');
+        openBtn.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      };
+
+      const closeMenu = () => {
+        overlay.classList.remove('is-open');
+        overlay.setAttribute('aria-hidden', 'true');
+        openBtn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+
+        closeAllGroups();
+        overlay.scrollTo({ top: 0 });
+      };
+
+      // ✅ 한 번에 하나만 열리는 아코디언
+      groups.forEach((d) => {
+        d.addEventListener('toggle', () => {
+          if (!d.open) return;
+          groups.forEach((other) => {
+            if (other !== d) other.open = false;
+          });
+        });
+      });
+
+      openBtn.addEventListener('click', openMenu);
+      closeBtn.addEventListener('click', closeMenu);
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeMenu();
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenu();
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initMobileMenu);
+    } else {
+      initMobileMenu();
     }
-
-    function closeMenu() {
-      overlay.classList.remove('is-open');
-      overlay.setAttribute('aria-hidden', 'true');
-      openBtn.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
-    }
-
-    openBtn.addEventListener('click', openMenu);
-    closeBtn.addEventListener('click', closeMenu);
-
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) closeMenu();
-    });
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeMenu();
-    });
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMobileMenu);
-  } else {
-    initMobileMenu();
   }
 </script>
 </header>

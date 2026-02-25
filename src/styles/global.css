@@ -443,28 +443,26 @@ h2 {
     display: none;
     position: fixed;
     inset: 0;
-    background: transparent; 
+    background: transparent; /* ✅ 전체 덮지 않게 */
     z-index: 6000;
-    overflow-y: auto;
+    overflow-y: auto;        /* ✅ 카드가 길어지면 overlay가 스크롤 */
   }
+
   .mobile-overlay.is-open {
     display: block;
   }
 
+  /* ✅ 파란 배경을 "일정 높이"까지만 칠하기 */
   .mobile-overlay::before {
     content: "";
     position: fixed;
     left: 0;
     right: 0;
     top: 0;
-
-    height: var(--overlay-h, 60vh);
+    height: var(--overlay-h, 60vh); /* ✅ 여기 숫자만 바꾸면 파란 높이 조절 */
     background: rgba(24, 75, 143, 0.96);
     z-index: 0;
-
-    transition: height 160ms ease;
   }
-
   .mobile-overlay-inner {
     position: relative;
     z-index: 1;
@@ -476,7 +474,7 @@ h2 {
   .mobile-topbar {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 18px;
+    margin-bottom: 8px;
   }
 
   .mobile-close {
@@ -488,14 +486,13 @@ h2 {
     cursor: pointer;
     padding: 6px 8px;
   }
-
+  
   .mobile-card {
     background: #fff;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
   }
-
   .mobile-group {
     border-top: 1px solid var(--line);
   }
