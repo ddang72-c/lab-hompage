@@ -41,20 +41,17 @@ const navGroups = [
     <div class="header-main-inner header-main-inner--wide">
       <a class="brand" href="/" aria-label="Home">
         <span class="brand-logos" aria-hidden="true">
-        <!-- 심볼(logo1 파일) -> logo2 스타일(큰 사이즈) 적용 -->
           <img class="brand-logo brand-logo--logo2" src="/images/logo1.png" alt="" />
-
-        <!-- 글자(logo2 파일) -> logo1 스타일(얇은 가로 로고) 적용 -->
           <img class="brand-logo brand-logo--logo1" src="/images/logo2.png" alt="" />
         </span>
       </a>
+
       <!-- Desktop nav with dropdown -->
       <nav class="gnb" aria-label="Main navigation">
         <ul class="gnb-list">
           {navGroups.map((g) => (
             <li class="gnb-item">
               <a class="gnb-link" href={g.href}>{g.label}</a>
-
               <ul class="dropdown" aria-label={`${g.label} submenu`}>
                 {g.dropdown.map((it) => (
                   <li class="dropdown-item">
@@ -68,7 +65,13 @@ const navGroups = [
       </nav>
 
       <!-- Mobile toggle -->
-      <button class="nav-toggle" type="button" aria-label="Open menu" aria-controls="mobileMenu" aria-expanded="false">
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-label="Open menu"
+        aria-controls="mobileMenu"
+        aria-expanded="false"
+      >
         ☰
       </button>
     </div>
@@ -98,39 +101,49 @@ const navGroups = [
       </div>
     </div>
   </div>
+  
+<script is:inline>
+  window.menuInited = true;
 
-  <script is:inline>
-    {`
-      const overlay = document.getElementById('mobileMenu');
-      const openBtn = document.querySelector('.nav-toggle');
-      const closeBtn = document.querySelector('.mobile-close');
+  // DOM이 확실히 잡힌 뒤 실행(가끔 Astro/CSR 타이밍 이슈 방지)
+  const initMobileMenu = () => {
+    const overlay = document.getElementById('mobileMenu');
+    const openBtn = document.querySelector('.nav-toggle');
+    const closeBtn = document.querySelector('.mobile-close');
 
-      function openMenu() {
-        if (!overlay || !openBtn) return;
-        overlay.classList.add('is-open');
-        overlay.setAttribute('aria-hidden', 'false');
-        openBtn.setAttribute('aria-expanded', 'true');
-        document.body.style.overflow = 'hidden';
-      }
+    // ✅ 요소가 없을 때만 종료
+    if (!overlay || !openBtn || !closeBtn) return;
 
-      function closeMenu() {
-        if (!overlay || !openBtn) return;
-        overlay.classList.remove('is-open');
-        overlay.setAttribute('aria-hidden', 'true');
-        openBtn.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-      }
+    function openMenu() {
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      openBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
 
-      openBtn?.addEventListener('click', openMenu);
-      closeBtn?.addEventListener('click', closeMenu);
+    function closeMenu() {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      openBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
 
-      overlay?.addEventListener('click', (e) => {
-        if (e.target === overlay) closeMenu();
-      });
+    openBtn.addEventListener('click', openMenu);
+    closeBtn.addEventListener('click', closeMenu);
 
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeMenu();
-      });
-    `}
-  </script>
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeMenu();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMenu();
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileMenu);
+  } else {
+    initMobileMenu();
+  }
+</script>
 </header>
