@@ -221,3 +221,15 @@ collections:
       - { label: "Image", name: "image", widget: "image" }
       - { label: "Link", name: "link", widget: "string", required: false }
       - { label: "Body", name: "body", widget: "markdown", required: false }
+
+  - label: "Style"
+    name: "style"
+    widget: "object"
+    required: false
+    fields:
+      - { label: "Title Size", name: "titleSize", widget: "select", required: false,
+          options: ["36px", "32px", "28px", "24px", "20px"] }
+      - { label: "Title Color", name: "titleColor", widget: "color", required: false }
+      - { label: "Body Size", name: "bodySize", widget: "select", required: false,
+          options: ["20px", "18px", "16px", "15px", "14px"] }
+      - { label: "Body Color", name: "bodyColor", widget: "color", required: false }
