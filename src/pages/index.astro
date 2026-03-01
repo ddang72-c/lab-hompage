@@ -2,11 +2,13 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import "../styles/home.css";
 
+type SlideFM = { image: string; alt?: string };
+type SlideVM = { src: string; alt: string };
 
 const homeEntries = await Astro.glob("../content/home/home.md");
 const home = homeEntries[0];
 
-const slides = (home?.frontmatter?.slides ?? []).map((s) => ({
+const slides: SlideVM[] = (home?.frontmatter?.slides ?? []).map((s: SlideFM) => ({
   src: s.image,
   alt: s.alt ?? "",
 }));
@@ -19,7 +21,7 @@ const about = home?.frontmatter?.about ?? {};
     <div class="home-slider-viewport" data-viewport>
       <div class="home-slider-track" data-track>
         {slides.length > 0 ? (
-          slides.map((s, idx) => (
+          slides.map((s: SlideVM, idx: number) => (
             <figure class="home-slide">
               <img src={s.src} alt={s.alt} loading={idx === 0 ? "eager" : "lazy"} />
             </figure>
@@ -66,7 +68,7 @@ const about = home?.frontmatter?.about ?? {};
 
     {slides.length > 1 && (
       <div class="home-slider-dots" aria-hidden="true" data-dots>
-        {slides.map((_, i) => (
+        {slides.map((_: SlideVM, i: number) => (
           <span class={`dot ${i === 0 ? "is-active" : ""}`}></span>
         ))}
       </div>
@@ -97,7 +99,6 @@ const about = home?.frontmatter?.about ?? {};
   </section>
 
   <div class="home-section-rule" aria-hidden="true"></div>
-
 </BaseLayout>
 
 <script is:inline>
@@ -106,19 +107,19 @@ const about = home?.frontmatter?.about ?? {};
     if (!root) return;
 
     const track = root.querySelector("[data-track]");
-    const slides = Array.from(root.querySelectorAll(".home-slide"));
+    const slideEls = Array.from(root.querySelectorAll(".home-slide"));
     const prevBtn = root.querySelector("[data-prev]");
     const nextBtn = root.querySelector("[data-next]");
 
     const dotsWrap = root.querySelector("[data-dots]");
     const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll(".dot")) : [];
 
-    if (!track || slides.length <= 1 || !prevBtn || !nextBtn) return;
+    if (!track || slideEls.length <= 1 || !prevBtn || !nextBtn) return;
 
     let idx = 0;
 
     const setIndex = (next) => {
-      idx = (next + slides.length) % slides.length;
+      idx = (next + slideEls.length) % slideEls.length;
       track.style.transform = `translateX(-${idx * 100}%)`;
 
       if (dots.length) {
@@ -137,5 +138,7 @@ const about = home?.frontmatter?.about ?? {};
     root.tabIndex = 0;
 
     setIndex(0);
+    if (window.__homeSliderTimer) clearInterval(window.__homeSliderTimer);
+    window.__homeSliderTimer = setInterval(() => setIndex(idx + 1), 5000);
   })();
 </script>
