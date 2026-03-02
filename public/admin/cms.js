@@ -237,7 +237,8 @@
     },
   });
 })();
-// Font size token: :size[TEXT]{value=18}
+
+// <span style="font-size:18px;">TEXT</span>
 CMS.registerEditorComponent({
   id: "font-size",
   label: "Font Size",
@@ -254,13 +255,14 @@ CMS.registerEditorComponent({
       default: 18,
     },
   ],
-  pattern: /^:size\[(.+?)\]\{value=(\d+)\}$/,
-  fromBlock: (match) => ({ text: match[1], value: Number(match[2]) }),
-  toBlock: ({ text, value }) => `:size[${text}]{value=${value}}`,
+  // 저장된 HTML span을 다시 폼으로 불러오기
+  pattern: /^<span\s+style="[^"]*font-size:\s*([0-9]+)px;?[^"]*"\s*>([\s\S]*?)<\/span>$/,
+  fromBlock: (match) => ({ value: Number(match[1]), text: match[2] }),
+  toBlock: ({ text, value }) => `<span style="font-size:${value}px;">${text}</span>`,
   toPreview: ({ text, value }) => `<span style="font-size:${value}px;">${text}</span>`,
 });
 
-// Text color token: :color[TEXT]{value=#ff0000}
+// <span style="color:#ff0000;">TEXT</span>
 CMS.registerEditorComponent({
   id: "text-color",
   label: "Text Color",
@@ -268,13 +270,13 @@ CMS.registerEditorComponent({
     { name: "text", label: "Text", widget: "string" },
     { name: "value", label: "Color", widget: "color", default: "#ff0000" },
   ],
-  pattern: /^:color\[(.+?)\]\{value=(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6})\}$/,
-  fromBlock: (match) => ({ text: match[1], value: match[2] }),
-  toBlock: ({ text, value }) => `:color[${text}]{value=${value}}`,
+  pattern: /^<span\s+style="[^"]*color:\s*(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6});?[^"]*"\s*>([\s\S]*?)<\/span>$/,
+  fromBlock: (match) => ({ value: match[1], text: match[2] }),
+  toBlock: ({ text, value }) => `<span style="color:${value};">${text}</span>`,
   toPreview: ({ text, value }) => `<span style="color:${value};">${text}</span>`,
 });
 
-// Font size + color token: :t[TEXT]{size=18 color=#ff0000}
+// <span style="font-size:18px; color:#ff0000;">TEXT</span>
 CMS.registerEditorComponent({
   id: "font-size-color",
   label: "Font + Color",
@@ -293,9 +295,8 @@ CMS.registerEditorComponent({
     { name: "color", label: "Color", widget: "color", default: "#ff0000" },
   ],
   pattern:
-    /^:t\[(.+?)\]\{size=(\d+)\s+color=(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6})\}$/,
-  fromBlock: (match) => ({ text: match[1], size: Number(match[2]), color: match[3] }),
-  toBlock: ({ text, size, color }) => `:t[${text}]{size=${size} color=${color}}`,
-  toPreview: ({ text, size, color }) =>
-    `<span style="font-size:${size}px; color:${color};">${text}</span>`,
+    /^<span\s+style="[^"]*font-size:\s*([0-9]+)px;?[^"]*color:\s*(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6});?[^"]*"\s*>([\s\S]*?)<\/span>$/,
+  fromBlock: (match) => ({ size: Number(match[1]), color: match[2], text: match[3] }),
+  toBlock: ({ text, size, color }) => `<span style="font-size:${size}px; color:${color};">${text}</span>`,
+  toPreview: ({ text, size, color }) => `<span style="font-size:${size}px; color:${color};">${text}</span>`,
 });
