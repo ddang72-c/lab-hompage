@@ -1,9 +1,13 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
 
-import react from '@astrojs/react';
+import remarkDirective from "remark-directive";
+import remarkTypography from "./src/lib/remark-typography.js";
 
-// https://astro.build/config
 export default defineConfig({
-  integrations: [react()]
+  integrations: [react()],
+  markdown: {
+    remarkPlugins: [remarkDirective, remarkTypography],
+  },
 });

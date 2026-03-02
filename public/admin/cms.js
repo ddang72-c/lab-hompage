@@ -237,3 +237,39 @@
     },
   });
 })();
+// Font size token: :size[TEXT]{value=18}
+CMS.registerEditorComponent({
+  id: "font-size",
+  label: "Font Size",
+  fields: [
+    { name: "text", label: "Text", widget: "string" },
+    {
+      name: "value",
+      label: "Size (9~60)",
+      widget: "number",
+      value_type: "int",
+      min: 9,
+      max: 60,
+      step: 1,
+      default: 18,
+    },
+  ],
+  pattern: /^:size\[(.+?)\]\{value=(\d+)\}$/,
+  fromBlock: (match) => ({ text: match[1], value: Number(match[2]) }),
+  toBlock: ({ text, value }) => `:size[${text}]{value=${value}}`,
+  toPreview: ({ text, value }) => `<span style="font-size:${value}px;">${text}</span>`,
+});
+
+// Text color token: :color[TEXT]{value=#ff0000}
+CMS.registerEditorComponent({
+  id: "text-color",
+  label: "Text Color",
+  fields: [
+    { name: "text", label: "Text", widget: "string" },
+    { name: "value", label: "Color", widget: "color", default: "#ff0000" },
+  ],
+  pattern: /^:color\[(.+?)\]\{value=(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6})\}$/,
+  fromBlock: (match) => ({ text: match[1], value: match[2] }),
+  toBlock: ({ text, value }) => `:color[${text}]{value=${value}}`,
+  toPreview: ({ text, value }) => `<span style="color:${value};">${text}</span>`,
+});
