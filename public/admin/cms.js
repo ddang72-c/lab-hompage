@@ -273,3 +273,29 @@ CMS.registerEditorComponent({
   toBlock: ({ text, value }) => `:color[${text}]{value=${value}}`,
   toPreview: ({ text, value }) => `<span style="color:${value};">${text}</span>`,
 });
+
+// Font size + color token: :t[TEXT]{size=18 color=#ff0000}
+CMS.registerEditorComponent({
+  id: "font-size-color",
+  label: "Font + Color",
+  fields: [
+    { name: "text", label: "Text", widget: "string" },
+    {
+      name: "size",
+      label: "Size (9~60)",
+      widget: "number",
+      value_type: "int",
+      min: 9,
+      max: 60,
+      step: 1,
+      default: 18,
+    },
+    { name: "color", label: "Color", widget: "color", default: "#ff0000" },
+  ],
+  pattern:
+    /^:t\[(.+?)\]\{size=(\d+)\s+color=(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6})\}$/,
+  fromBlock: (match) => ({ text: match[1], size: Number(match[2]), color: match[3] }),
+  toBlock: ({ text, size, color }) => `:t[${text}]{size=${size} color=${color}}`,
+  toPreview: ({ text, size, color }) =>
+    `<span style="font-size:${size}px; color:${color};">${text}</span>`,
+});
