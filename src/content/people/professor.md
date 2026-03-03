@@ -8,7 +8,7 @@ name: Haeyong Kang
 ## Personal
 
 * ##### Office: 공동연구기기동(311) 508호
-* ##### Email: haeyong.kang@pnu.ac.kr
+* ##### Email: haeyong.kang@pusan.ac.kr
 * ##### Tel: (051) 510-2228
 * ##### Fax: (051) 510-7664
 
