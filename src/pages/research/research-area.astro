@@ -23,7 +23,11 @@ const posts = await Promise.all(
 posts.sort((a, b) => (b.order - a.order) || b.path.localeCompare(a.path));
 ---
 
-<SectionLayout title="Research area">
+<SectionLayout
+  title="Research Area"
+  sectionTitle="Research"
+  subTitle="Research Area"
+>
   <style is:global>
     .research-wrap {
       max-width: 1180px;

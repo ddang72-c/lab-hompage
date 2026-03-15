@@ -387,6 +387,12 @@ h2 {
   color: var(--brand);
 }
 
+.pub-year:first-of-type {
+  border-top: 0;
+  margin-top: 18px;
+}
+
+
 /* =========================
    Footer
 ========================= */
@@ -678,4 +684,93 @@ html {
     width: 80%;   /* 1 / 1.25 = 0.8 */
     height: 80%;
   }
+}
+
+
+.page-heading {
+  width: 100%;
+  background: #f2f4f8;
+  padding: 1px 0 10px;
+}
+
+.page-heading--bleed {
+  width: calc(100% + 120px);
+  margin-left: -60px;
+  margin-right: -60px;
+}
+.page-heading__inner {
+  width: 94%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.page-heading__title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.page-heading__section {
+  margin: 0;
+  font-size: 2.1rem;
+  font-weight: 550;
+  line-height: 1.2;
+  color: #111;
+}
+
+.page-heading__sub {
+  font-size: 1.9rem;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #222;
+}
+
+.page-heading__line {
+  width: 100%;
+  height: 1px;
+  background: #d2d6dc;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .page-heading--bleed {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .page-heading {
+    padding: 1px 0 8px;
+  }
+
+  .page-heading__inner {
+    width: calc(100% - 24px);
+  }
+
+  .page-heading__title-row {
+    gap: 10px;
+  }
+
+  .page-heading__section {
+    font-size: 1.8rem;
+  }
+
+  .page-heading__sub {
+    font-size: 1.45rem;
+  }
+
+  .page-heading__line {
+    margin-top: 14px;
+  }
+}
+
+.gallery-post {
+  margin-top: 24px;
+}
+
+
+/* Gallery 첫 게시글 시작 여백 */
+.gallery-list {
+  margin-top: 16px;
 }

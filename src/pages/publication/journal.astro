@@ -62,8 +62,11 @@ const doiHref = (doiRaw?: string) => {
   return `https://doi.org/${cleaned}`;
 };
 ---
-
-<SectionLayout title="Journal">
+<SectionLayout
+  title="Journal"
+  sectionTitle="Publication"
+  subTitle="Journal articles"
+>
   <style is:global>
     .pub-row {
       display: flex;

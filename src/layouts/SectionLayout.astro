@@ -1,10 +1,22 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 
-const { title } = Astro.props;
+const { title, sectionTitle, subTitle } = Astro.props;
 ---
 
 <BaseLayout title={title}>
+  {sectionTitle && (
+    <div class="page-heading page-heading--bleed">
+      <div class="page-heading__inner">
+        <div class="page-heading__title-row">
+          <h1 class="page-heading__section">{sectionTitle}</h1>
+          {subTitle && <span class="page-heading__sub">{subTitle}</span>}
+        </div>
+        <div class="page-heading__line"></div>
+      </div>
+    </div>
+  )}
+
   <div class="section-layout">
     <section class="sub-content">
       <slot />

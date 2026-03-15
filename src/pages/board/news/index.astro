@@ -37,7 +37,11 @@ posts.sort((a, b) => {
 const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
 ---
 
-<SectionLayout title="News">
+<SectionLayout
+  title="News"
+  sectionTitle="Board"
+  subTitle="News"
+>
   <style is:global>
     .news-wrap{
       max-width: 1180px;

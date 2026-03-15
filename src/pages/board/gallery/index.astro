@@ -37,7 +37,11 @@ posts.sort((a, b) => {
 const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 10) : "");
 ---
 
-<SectionLayout title="Gallery">
+<SectionLayout
+  title="Gallery"
+  sectionTitle="Board"
+  subTitle="Gallery"
+>
   <style is:global>
     .gallery-wrap{
       max-width: 1180px;

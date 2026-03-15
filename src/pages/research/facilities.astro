@@ -22,7 +22,11 @@ const items = await Promise.all(
 items.sort((a, b) => a.title.localeCompare(b.title));
 ---
 
-<SectionLayout title="Facilities">
+<SectionLayout
+  title="Facilities"
+  sectionTitle="Research"
+  subTitle="Facilities"
+>
   <style is:global>
     .fac-wrap {
       max-width: 1180px;
