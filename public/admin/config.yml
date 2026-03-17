@@ -188,33 +188,7 @@ collections:
 
       - { label: Body, name: body, widget: markdown, required: false }
 
-  - name: home
-    label: Home
-    files:
-      - name: home
-        label: Home Page
-        file: "src/content/home/home.md"
-        format: frontmatter
-        fields:
-          - { label: "Title", name: "title", widget: "string", required: false }
 
-          - label: "Slides"
-            name: "slides"
-            widget: "list"
-            summary: "{{fields.image}}"
-            fields:
-              - { label: "Image", name: "image", widget: "image" }
-
-          - label: "About section"
-            name: "about"
-            widget: "object"
-            fields:
-              - { label: "Image", name: "image", widget: "image", required: false }
-              - { label: "Title", name: "title", widget: "string", required: false }
-              - { label: "Text", name: "text", widget: "text", required: false }
-              - { label: "Button text", name: "buttonText", widget: "string", required: false }
-              - { label: "Button link", name: "buttonLink", widget: "string", required: false }
-              
   - name: home
     label: Home
     files:

@@ -173,13 +173,6 @@
   font-size: 15px;
 }
 
-.home-section-rule{
-  width: min(1080px, 90%);
-  margin: 0 auto;
-  height: 1px;
-  background: rgba(0,0,0,0.12);
-}
-
 /* Responsive */
 @media (max-width: 900px){
   .home-about{
