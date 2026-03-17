@@ -5,6 +5,12 @@ import "../styles/home.css";
 type SlideFM = { image: string; alt?: string };
 type SlideVM = { src: string; alt: string };
 
+type SectionFM = {
+  image?: string;
+  title?: string;
+  text?: string;
+};
+
 const homeEntries = await Astro.glob("../content/home/home.md");
 const home = homeEntries[0];
 
@@ -13,7 +19,7 @@ const slides: SlideVM[] = (home?.frontmatter?.slides ?? []).map((s: SlideFM) => 
   alt: s.alt ?? "",
 }));
 
-const about = home?.frontmatter?.about ?? {};
+const sections: SectionFM[] = home?.frontmatter?.sections ?? [];
 ---
 
 <BaseLayout title="LETS">
@@ -77,26 +83,49 @@ const about = home?.frontmatter?.about ?? {};
     <div class="home-slider-rule" aria-hidden="true"></div>
   </section>
 
-  <section class="home-about" aria-label="About section">
-    <div class="home-about-inner">
-      <div class="home-about-media">
-        <img
-          class="home-about-image"
-          src={about.image ?? "/images/home/wordcloud.png"}
-          alt="About image"
-          loading="lazy"
-        />
-      </div>
+  {sections.length > 0 ? (
+    <section class="home-about" aria-label="Home sections">
+      {sections.map((section: SectionFM) => (
+        <div class="home-about-item">
+          <div class="home-about-inner">
+            <div class="home-about-media">
+              <img
+                class="home-about-image"
+                src={section.image ?? "/images/home/wordcloud.png"}
+                alt={section.title ?? "Section image"}
+                loading="lazy"
+              />
+            </div>
 
-      <div class="home-about-content">
-        <h2 class="home-about-title">{about.title ?? "About..."}</h2>
-        <p class="home-about-text">{about.text ?? ""}</p>
-        <a class="home-about-btn" href={about.buttonLink ?? "/research/research-area/"}>
-          {about.buttonText ?? "More about Research Area"}
-        </a>
+            <div class="home-about-content">
+              <h2 class="home-about-title">{section.title ?? "About..."}</h2>
+              <p class="home-about-text">{section.text ?? ""}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </section>
+  ) : (
+    <section class="home-about" aria-label="Home sections">
+      <div class="home-about-item">
+        <div class="home-about-inner">
+          <div class="home-about-media">
+            <img
+              class="home-about-image"
+              src="/images/home/wordcloud.png"
+              alt="Section image"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="home-about-content">
+            <h2 class="home-about-title">About...</h2>
+            <p class="home-about-text">No home sections yet. Add sections in /admin → Home.</p>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
   <div class="home-section-rule" aria-hidden="true"></div>
 </BaseLayout>
