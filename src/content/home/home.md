@@ -20,11 +20,11 @@ homeCards:
     buttonText: More about this work
     buttonLink: /research/research-area
   - title: Highlights (2024)
-    image: /uploads/화면-캡처-2026-02-20-005350.png
+    image: /uploads/스크린샷-2026-01-27-204305.png
     text: The Hall effect can be realized in the absence of external magnetic field
       and even spontaneous magnetization.
     buttonText: More about this work
-    buttonLink: /research/research-area
+    buttonLink: https://phys.pusan.ac.kr/phys/12901/subview.do
   - title: News
     text: 최신 소식이나 공지 내용을 이 카드에 넣으면 됩니다.
     buttonText: ""
