@@ -27,6 +27,6 @@ homeCards:
     buttonLink: /research/research-area
   - title: News
     text: 최신 소식이나 공지 내용을 이 카드에 넣으면 됩니다.
-    buttonText: View all news
-    buttonLink: /board/news
+    buttonText: ""
+    buttonLink: ""
 ---
