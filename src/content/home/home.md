@@ -12,19 +12,19 @@ featuredSection:
     applications such as graphene-based oxide detectors and new concepts of
     transistors.
 homeCards:
-  - title: Highlights (2024)
-    image: /uploads/1pg.png
-    text: Depending on the structural phases, transition-metal dichalcogenides can
-      stand alone on the bilayer graphene substrate or play more actively with
-      the substrate.
+  - title: Latest Research Highlights
+    image: https://pubs.acs.org/cms/10.1021/acsaelm.5c02447/asset/images/large/el5c02447_0006.jpeg
+    text: Enhanced Visible-Light Response and Optoelectronic Properties of a-IGZO
+      Phototransistors with Dye and PMMA Blend Heterojunctions (ACS Appl.
+      Electron. Mater. 2026, 8, 4, 1716–1725)
     buttonText: More about this work
-    buttonLink: /research/research-area
-  - title: Highlights (2024)
-    image: /uploads/스크린샷-2026-01-27-204305.png
-    text: The Hall effect can be realized in the absence of external magnetic field
-      and even spontaneous magnetization.
+    buttonLink: https://pubs.acs.org/doi/full/10.1021/acsaelm.5c02447
+  - title: Latest Research Highlights
+    image: /uploads/figure1_v2.png
+    text: "Review: Electrical probing of defects in two-dimensional material-based
+      heterostructures"
     buttonText: More about this work
-    buttonLink: https://phys.pusan.ac.kr/phys/12901/subview.do
+    buttonLink: https://www.sciencedirect.com/science/article/abs/pii/S1567173926000623
   - title: News
     text: 최신 소식이나 공지 내용을 이 카드에 넣으면 됩니다.
     buttonText: ""
