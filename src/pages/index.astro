@@ -139,8 +139,8 @@ const homeCards: HomeCardFM[] = home?.frontmatter?.homeCards ?? [];
                 <a
                   class="home-card-button"
                   href={card.buttonLink}
-                  target="_blank"
-                  rel="noreferrer"
+                  target={card.buttonLink.startsWith("http") ? "_blank" : undefined}
+                  rel={card.buttonLink.startsWith("http") ? "noreferrer" : undefined}
                 >
                   {card.buttonText}
                 </a>
