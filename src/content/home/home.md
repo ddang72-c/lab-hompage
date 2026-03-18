@@ -20,7 +20,7 @@ homeCards:
     buttonText: More about this work
     buttonLink: /research/research-area
   - title: Highlights (2024)
-    image: /uploads/kakaotalk_20260220_010302635.jpg
+    image: /uploads/화면-캡처-2026-02-20-005350.png
     text: The Hall effect can be realized in the absence of external magnetic field
       and even spontaneous magnetization.
     buttonText: More about this work
