@@ -5,12 +5,15 @@ slides:
   - image: /uploads/kakaotalk_20260220_022301398.jpg
 featuredSection:
   image: /uploads/스크린샷-2026-01-27-203949.png
-  title: Heterojunction Nano Devices 이종접합 나노소자
-  text: We design and fabricate heterojunction nano devices by integrating 2D
-    materials (graphene and TMDs) with functional substrates and oxides. We
-    develop various fabrication and patterning methods and extend toward
-    applications such as graphene-based oxide detectors and new concepts of
-    transistors.
+  title: Research Area
+  text: We study defect physics and device characterization to understand and
+    quantify how defects impact material and device performance. We conduct
+    quantum transport measurements under extreme conditions (e.g., low
+    temperatures and high magnetic fields) to uncover fundamental transport
+    mechanisms. We also develop heterojunction nanodevices by engineering
+    interfaces and band alignment, and we advance oxide thin-film transistors by
+    optimizing process–structure–property relationships for improved device
+    operation.
 homeCards:
   - title: Latest Research Highlights
     image: https://pubs.acs.org/cms/10.1021/acsaelm.5c02447/asset/images/large/el5c02447_0006.jpeg
