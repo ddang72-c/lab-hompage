@@ -5,10 +5,18 @@ import "../styles/home.css";
 type SlideFM = { image: string; alt?: string };
 type SlideVM = { src: string; alt: string };
 
-type SectionFM = {
+type FeaturedSectionFM = {
   image?: string;
   title?: string;
   text?: string;
+};
+
+type HomeCardFM = {
+  title?: string;
+  image?: string;
+  text?: string;
+  buttonText?: string;
+  buttonLink?: string;
 };
 
 const homeEntries = await Astro.glob("../content/home/home.md");
@@ -19,7 +27,8 @@ const slides: SlideVM[] = (home?.frontmatter?.slides ?? []).map((s: SlideFM) => 
   alt: s.alt ?? "",
 }));
 
-const sections: SectionFM[] = home?.frontmatter?.sections ?? [];
+const featuredSection: FeaturedSectionFM | undefined = home?.frontmatter?.featuredSection;
+const homeCards: HomeCardFM[] = home?.frontmatter?.homeCards ?? [];
 ---
 
 <BaseLayout title="LETS">
@@ -83,50 +92,65 @@ const sections: SectionFM[] = home?.frontmatter?.sections ?? [];
     <div class="home-slider-rule" aria-hidden="true"></div>
   </section>
 
-  {sections.length > 0 ? (
-    <section class="home-about" aria-label="Home sections">
-      {sections.map((section: SectionFM) => (
-        <div class="home-about-item">
-          <div class="home-about-inner">
-            <div class="home-about-media">
-              <img
-                class="home-about-image"
-                src={section.image ?? "/images/home/wordcloud.png"}
-                alt={section.title ?? "Section image"}
-                loading="lazy"
-              />
-            </div>
-
-            <div class="home-about-content">
-              <h2 class="home-about-title">{section.title ?? "About..."}</h2>
-              <p class="home-about-text">{section.text ?? ""}</p>
-            </div>
-          </div>
+  <section class="home-about" aria-label="Featured home section">
+    <div class="home-about-item">
+      <div class="home-about-inner">
+        <div class="home-about-media">
+          <img
+            class="home-about-image"
+            src={featuredSection?.image ?? "/images/home/wordcloud.png"}
+            alt={featuredSection?.title ?? "Section image"}
+            loading="lazy"
+          />
         </div>
-      ))}
-    </section>
-  ) : (
-    <section class="home-about" aria-label="Home sections">
-      <div class="home-about-item">
-        <div class="home-about-inner">
-          <div class="home-about-media">
-            <img
-              class="home-about-image"
-              src="/images/home/wordcloud.png"
-              alt="Section image"
-              loading="lazy"
-            />
-          </div>
 
-          <div class="home-about-content">
-            <h2 class="home-about-title">About...</h2>
-            <p class="home-about-text">No home sections yet. Add sections in /admin → Home.</p>
-          </div>
+        <div class="home-about-content">
+          <h2 class="home-about-title">{featuredSection?.title ?? "About..."}</h2>
+          <p class="home-about-text">
+            {featuredSection?.text ?? "No featured section yet. Add content in /admin → Home."}
+          </p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  {homeCards.length > 0 && (
+    <section class="home-cards" aria-label="Home cards">
+      <div class="home-cards-grid">
+        {homeCards.map((card: HomeCardFM) => (
+          <article class="home-card">
+            {card.image && (
+              <div class="home-card-media">
+                <img
+                  class="home-card-image"
+                  src={card.image}
+                  alt={card.title ?? "Card image"}
+                  loading="lazy"
+                />
+              </div>
+            )}
+
+            <div class="home-card-body">
+              <h3 class="home-card-title">{card.title ?? ""}</h3>
+
+              {card.text && <p class="home-card-text">{card.text}</p>}
+
+              {card.buttonText && card.buttonLink && (
+                <a
+                  class="home-card-button"
+                  href={card.buttonLink}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {card.buttonText}
+                </a>
+              )}
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   )}
-
 </BaseLayout>
 
 <script is:inline>

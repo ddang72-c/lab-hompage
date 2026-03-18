@@ -206,14 +206,28 @@ collections:
             fields:
               - { label: "Image", name: "image", widget: "image" }
 
-          - label: "Home sections"
-            name: "sections"
-            widget: "list"
+          - label: "Featured section"
+            name: "featuredSection"
+            widget: "object"
             summary: "{{fields.title}}"
             fields:
               - { label: "Image", name: "image", widget: "image", required: false }
               - { label: "Title", name: "title", widget: "string", required: false }
               - { label: "Text", name: "text", widget: "text", required: false }
+
+          - label: "Home cards"
+            name: "homeCards"
+            widget: "list"
+            summary: "{{fields.title}}"
+            min: 3
+            max: 3
+            fields:
+              - { label: "Title", name: "title", widget: "string", required: true }
+              - { label: "Image", name: "image", widget: "image", required: false }
+              - { label: "Text", name: "text", widget: "text", required: false }
+              - { label: "Button Text", name: "buttonText", widget: "string", required: false }
+              - { label: "Button Link", name: "buttonLink", widget: "string", required: false }
+
 
   - name: research
     label: Research
