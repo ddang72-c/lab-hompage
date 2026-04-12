@@ -1,46 +1,39 @@
-# Astro Starter Kit: Basics
+# 부산대학교 연구실 홈페이지 제작 및 배포
 
-```sh
-npm create astro@latest -- --template basics
-```
+교수님 요구사항을 반영해 연구실 소개와 게시판 관리가 가능한 홈페이지를 제작하고 GitHub와 Cloudflare Pages로 배포한 프로젝트입니다.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 프로젝트 소개
 
-## 🚀 Project Structure
+이 프로젝트는 연구실 소개, 구성원, 연구 분야, 논문, 게시판 등 주요 정보를 한 곳에서 확인할 수 있는 홈페이지를 만드는 것을 목표로 진행했습니다.  
+단순 소개 페이지에 그치지 않고, 게시글과 콘텐츠를 비교적 쉽게 관리할 수 있도록 CMS 기반 구조도 함께 구성했습니다.
 
-Inside of your Astro project, you'll see the following folders and files:
+제작 과정에서는 페이지 구조와 디자인을 먼저 구성한 뒤, 교수님 피드백에 맞춰 콘텐츠와 화면을 반복 수정하며 완성도를 높였습니다.
 
-```text
-/
-├── public/
-│   └── favicon.svg
+## 배포 주소
+
+- 홈페이지: https://letspusan.pages.dev/
+- GitHub Repository: https://github.com/ddang72-c/lab-hompage
+
+## 사용 기술
+
+- Astro
+- React
+- Decap CMS
+- GitHub
+- Cloudflare Pages
+
+## 주요 페이지 및 기능
+
+- 연구실 소개 페이지
+- 구성원 소개 페이지
+- 연구 분야 소개 페이지
+- 논문 및 게시판 페이지
+- CMS 기반 콘텐츠 관리 구조
+- 정적 사이트 배포 환경 구성
+
+.
+├── public
 ├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
-
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+├── package.json
+├── astro.config.mjs
+└── README.md
