@@ -5,5 +5,5 @@ position: 2025.03.~
 joined: Intern (Since 2025.03. ~ )
 contact: ": pdj716@pusan.ac.kr "
 photo: /uploads/image4.png
-order: 4
+order: 11
 ---
