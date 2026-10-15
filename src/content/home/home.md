@@ -1,8 +1,7 @@
 ---
 title: Home
 slides:
-  - image: /uploads/kakaotalk_20260220_022341464.jpg
-  - image: /uploads/kakaotalk_20260220_022301398.jpg
+  - image: /uploads/a847e185-f3b1-46b8-98a7-373f6bb6b71a.png
 featuredSection:
   image: /uploads/스크린샷-2026-01-27-203949.png
   title: Research Area
