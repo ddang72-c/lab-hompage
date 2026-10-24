@@ -1,7 +1,7 @@
 ---
 title: Home
 slides:
-  - image: /uploads/a847e185-f3b1-46b8-98a7-373f6bb6b71a.png
+  - image: /uploads/d3862373-984f-437e-bd3e-6dd6ed9e9ff1.png
   - image: /uploads/ead7c865-f.png
   - image: /uploads/3a0a5d36-2721-4ca4-b24a-cf5cae569245.png
 featuredSection:
